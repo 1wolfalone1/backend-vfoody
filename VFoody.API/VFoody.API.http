@@ -1,0 +1,6 @@
+@VFoody.API_HostAddress = http://localhost:5063
+
+GET {{VFoody.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
