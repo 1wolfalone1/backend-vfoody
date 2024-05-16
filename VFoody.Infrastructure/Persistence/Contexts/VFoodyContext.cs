@@ -85,6 +85,8 @@ public partial class VFoodyContext : DbContext
     public virtual DbSet<ShopPromotion> ShopPromotions { get; set; }
 
     public virtual DbSet<Transaction> Transactions { get; set; }
+    
+    public virtual DbSet<VerificationCode> VerificationCodes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql(Environment.GetEnvironmentVariable("DATABASE_URL"), ServerVersion.Parse("8.0.33-mysql"));
@@ -347,6 +349,15 @@ public partial class VFoodyContext : DbContext
             entity.HasKey(e => e.Id).HasName("PRIMARY");
         });
 
+        modelBuilder.Entity<VerificationCode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.VerificationCodes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("verification_code_account_FK");
+        });
+        
         OnModelCreatingPartial(modelBuilder);
     }
 

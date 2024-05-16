@@ -82,4 +82,7 @@ public partial class Account : BaseEntity
 
     [InverseProperty("Account")]
     public virtual ICollection<Shop> Shops { get; set; } = new List<Shop>();
+    
+    [InverseProperty("Account")]
+    public virtual ICollection<VerificationCode> VerificationCodes { get; set; } = new List<VerificationCode>();
 }
