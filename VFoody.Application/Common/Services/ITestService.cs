@@ -1,6 +1,6 @@
 ﻿namespace VFoody.Application.Common.Services;
 
-public interface IAccountService : IBaseService
+public interface ITestService : IBaseService
 {
     void TestWriteLog();
 }

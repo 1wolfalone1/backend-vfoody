@@ -302,7 +302,7 @@ public class DapperService : IDapperService
     {
         string result = null;
 
-        string sqlFile = queryName.GetType().FullName + ".sql";
+        string sqlFile = queryName.ToString() + ".sql";
         Stream stream = this.assembly.GetManifestResourceStream(this.assembly.GetName().Name + ".Common.Queries." + sqlFile);
         StreamReader reader = new StreamReader(stream);
         result = await reader.ReadToEndAsync().ConfigureAwait(false);

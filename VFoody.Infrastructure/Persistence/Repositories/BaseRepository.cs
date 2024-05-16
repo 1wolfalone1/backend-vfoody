@@ -122,4 +122,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         this.DbSet.AttachRange(entities);
         return entities;
     }
+
+    public async Task<TEntity?> GetByIdAsync(object id)
+    {
+        return await this.DbSet.FindAsync(id);
+    }
 }
