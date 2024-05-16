@@ -10,7 +10,6 @@
     <Folder Include="Enums\" />
     <Folder Include="ValueObjects\" />
     <Folder Include="Primitives\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

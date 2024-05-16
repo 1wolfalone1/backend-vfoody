@@ -23,4 +23,8 @@
     <ProjectReference Include="..\VFoody.Infrastructure\VFoody.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MIddleware\" />
+  </ItemGroup>
+
 </Project>

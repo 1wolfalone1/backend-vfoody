@@ -15,11 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Accounts\Commands\" />
+    <ProjectReference Include="..\VFoody.Domain\VFoody.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VFoody.Domain\VFoody.Domain.csproj" />
+    <Folder Include="UseCases\Accounts\Commands\" />
+    <Folder Include="UseCases\Roles\Queries\" />
   </ItemGroup>
 
 </Project>

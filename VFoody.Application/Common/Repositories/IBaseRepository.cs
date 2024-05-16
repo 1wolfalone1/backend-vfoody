@@ -18,6 +18,8 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
         List<Expression<Func<TEntity, object>>>? includes = null,
         bool disableTracking = false);
 
+    Task<TEntity?> GetByIdAsync(object id);
+
     TEntity Update(TEntity entity);
 
     IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities);

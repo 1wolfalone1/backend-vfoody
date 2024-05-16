@@ -11,6 +11,7 @@ using VFoody.Infrastructure.Persistence.Repositories;
 using VFoody.Infrastructure.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Infrastructure.Services.Dapper;
+using System.Text.Json.Serialization;
 
 namespace VFoody.API.Extensions;
 
@@ -58,15 +59,21 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        //Config service
+        // Config Jsonconvert
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
+        //Config service
+        var assembly = typeof(BaseService).Assembly;
         services.Scan(scan => scan
-        .FromAssemblyOf<IAccountService>() // Application Layer
-        .AddClasses(classes => classes.AssignableTo<AccountService>())
+        .FromAssemblies(assembly) // Application Layer
+        .AddClasses(classes => classes.AssignableTo(typeof(IBaseService)))
         .AsImplementedInterfaces()
         .WithTransientLifetime()
-        .FromAssemblyOf<AccountRepository>() // Infrastructure Layer
-        .AddClasses(classes => classes.AssignableTo<IAccountRepository>())
+        .FromAssembliesOf(typeof(AccountRepository)) // Infrastructure Layer
+        .AddClasses(classes => classes.AssignableTo(typeof(IBaseRepository<>)))
         .AsImplementedInterfaces()
         .WithTransientLifetime());
 

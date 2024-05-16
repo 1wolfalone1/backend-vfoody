@@ -3,17 +3,17 @@ using VFoody.Application.Common.Services;
 
 namespace VFoody.Infrastructure.Services;
 
-public class AccountService : IAccountService
+public class TestService : BaseService, ITestService
 {
-    private readonly ILogger<AccountService> logger;
+    private readonly ILogger<TestService> logger;
 
-    public AccountService(ILogger<AccountService> logger)
+    public TestService(ILogger<TestService> logger)
     {
         this.logger = logger;
     }
 
     public void TestWriteLog()
     {
-        this.logger.LogInformation("Log successly");
+        logger.LogInformation("Test Log");
     }
 }

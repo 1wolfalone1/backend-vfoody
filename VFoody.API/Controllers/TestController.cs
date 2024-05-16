@@ -1,22 +1,29 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.UseCases.Accounts.Queries;
+using VFoody.Application.UseCases.Roles.Commands.CreateRole;
+using VFoody.Application.UseCases.Roles.Commands.UpdateRole;
 using VFoody.Domain.Entities;
 
 namespace VFoody.API.Controllers;
 
 public class TestController : BaseApiController
 {
-    private readonly IMediator _mediator;
-
-    public TestController(IMediator mediator)
+    [HttpGet("/hehe")]
+    public async Task<IActionResult> GetAccount()
     {
-        _mediator = mediator;
+        return this.HandleResult(await this.Mediator.Send(new GetAllAccounQuery()));
     }
 
-    [HttpGet("/hehe")]
-    public async Task<ActionResult<List<Account>>> GetAccount()
+    [HttpPost("/role")]
+    public async Task<IActionResult> CreateRole([FromBody] string name)
+    { 
+        return this.HandleResult(await this.Mediator.Send(new CreateRoleCommand { Name = name}));
+    }
+
+    [HttpPut("/role")]
+    public async Task<IActionResult> UpdateRole([FromBody] UpdateRole role)
     {
-        return await this.Mediator.Send(new GetAllAccounQuery());
+        return this.HandleResult(await this.Mediator.Send(new UpdateRoleCommand { Role = role }));
     }
 }
