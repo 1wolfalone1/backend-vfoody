@@ -20,6 +20,8 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
 
     Task<TEntity?> GetByIdAsync(object id);
 
+    TEntity? GetById(object id);
+
     TEntity Update(TEntity entity);
 
     IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities);

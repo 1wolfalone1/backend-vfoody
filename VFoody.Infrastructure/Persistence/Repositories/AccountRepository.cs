@@ -8,5 +8,11 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     public AccountRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
     }
+
+    public Account GetCustomerAccount(string email, string password)
+    {
+        return this.DbSet.SingleOrDefault(a => a.Email == email 
+                                               && password == password);
+    }
 }
 

@@ -5,6 +5,6 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Accounts.Queries;
 
-public class GetAllAccounQuery :  IQuery<Result<List<Account>>>
+public class GetAllAccountQuery :  IQuery<Result<List<Account>>>
 {
 }

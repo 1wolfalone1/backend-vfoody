@@ -5,7 +5,7 @@ using VFoody.Domain.Shared;
 namespace VFoody.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class BaseApiController : ControllerBase
 {
     private IMediator _mediator;

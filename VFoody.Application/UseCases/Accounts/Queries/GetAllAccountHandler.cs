@@ -9,7 +9,7 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Accounts.Queries;
 
-public class GetAllAccountHandler : IQueryHandler<GetAllAccounQuery, Result<List<Account>>>
+public class GetAllAccountHandler : IQueryHandler<GetAllAccountQuery, Result<List<Account>>>
 {
     private readonly IAccountRepository accountRepository;
     private readonly IDapperService dapperService;
@@ -25,7 +25,7 @@ public class GetAllAccountHandler : IQueryHandler<GetAllAccounQuery, Result<List
     }
 
 
-    public async Task<Result<Result<List<Account>>>> Handle(GetAllAccounQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Result<List<Account>>>> Handle(GetAllAccountQuery request, CancellationToken cancellationToken)
     {
         var test = this.dapperService.SingleOrDefault<int>(QueryName.TestQuery, null);
         var test1 = await this.dapperService.SingleOrDefaultAsync<int>(QueryName.TestQuery, null).ConfigureAwait(false);
