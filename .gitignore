@@ -275,3 +275,5 @@ __pycache__/
 .env
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore,dotenv
+
+appsettings.Development.json

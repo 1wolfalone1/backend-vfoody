@@ -127,4 +127,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     {
         return await this.DbSet.FindAsync(id);
     }
+    
+    public TEntity? GetById(object id)
+    {
+        return this.DbSet.Find(id);
+    }
 }
