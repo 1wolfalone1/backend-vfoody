@@ -23,25 +23,29 @@ public class ApplicationDbInitializer
 
     public async Task SeedAsync()
     {
-        await this._unitOfWork.BeginTransactionAsync();
         try
         {
-            if (!_buildingRepository.Any())
+            if (!_roleRepository.Any())
             {
+                await this._unitOfWork.BeginTransactionAsync();
                 await this._roleRepository.AddRangeAsync(Seed.DefaultRoles);
+                await this._unitOfWork.CommitTransactionAsync();
             }
 
             if (!_buildingRepository.Any())
             {
+                await this._unitOfWork.BeginTransactionAsync();
                 await this._buildingRepository.AddRangeAsync(Seed.DefaultBuildings);
+                await this._unitOfWork.CommitTransactionAsync();
             }
 
             if (!_accountRepository.Any())
             {
+                await this._unitOfWork.BeginTransactionAsync();
                 await this._accountRepository.AddRangeAsync(Seed.DefaultAccounts);
+                await this._unitOfWork.CommitTransactionAsync();
             }
-
-            await this._unitOfWork.CommitTransactionAsync();
+            
             this._logger.LogInformation("Seed Data Success");
         }
         catch (Exception e)

@@ -38,7 +38,7 @@ public class JwtTokenService : IJwtTokenService, IBaseService
             _jwtSetting.Issuer,
             _jwtSetting.Audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(expireInMinutes),
+            expires: DateTime.UtcNow.AddHours(expireInMinutes),
             signingCredentials: credentials
         );
 
@@ -48,5 +48,10 @@ public class JwtTokenService : IJwtTokenService, IBaseService
     public string GenerateJwtToken(Account account)
     {
         return GenerateJwtToken(account, _jwtSetting.TokenExpire);
+    }
+    
+    public string GenerateJwtRefreshToken(Account account)
+    {
+        return GenerateJwtToken(account, _jwtSetting.RefreshTokenExpire);
     }
 }

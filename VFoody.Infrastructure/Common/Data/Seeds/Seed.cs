@@ -41,6 +41,7 @@ public class Seed
             Email = "tienhoangbmt2911@gmail.com",
             Status = (int)AccountStatus.Verify,
             RoleId = (int) Roles.Customer,
+            AccountType = (int) AccountTypes.Local,
             BuildingId = 1
         },
         new Account()
@@ -53,6 +54,7 @@ public class Seed
             Email = "ducdmd@gmail.com",
             Status = (int)AccountStatus.Verify,
             RoleId = (int) Roles.Shop,
+            AccountType = (int) AccountTypes.Local,
             BuildingId = 1
         },
         new Account()
@@ -65,6 +67,7 @@ public class Seed
             Email = "thongnv@gmail.com",
             Status = (int)AccountStatus.Verify,
             RoleId = (int) Roles.Admin,
+            AccountType = (int) AccountTypes.Local,
             BuildingId = 1
         }
     };

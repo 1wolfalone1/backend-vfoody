@@ -60,6 +60,9 @@ public partial class Shop : BaseEntity
 
     [Column("total_rating")]
     public int TotalRating { get; set; }
+    
+    [Column("total_star")]
+    public int TotalStar { get; set; }
 
     [Column("status")]
     public int Status { get; set; }

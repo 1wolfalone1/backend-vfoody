@@ -53,6 +53,13 @@ public partial class Account : BaseEntity
 
     [Column("building_id")]
     public int? BuildingId { get; set; }
+    
+    [Column("refresh_token")]
+    [StringLength(250)]
+    public string? RefreshToken { get; set; }
+    
+    [Column("account_type")]
+    public int AccountType { get; set; }
 
     [ForeignKey("BuildingId")]
     [InverseProperty("Accounts")]
