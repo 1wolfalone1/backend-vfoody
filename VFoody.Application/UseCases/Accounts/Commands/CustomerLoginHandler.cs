@@ -4,6 +4,7 @@ using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Utils;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
@@ -11,15 +12,17 @@ namespace VFoody.Application.UseCases.Accounts.Commands;
 
 public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result>
 {
-    private IJwtTokenService _jwtTokenService;
-    private IAccountRepository _accountRepository;
-    private IMapper _mapper;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public CustomerLoginHandler(IJwtTokenService jwtTokenService, IAccountRepository accountRepository, IMapper mapper)
+    public CustomerLoginHandler(IJwtTokenService jwtTokenService, IAccountRepository accountRepository, IMapper mapper, IUnitOfWork unitOfWork)
     {
         _jwtTokenService = jwtTokenService;
         _accountRepository = accountRepository;
         _mapper = mapper;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<Result>> Handle(CustomerLoginCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,10 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
             return Result.Failure(new Error("401", "Your account haven't verify"));
 
         var token = this._jwtTokenService.GenerateJwtToken(customerAccount);
+        var refreshToken = this._jwtTokenService.GenerateJwtRefreshToken(customerAccount);
+        // Update token
+        this.UpdateRefreshToken(customerAccount, refreshToken);
+        
         var accountResponse = new AccountResponse(); 
         this._mapper.Map(customerAccount, accountResponse);
         accountResponse.RoleName = Domain.Enums.Roles.Customer.GetDescription();
@@ -46,8 +53,16 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
             AccessTokenResponse = new AccessTokenResponse
             {
                 AccessToken = token,
-                RefreshToken = token
+                RefreshToken = refreshToken
             }
         });
+    }
+
+    private void UpdateRefreshToken(Account account, string token)
+    {
+        this._unitOfWork.BeginTransactionAsync();
+        account.RefreshToken = token;
+        this._accountRepository.Update(account);
+        this._unitOfWork.CommitTransactionAsync();
     }
 }
