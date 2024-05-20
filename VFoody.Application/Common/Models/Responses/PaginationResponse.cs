@@ -2,74 +2,73 @@
 
 public class PaginationResponse<TEntity, TResponse> where TEntity : class where TResponse : class
 {
-    public PaginationResponse(IList<TResponse> items, int count, int pageNumber, int pageSize)
-    {
-        TotalCount = count;
-        PageNumber = pageNumber;
+    public PaginationResponse(IList<TResponse> items, int pageIndex, int pageSize, int totalOfPages)
+    {  
+        PageIndex = pageIndex;
         PageSize = pageSize;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+        TotalOfPages = totalOfPages;
+        NumberOfItems = items.Count;
         Items = items;
     }
 
-    public PaginationResponse(IList<TEntity> items, int count, int pageNumber, int pageSize,
-        Func<TEntity, TResponse> mapper)
+    public PaginationResponse(IList<TEntity> items, int pageIndex, int pageSize, int totalOfPages, Func<TEntity, TResponse> mapper)
     {
-        TotalCount = count;
-        PageNumber = pageNumber;
+        PageIndex = pageIndex;
         PageSize = pageSize;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+        TotalOfPages = totalOfPages;
+        NumberOfItems = items.Count;
         Items = items.Select(mapper).ToList();
     }
 
-    public PaginationResponse(IQueryable<TEntity> source, int pageNumber, int pageSize, Func<TEntity, TResponse> mapper)
+    public PaginationResponse(IQueryable<TEntity> source, int pageIndex, int pageSize, int totalOfPages, Func<TEntity, TResponse> mapper)
     {
-        TotalCount = source.Count();
         PageSize = pageSize;
-        PageNumber = pageNumber;
-        TotalPages = (int)Math.Ceiling(TotalCount / (double)pageSize);
+        PageIndex = pageIndex;
+        TotalOfPages = totalOfPages;
 
         var items = source
-            .Skip((pageNumber - 1) * pageSize)
+            .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToList();
 
+        NumberOfItems = items.Count;
         Items = items.Select(mapper).ToList();
     }
 
-    public int PageNumber { get; }
+    public int PageIndex { get; }
 
-    public int TotalPages { get; }
+    public int TotalOfPages { get; }
 
     public int PageSize { get; set; }
 
-    public int TotalCount { get; }
+    public int NumberOfItems { get; }
 
-    public bool HasPrevious => PageNumber > 1;
+    public bool HasPrevious => PageIndex > 1;
 
-    public bool HasNext => PageNumber < TotalPages;
+    public bool HasNext => PageIndex < TotalOfPages;
 
     public IList<TResponse> Items { get; }
 }
 
 public class PaginationResponse<TEntity> : PaginationResponse<TEntity, TEntity> where TEntity : class
 {
-    public PaginationResponse(IList<TEntity> items, int count, int pageNumber, int pageSize)
-        : base(items, count, pageNumber, pageSize)
+    public PaginationResponse(IList<TEntity> items, int pageIndex, int pageSize, int totalOfPages)
+        : base(items, pageIndex, pageSize, totalOfPages, entity => entity)
     {
     }
 
-    public PaginationResponse(IList<TEntity> items, int count, int pageNumber, int pageSize, Func<TEntity, TEntity> mapper)
-        : base(items, count, pageNumber, pageSize, mapper)
+    public PaginationResponse(IList<TEntity> items, int pageIndex, int pageSize, int totalOfPages, Func<TEntity, TEntity> mapper)
+        : base(items, pageIndex, pageSize, totalOfPages, mapper)
     {
     }
 
-    public PaginationResponse(IQueryable<TEntity> source, int pageNumber, int pageSize, Func<TEntity, TEntity> mapper)
-        : base(source, pageNumber, pageSize, mapper)
+    public PaginationResponse(IQueryable<TEntity> source, int pageIndex, int pageSize, int totalOfPages, Func<TEntity, TEntity> mapper)
+        : base(source, pageIndex, pageSize, totalOfPages, mapper)
     {
     }
 
-    public PaginationResponse(IQueryable<TEntity> source, int pageNumber, int pageSize) : base(source, pageNumber, pageSize, entity => entity)
+    public PaginationResponse(IQueryable<TEntity> source, int pageIndex, int pageSize, int totalOfPages)
+        : base(source, pageIndex, pageSize, totalOfPages, entity => entity)
     {
     }
-
 }

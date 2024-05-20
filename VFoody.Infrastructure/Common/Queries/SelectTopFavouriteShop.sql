@@ -34,6 +34,7 @@ WITH ShopRatings AS (
         COUNT(s.id) OVER () AS TotalItems
     FROM
         v_foody.shop s
+    WHERE status = true
 )
 
 SELECT
@@ -56,7 +57,7 @@ SELECT
     shipping_fee AS ShippingFee,
     building_id AS BuildingId,
     account_id AS AccountId,
-    avg_rating AS AvgRating,
+    avg_rating AS Rating,
     TotalItems,
     CEILING(TotalItems * 1.0 / @PageSize) AS TotalPages
 FROM
