@@ -19,10 +19,10 @@ public partial class Account : BaseEntity
 
     [Column("phone_number")]
     [StringLength(20)]
-    public string PhoneNumber { get; set; } = null!;
+    public string? PhoneNumber { get; set; }
 
     [Column("password")]
-    [StringLength(250)]
+    [StringLength(1000)]
     public string Password { get; set; } = null!;
 
     [Column("avatar_url")]
@@ -55,7 +55,7 @@ public partial class Account : BaseEntity
     public int? BuildingId { get; set; }
     
     [Column("refresh_token")]
-    [StringLength(250)]
+    [StringLength(2000)]
     public string? RefreshToken { get; set; }
     
     [Column("account_type")]
