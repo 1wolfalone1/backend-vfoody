@@ -22,8 +22,8 @@ public class ShopController : BaseApiController
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
         {
-            PageIndex = 1,
-            PageSize = 12
+            PageIndex = pageIndex,
+            PageSize = pageSize
         }));
     }
 }
