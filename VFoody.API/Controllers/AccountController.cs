@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.UseCases.Accounts.Commands;
+using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
+using VFoody.Application.UseCases.Accounts.Commands.Verify;
 
 namespace VFoody.API.Controllers;
 
@@ -24,9 +26,23 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("customer/register")]
-    public async  Task<IActionResult> Login([FromBody] CustomerRegisterRequest registerRequest)
+    public async  Task<IActionResult> Register([FromBody] CustomerRegisterRequest registerRequest)
     {
         var command = _mapper.Map<CustomerRegisterCommand>(registerRequest);
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("customer/verify")]
+    public async  Task<IActionResult> Verify([FromBody] AccountVerifyRequest accountVerifyRequest)
+    {
+        var command = _mapper.Map<AccountVerifyCommand>(accountVerifyRequest);
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("customer/resend-code")]
+    public async  Task<IActionResult> ResendCodeVerify([FromBody] AccountReVerifyRequest accountReVerifyRequest)
+    {
+        var command = _mapper.Map<AccountReVerifyCommand>(accountReVerifyRequest);
         return HandleResult(await Mediator.Send(command));
     }
 }
