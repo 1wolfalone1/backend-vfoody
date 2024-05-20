@@ -14,5 +14,10 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
         return this.DbSet.SingleOrDefault(a => a.Email == email 
                                                && password == password);
     }
+
+    public Account? GetAccountByEmail(string email)
+    {
+        return DbSet.SingleOrDefault(a => a.Email == email);
+    }
 }
 

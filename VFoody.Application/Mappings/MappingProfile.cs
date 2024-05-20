@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Models;
 using VFoody.Domain.Entities;
 
@@ -9,5 +10,6 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Account, AccountResponse>();
+        CreateMap<CustomerRegisterRequest, CustomerRegisterCommand>();
     }
 }
