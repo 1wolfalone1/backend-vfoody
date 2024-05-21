@@ -8,19 +8,19 @@ using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Application.UseCases.Product.Models;
-using VFoody.Application.UseCases.Shop.Models;
+using VFoody.Application.UseCases.Shop.Queries;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Shared;
 
-namespace VFoody.Application.UseCases.Shop.Queries;
+namespace VFoody.Application.UseCases.Product.Queries;
 
-public class GetTopShopHandler : IQueryHandler<GetTopProductQuery, Result>
+public class GetTopProductHandler : IQueryHandler<GetTopProductQuery, Result>
 {
     private readonly IDapperService dapperService;
     private readonly IAccountService accountService;
     private readonly ITestService testService;
 
-    public GetTopShopHandler(IDapperService dapperService, ITestService testService)
+    public GetTopProductHandler(IDapperService dapperService, ITestService testService)
     {
         this.dapperService = dapperService;
         this.testService = testService;
@@ -31,13 +31,13 @@ public class GetTopShopHandler : IQueryHandler<GetTopProductQuery, Result>
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectTopShopDTO>(QueryName.SelectTopRatingShop, new
+            var list = await this.dapperService.SelectAsync<SelectTopProductDTO>(QueryName.SelectTopOrderProduct, new
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize
             });
 
-            var result = new PaginationResponse<SelectTopShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectTopProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
 
             return Result.Success(result);
         }
