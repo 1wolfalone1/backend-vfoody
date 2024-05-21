@@ -18,12 +18,25 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/top")]
-    public async  Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
+    public async  Task<IActionResult> GetTopShop(int pageIndex = 1, int pageSize = 20)
     {
-        return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
+        return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
         {
             PageIndex = pageIndex,
             PageSize = pageSize
+        }));
+    }
+
+    [HttpGet("customer/shop/search")]
+    public async Task<IActionResult> GetSearchingProductQuery(int pageIndex = 1, int pageSize = 20, string searchText = "", int orderType = 0, int currentBuildingId = 0)
+    {
+        return this.HandleResult(await this.Mediator.Send(new GetSearchingShopQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+            SearchText = searchText,
+            OrderType = orderType,
+            CurrentBuildingId = currentBuildingId,
         }));
     }
 }

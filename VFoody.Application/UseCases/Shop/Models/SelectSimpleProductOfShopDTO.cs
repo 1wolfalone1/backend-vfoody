@@ -5,9 +5,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace VFoody.Application.UseCases.Product.Models
+namespace VFoody.Application.UseCases.Shop.Models
 {
-    public class SelectTopProductDTO
+    public class SelectSimpleProductOfShopDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -17,11 +17,6 @@ namespace VFoody.Application.UseCases.Product.Models
         public int TotalOrder { get; set; }
         public bool Status { get; set; }
         public int ShopId { get; set; }
-        public string ShopName { get; set; }
-        public string ShopLogoUrl { get; set; }
-        public bool ShopActive { get; set; }
-        public int ShopActiveFrom { get; set; }
-        public int ShopActiveTo { get; set; }
         [JsonIgnore]
         public int TotalItems { get; set; }
         [JsonIgnore]

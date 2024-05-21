@@ -14,7 +14,7 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Shop.Queries;
 
-public class GetTopShopHandler : IQueryHandler<GetTopProductQuery, Result>
+public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
 {
     private readonly IDapperService dapperService;
     private readonly IAccountService accountService;
@@ -27,17 +27,17 @@ public class GetTopShopHandler : IQueryHandler<GetTopProductQuery, Result>
     }
 
 
-    public async Task<Result<Result>> Handle(GetTopProductQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Result>> Handle(GetTopShopQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectTopShopDTO>(QueryName.SelectTopRatingShop, new
+            var list = await this.dapperService.SelectAsync<SelectSimpleShopDTO>(QueryName.SelectTopRatingShop, new
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectTopShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectSimpleShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
 
             return Result.Success(result);
         }
