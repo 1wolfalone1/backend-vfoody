@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Common\Queries\SelectRecentOrderedProduct.sql" />
+    <None Remove="Common\Queries\SelectTopOrderProduct.sql" />
+    <None Remove="Common\Queries\SelectTopRatingShop.sql" />
     <None Remove="Common\Queries\TestQuery.sql" />
   </ItemGroup>
 
@@ -22,6 +25,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MySql.Data" Version="8.4.0" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
   </ItemGroup>
@@ -35,6 +39,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Common\Queries\SelectRecentOrderedProduct.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectTopOrderProduct.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectTopRatingShop.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Common\Queries\TestQuery.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
