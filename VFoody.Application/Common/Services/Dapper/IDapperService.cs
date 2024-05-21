@@ -26,5 +26,5 @@ public interface IDapperService
 public enum QueryName
 {
     TestQuery,
-    SelectTopFavouriteShop
+    SelectTopRatingShop
 }

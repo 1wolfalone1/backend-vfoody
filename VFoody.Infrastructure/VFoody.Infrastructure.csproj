@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Common\Queries\SelectTopFavouriteShop.sql" />
+    <None Remove="Common\Queries\SelectTopRatingShop.sql" />
     <None Remove="Common\Queries\TestQuery.sql" />
   </ItemGroup>
 
@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Common\Queries\SelectTopFavouriteShop.sql">
+    <EmbeddedResource Include="Common\Queries\SelectTopRatingShop.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\Queries\TestQuery.sql">

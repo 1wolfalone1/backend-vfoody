@@ -30,7 +30,7 @@ public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectTopShopDTO>(QueryName.SelectTopFavouriteShop, new
+            var list = await this.dapperService.SelectAsync<SelectTopShopDTO>(QueryName.SelectTopRatingShop, new
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize

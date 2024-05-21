@@ -29,8 +29,8 @@ WITH ShopRatings AS (
         s.shipping_fee,
         s.building_id,
         s.account_id,
-        (s.total_rating / s.total_star) AS avg_rating,
-        ROW_NUMBER() OVER (ORDER BY (s.total_rating / s.total_star) DESC) AS RowNum,
+        (s.total_star / s.total_rating) AS avg_rating,
+        ROW_NUMBER() OVER (ORDER BY (s.total_star / s.total_rating) DESC) AS RowNum,
         COUNT(s.id) OVER () AS TotalItems
     FROM
         v_foody.shop s
