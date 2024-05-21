@@ -28,13 +28,13 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
-    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize, string phone)
+    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize, string email)
     {
         return this.HandleResult(await this.Mediator.Send(new GetRecentOrderedProductQuery
         {
             PageIndex = pageIndex,
             PageSize = pageSize,
-            Phone = phone
+            Email = email
         }));
     }
 }

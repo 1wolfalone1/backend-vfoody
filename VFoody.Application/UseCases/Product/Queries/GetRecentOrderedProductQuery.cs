@@ -11,5 +11,5 @@ public class GetRecentOrderedProductQuery :  IQuery<Result>
 {
     public int PageIndex { get; set; }
     public int PageSize { get; set; }
-    public string Phone { get; set; }
+    public string Email { get; set; }
 }
