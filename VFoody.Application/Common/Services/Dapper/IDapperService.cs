@@ -28,5 +28,6 @@ public enum QueryName
     TestQuery,
     SelectTopRatingShop,
     SelectTopOrderProduct,
-    SelectRecentOrderedProduct
+    SelectRecentOrderedProduct,
+    SelectSearchingShop
 }

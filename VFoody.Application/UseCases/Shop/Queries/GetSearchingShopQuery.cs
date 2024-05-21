@@ -7,8 +7,11 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Shop.Queries;
 
-public class GetTopShopQuery :  IQuery<Result>
+public class GetSearchingShopQuery :  IQuery<Result>
 {
     public int PageIndex { get; set; }
     public int PageSize { get; set; }
+    public string SearchText { get; set; }
+    public int OrderType { get; set; }
+    public int CurrentBuildingId { get; set; }
 }
