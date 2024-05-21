@@ -12,6 +12,10 @@ public partial class PlatformPromotion : BaseEntity
     [Key]
     [Column("id")]
     public int Id { get; set; }
+    
+    [Column("banner_url")]
+    [StringLength(300)]
+    public string? BannerUrl { get; set; }
 
     [Column("amount_rate")]
     public float AmountRate { get; set; }
