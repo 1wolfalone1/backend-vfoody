@@ -42,12 +42,12 @@ public partial class Shop : BaseEntity
     [Column("phone_number")]
     [StringLength(20)]
     public string PhoneNumber { get; set; } = null!;
+    
+    [Column("active_from")]
+    public int ActiveFrom { get; set; }
 
-    [Column("active_from", TypeName = "datetime")]
-    public DateTime ActiveFrom { get; set; }
-
-    [Column("active_to", TypeName = "datetime")]
-    public DateTime ActiveTo { get; set; }
+    [Column("active_to")]
+    public int ActiveTo { get; set; }
 
     [Column("active", TypeName = "bit(1)")]
     public ulong Active { get; set; }
