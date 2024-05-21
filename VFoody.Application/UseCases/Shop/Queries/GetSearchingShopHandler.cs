@@ -31,7 +31,7 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectSimpleShopDTO>(QueryName.SelectSearchingShop, new
+            var list = await this.dapperService.SelectAsync<SelectDetailsShopDTO>(QueryName.SelectSearchingShop, new
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
@@ -40,7 +40,20 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
                 CurrentBuildingId = request.CurrentBuildingId,
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectSimpleShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var MAX_GET_PRODUCT_LIST_SIZE = 32;
+            foreach(var shop in list)
+            {
+                var products = await this.dapperService.SelectAsync<SelectSimpleProductOfShopDTO>(QueryName.SelectAvailableProductListOfShop, new
+                {
+                    PageIndex = request.PageIndex,
+                    PageSize = MAX_GET_PRODUCT_LIST_SIZE,
+                    ShopId = shop.Id,
+                    SearchText = request.SearchText,
+                }).ConfigureAwait(false);
+
+                shop.Products = products.ToList();
+            }
+            var result = new PaginationResponse<SelectDetailsShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
 
             return Result.Success(result);
         }

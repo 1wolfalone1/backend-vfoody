@@ -29,5 +29,6 @@ public enum QueryName
     SelectTopRatingShop,
     SelectTopOrderProduct,
     SelectRecentOrderedProduct,
-    SelectSearchingShop
+    SelectSearchingShop,
+    SelectAvailableProductListOfShop
 }

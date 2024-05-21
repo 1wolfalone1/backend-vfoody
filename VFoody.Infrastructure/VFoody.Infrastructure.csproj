@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Common\Queries\SelectAvailableProductListOfShop.sql" />
     <None Remove="Common\Queries\SelectRecentOrderedProduct.sql" />
     <None Remove="Common\Queries\SelectSearchingShop.sql" />
     <None Remove="Common\Queries\SelectTopOrderProduct.sql" />
@@ -41,6 +42,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Common\Queries\SelectRecentOrderedProduct.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectAvailableProductListOfShop.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\Queries\SelectTopOrderProduct.sql">
