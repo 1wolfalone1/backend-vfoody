@@ -16,8 +16,8 @@ namespace VFoody.Application.UseCases.Shop.Models
         public string? Description { get; set; }
         public double Rating { get; set; }
         public string PhoneNumber { get; set; }
-        public DateTime ActiveFrom { get; set; }
-        public DateTime ActiveTo { get; set; }
+        public int ActiveFrom { get; set; }
+        public int ActiveTo { get; set; }
         public bool Active { get; set; }
         public int TotalOrder { get; set; }
         public int TotalProduct { get; set; }

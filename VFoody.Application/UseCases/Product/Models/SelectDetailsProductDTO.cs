@@ -20,8 +20,8 @@ namespace VFoody.Application.UseCases.Product.Models
         public string ShopName { get; set; }
         public string ShopLogoUrl { get; set; }
         public bool ShopActive { get; set; }
-        public DateTime ShopActiveFrom { get; set; }
-        public DateTime ShopActiveTo { get; set; }
+        public int ShopActiveFrom { get; set; }
+        public int ShopActiveTo { get; set; }
         [JsonIgnore]
         public int TotalItems { get; set; }
         [JsonIgnore]
