@@ -7,7 +7,7 @@
     @PageSize INT
 */
 
--- SET @UserPhoneNumber = '1234567890';
+-- SET @Email = 'john@example.com';
 -- SET @PageIndex = 1;
 -- SET @PageSize = 12;
 
@@ -37,7 +37,7 @@ WITH RecentOrderedProducts AS (
         INNER JOIN v_foody.account a ON o.account_id = a.id
         INNER JOIN v_foody.shop s ON p.shop_id = s.id
     WHERE
-        a.phone_number = @UserPhoneNumber
+        a.email = @Email
         AND p.status = TRUE
         AND s.status = TRUE
 )

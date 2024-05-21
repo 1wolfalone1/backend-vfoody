@@ -35,7 +35,7 @@ public class GetRecentOrderedProductHandler : IQueryHandler<GetRecentOrderedProd
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
-                UserPhoneNumber = request.Phone
+                Email = request.Email
             }).ConfigureAwait(false);
 
             var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
