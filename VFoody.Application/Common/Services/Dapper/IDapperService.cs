@@ -27,5 +27,6 @@ public enum QueryName
 {
     TestQuery,
     SelectTopRatingShop,
-    SelectTopOrderProduct
+    SelectTopOrderProduct,
+    SelectRecentOrderedProduct
 }

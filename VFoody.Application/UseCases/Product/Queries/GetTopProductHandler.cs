@@ -31,13 +31,13 @@ public class GetTopProductHandler : IQueryHandler<GetTopProductQuery, Result>
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectTopProductDTO>(QueryName.SelectTopOrderProduct, new
+            var list = await this.dapperService.SelectAsync<SelectSimpleProductDTO>(QueryName.SelectTopOrderProduct, new
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize
-            });
+            }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectTopProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
 
             return Result.Success(result);
         }

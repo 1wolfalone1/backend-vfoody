@@ -26,4 +26,15 @@ public class ProductController : BaseApiController
             PageSize = pageSize
         }));
     }
+
+    [HttpGet("customer/product/recent")]
+    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize, string phone)
+    {
+        return this.HandleResult(await this.Mediator.Send(new GetRecentOrderedProductQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+            Phone = phone
+        }));
+    }
 }
