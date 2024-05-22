@@ -25,7 +25,7 @@ WITH TargetShopIdList AS (
         shop.status = true
         AND shop.active = true
         AND product.status = true
-        AND product.name LIKE CONCAT('%', @SearchText, '%')
+        AND (shop.name LIKE CONCAT('%', @SearchText, '%') OR product.name LIKE CONCAT('%', @SearchText, '%'))
 ),
 
 TargetShop AS (
