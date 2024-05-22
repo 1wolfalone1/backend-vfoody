@@ -18,7 +18,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
-    public async  Task<IActionResult> GetTopProduct(int pageIndex, int pageSize)
+    public async  Task<IActionResult> GetTopProduct(int pageIndex = 1, int pageSize = 20)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
         {
@@ -28,7 +28,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
-    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize, string email)
+    public async Task<IActionResult> GetRecentOrderedProductQuery(string email, int pageIndex = 1, int pageSize = 20)
     {
         return this.HandleResult(await this.Mediator.Send(new GetRecentOrderedProductQuery
         {
