@@ -1,6 +1,7 @@
 ﻿using ArtHubBO.Payload;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Models.Responses;
@@ -17,13 +18,12 @@ namespace VFoody.Application.UseCases.Product.Queries;
 public class GetTopProductHandler : IQueryHandler<GetTopProductQuery, Result>
 {
     private readonly IDapperService dapperService;
-    private readonly IAccountService accountService;
-    private readonly ITestService testService;
+    private readonly ILogger<GetSearchingShopHandler> _logger;
 
-    public GetTopProductHandler(IDapperService dapperService, ITestService testService)
+    public GetTopProductHandler(IDapperService dapperService, ILogger<GetSearchingShopHandler> logger)
     {
         this.dapperService = dapperService;
-        this.testService = testService;
+        this._logger = logger;
     }
 
 
@@ -43,7 +43,7 @@ public class GetTopProductHandler : IQueryHandler<GetTopProductQuery, Result>
         }
         catch (Exception e)
         {
-            // logging exception
+            _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error: " + e.Message));
         }
     }

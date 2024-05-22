@@ -1,12 +1,14 @@
 ﻿using ArtHubBO.Payload;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Models.Responses;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
+using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Product.Models;
 using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
@@ -17,13 +19,12 @@ namespace VFoody.Application.UseCases.Shop.Queries;
 public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Result>
 {
     private readonly IDapperService dapperService;
-    private readonly IAccountService accountService;
-    private readonly ITestService testService;
+    private readonly ILogger<GetSearchingShopHandler> _logger;
 
-    public GetSearchingShopHandler(IDapperService dapperService, ITestService testService)
+    public GetSearchingShopHandler(IDapperService dapperService, ILogger<GetSearchingShopHandler> logger)
     {
         this.dapperService = dapperService;
-        this.testService = testService;
+        this._logger = logger;
     }
 
 
@@ -59,7 +60,7 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
         }
         catch (Exception e)
         {
-            // logging exception
+            _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error: " + e.Message));
         }
     }
