@@ -11,4 +11,10 @@ public enum ResponseCode
     [Description("Mapping Error")] MappingError = 3,
 
     [Description("Unauthorized")] Unauthorized = 4,
+    
+    // Auth
+        
+    [Description("Invalid username or password")] AuthErrorInvalidUsernameOrPassword = 20,
+    
+    [Description("Invalid refresh token")] AuthErrorInvalidRefreshToken = 21,
 }

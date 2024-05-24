@@ -7,5 +7,9 @@ public class IdentityConst
     public const string CustomerClaimName = "Customer";
 
     public const string CustomerPolicyName = "customer";
-    
+
+    public const string ShopClaimName = "Shop";
+
+    public const string AdminClaimName = "Admin";
+
 }

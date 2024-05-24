@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,14 +22,16 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILogger<CustomerLoginGoogleHandler> _logger;
+    private readonly IConfiguration _configuration;
 
-    public CustomerLoginGoogleHandler(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService, IMapper mapper, ILogger<CustomerLoginGoogleHandler> logger)
+    public CustomerLoginGoogleHandler(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService, IMapper mapper, ILogger<CustomerLoginGoogleHandler> logger, IConfiguration configuration)
     {
         _accountRepository = accountRepository;
         _unitOfWork = unitOfWork;
         _jwtTokenService = jwtTokenService;
         _mapper = mapper;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<Result<Result>> Handle(CustomerLoginGoogleCommand request, CancellationToken cancellationToken)
@@ -36,7 +39,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.AccessToken);
         
-        var response = await client.GetAsync("https://www.googleapis.com/userinfo/v2/me").ConfigureAwait(false);
+        var response = await client.GetAsync(_configuration["API_GET_USER_INFO_GOOGLE"]).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
