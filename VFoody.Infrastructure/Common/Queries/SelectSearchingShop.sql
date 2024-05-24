@@ -95,7 +95,7 @@ SELECT
     building_id AS BuildingId,
     building_name AS BuildingName,
     account_id AS AccountId,
-    avg_rating AS Rating,
+    ROUND(avg_rating, 1) AS Rating,
     TotalItems,
     CEILING(TotalItems * 1.0 / @PageSize) AS TotalPages
 FROM
