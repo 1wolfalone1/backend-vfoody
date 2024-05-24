@@ -25,6 +25,10 @@ public partial class Option : BaseEntity
 
     [Column("price")]
     public float Price { get; set; }
+    
+    [Column("image_url")]
+    [StringLength(300)]
+    public string? ImageUrl { get; set; }
 
     [Column("status")]
     public int Status { get; set; }
