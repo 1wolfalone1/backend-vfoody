@@ -24,6 +24,10 @@ public partial class Category : BaseEntity
     [MySqlCharSet("utf8mb3")]
     [MySqlCollation("utf8mb3_general_ci")]
     public string Description { get; set; } = null!;
+    
+    [Column("image_url")]
+    [StringLength(300)]
+    public string? ImageUrl { get; set; }
 
     [InverseProperty("Category")]
     public virtual ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
