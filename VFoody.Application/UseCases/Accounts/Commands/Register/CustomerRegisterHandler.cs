@@ -73,7 +73,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
                 Status = (int)AccountStatus.UnVerify
             };
 
-            var refreshToken = _jwtTokenService.GenerateJwtRefreshToken(newAccount);
+            var refreshToken = _jwtTokenService.GenerateJwtToken(newAccount);
 
             newAccount.RefreshToken = refreshToken;
             return await CreateAccount(newAccount);
