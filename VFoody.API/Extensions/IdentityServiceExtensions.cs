@@ -10,6 +10,9 @@ public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityService(this IServiceCollection services, IConfiguration config)
     {
+        // Register IHttpContextAccessor
+        services.AddHttpContextAccessor();
+        
         //config authen
         services.AddAuthentication(x =>
         {
