@@ -48,7 +48,7 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
         
         var accountResponse = new AccountResponse(); 
         this._mapper.Map(customerAccount, accountResponse);
-        accountResponse.RoleName = Domain.Enums.Roles.Customer.GetDescription();
+        accountResponse.RoleName = EnumHelper.GetEnumDescription<Domain.Enums.Roles>(customerAccount.RoleId);
 
         return Result<LoginResponse>.Success(new LoginResponse
         {
