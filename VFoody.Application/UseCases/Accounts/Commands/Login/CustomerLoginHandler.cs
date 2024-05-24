@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
@@ -16,13 +17,15 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
     private readonly IAccountRepository _accountRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ILogger<CustomerLoginHandler> _logger;
 
-    public CustomerLoginHandler(IJwtTokenService jwtTokenService, IAccountRepository accountRepository, IMapper mapper, IUnitOfWork unitOfWork)
+    public CustomerLoginHandler(IJwtTokenService jwtTokenService, IAccountRepository accountRepository, IMapper mapper, IUnitOfWork unitOfWork, ILogger<CustomerLoginHandler> logger)
     {
         _jwtTokenService = jwtTokenService;
         _accountRepository = accountRepository;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<Result>> Handle(CustomerLoginCommand request, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
         var token = this._jwtTokenService.GenerateJwtToken(customerAccount);
         var refreshToken = this._jwtTokenService.GenerateJwtRefreshToken(customerAccount);
         // Update token
-        this.UpdateRefreshToken(customerAccount, refreshToken);
+        await this.UpdateRefreshToken(customerAccount, refreshToken).ConfigureAwait(false);
         
         var accountResponse = new AccountResponse(); 
         this._mapper.Map(customerAccount, accountResponse);
@@ -58,11 +61,19 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
         });
     }
 
-    private void UpdateRefreshToken(Account account, string token)
+    private async Task UpdateRefreshToken(Account account, string token)
     {
-        this._unitOfWork.BeginTransactionAsync();
-        account.RefreshToken = token;
-        this._accountRepository.Update(account);
-        this._unitOfWork.CommitTransactionAsync();
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            account.RefreshToken = token;
+            this._accountRepository.Update(account);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._unitOfWork.RollbackTransaction();
+            this._logger.LogError(e, e.Message);
+        }
     }
 }

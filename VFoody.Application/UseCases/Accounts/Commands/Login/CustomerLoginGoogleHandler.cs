@@ -1,0 +1,135 @@
+﻿using System.Net.Http.Headers;
+using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Repositories;
+using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Domain.Entities;
+using VFoody.Domain.Enums;
+using VFoody.Domain.Shared;
+
+namespace VFoody.Application.UseCases.Accounts.Commands;
+
+public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCommand, Result>
+{
+    private readonly IAccountRepository _accountRepository;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly ILogger<CustomerLoginGoogleHandler> _logger;
+
+    public CustomerLoginGoogleHandler(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService, IMapper mapper, ILogger<CustomerLoginGoogleHandler> logger)
+    {
+        _accountRepository = accountRepository;
+        _unitOfWork = unitOfWork;
+        _jwtTokenService = jwtTokenService;
+        _mapper = mapper;
+        _logger = logger;
+    }
+
+    public async Task<Result<Result>> Handle(CustomerLoginGoogleCommand request, CancellationToken cancellationToken)
+    {
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.AccessToken);
+        
+        var response = await client.GetAsync("https://www.googleapis.com/userinfo/v2/me").ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var userInfor = JsonConvert.DeserializeObject<GoogleUserInfor>(responseContent);
+
+        var accTemp = this._accountRepository.GetAccountByEmail(userInfor.Email);
+        // With email already regis account
+        if (accTemp != null)
+        {
+            if (accTemp.Status == (int)AccountStatus.UnVerify)
+            {
+                return Result.Failure(new Error("400", "This account hasn't verify yet!"));
+            }
+
+            if (accTemp.Status == (int)AccountStatus.Ban)
+            {
+                return Result.Failure(new Error("400", "This account got banned"));
+            }
+
+            return await this.GenerateJwtTokenAsync(accTemp).ConfigureAwait(false);
+        }
+
+        // With new account
+        Account acc = await this.RegisterANewCustomer(userInfor).ConfigureAwait(false);
+        return await this.GenerateJwtTokenAsync(acc).ConfigureAwait(false);
+    }
+    
+
+    private async Task<Account> RegisterANewCustomer(GoogleUserInfor userInfor)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+
+            var newAccount = new Account
+            {
+                Email = userInfor.Email,
+                FirstName = userInfor.GivenName,
+                LastName = userInfor.Name,
+                Password = String.Empty,
+                AvatarUrl = userInfor.Picture,
+                RoleId = (int)Domain.Enums.Roles.Customer,
+                AccountType = (int)AccountTypes.Google,
+                Status = (int)AccountStatus.Verify
+            };
+
+            await this._accountRepository.AddAsync(newAccount);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+            return newAccount;
+        }
+        catch (Exception e)
+        {
+            this._unitOfWork.RollbackTransaction();
+            this._logger.LogError(e, e.Message);
+            throw new ("Create account whent login with google fail");
+        }
+    }
+    
+    private async Task UpdateRefreshTokenAsync(Account account, string token)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            account.RefreshToken = token;
+            this._accountRepository.Update(account);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._unitOfWork.RollbackTransaction();
+            this._logger.LogError(e, e.Message);
+        }
+    }
+
+    private async Task<Result<LoginResponse>> GenerateJwtTokenAsync(Account acc)
+    {
+        var token = this._jwtTokenService.GenerateJwtToken(acc);
+        var refreshToken = this._jwtTokenService.GenerateJwtRefreshToken(acc);
+        // Update token
+        await this.UpdateRefreshTokenAsync(acc, refreshToken).ConfigureAwait(false);
+        
+        var accountResponse = new AccountResponse(); 
+        this._mapper.Map(acc, accountResponse);
+        accountResponse.RoleName = Domain.Enums.Roles.Customer.GetDescription();
+
+        return Result<LoginResponse>.Success(new LoginResponse
+        {
+            AccountResponse = accountResponse,
+            AccessTokenResponse = new AccessTokenResponse
+            {
+                AccessToken = token,
+                RefreshToken = refreshToken
+            }
+        });   
+    }
+}

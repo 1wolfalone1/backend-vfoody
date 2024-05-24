@@ -45,4 +45,11 @@ public class AccountController : BaseApiController
         var command = _mapper.Map<AccountReVerifyCommand>(accountReVerifyRequest);
         return HandleResult(await Mediator.Send(command));
     }
+
+    [HttpPost("customer/google/login")]
+    public async Task<IActionResult> LoginGoogle([FromBody] AccountGoogleLoginRequest accessToken)
+    {
+        return this.HandleResult(await this.Mediator.Send(new CustomerLoginGoogleCommand
+            { AccessToken = accessToken.AccessToken }));
+    }
 }
