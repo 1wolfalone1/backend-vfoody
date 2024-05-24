@@ -4,6 +4,7 @@ using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
+using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
 
 namespace VFoody.API.Controllers;
@@ -39,6 +40,15 @@ public class ProductController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize,
             Email = email
+        }));
+    }
+
+    [HttpPost("shop/product/create")]
+    public async  Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
+    {
+        return HandleResult(await Mediator.Send(new CreateProductCommand
+        {
+            CreateProductRequest = createProductRequest
         }));
     }
 }
