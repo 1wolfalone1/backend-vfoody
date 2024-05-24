@@ -12,6 +12,7 @@ using VFoody.Infrastructure.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Infrastructure.Services.Dapper;
 using System.Text.Json.Serialization;
+using VFoody.Infrastructure.Common.Data.ApplicationInitialData;
 
 namespace VFoody.API.Extensions;
 
@@ -52,13 +53,7 @@ public static class ApplicationServiceExtensions
         // FluentAPI validation
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(applicationAssembly);
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
+        
         // Config Jsonconvert
         services.AddControllers().AddJsonOptions(options =>
         {
@@ -68,18 +63,25 @@ public static class ApplicationServiceExtensions
         //Config service
         var assembly = typeof(BaseService).Assembly;
         services.Scan(scan => scan
-        .FromAssemblies(assembly) // Application Layer
-        .AddClasses(classes => classes.AssignableTo(typeof(IBaseService)))
-        .AsImplementedInterfaces()
-        .WithTransientLifetime()
-        .FromAssembliesOf(typeof(AccountRepository)) // Infrastructure Layer
-        .AddClasses(classes => classes.AssignableTo(typeof(IBaseRepository<>)))
-        .AsImplementedInterfaces()
-        .WithTransientLifetime());
+            .FromAssembliesOf(typeof(BaseService))
+            .AddClasses(classes => classes.AssignableTo(typeof(IBaseService)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+            .FromAssembliesOf(typeof(AccountRepository)) // Infrastructure Layer
+            .AddClasses(classes => classes.AssignableTo(typeof(IBaseRepository<>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
 
         //Add unit of work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IDapperService, DapperService>();
+
         return services;
+    }
+    
+    private static bool IsDevelopment()
+    {
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        return environment == Environments.Development;
     }
 }

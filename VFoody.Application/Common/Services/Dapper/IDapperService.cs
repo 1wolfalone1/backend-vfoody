@@ -25,5 +25,10 @@ public interface IDapperService
 
 public enum QueryName
 {
-    TestQuery
+    TestQuery,
+    SelectTopRatingShop,
+    SelectTopOrderProduct,
+    SelectRecentOrderedProduct,
+    SelectSearchingShop,
+    SelectAvailableProductListOfShop
 }

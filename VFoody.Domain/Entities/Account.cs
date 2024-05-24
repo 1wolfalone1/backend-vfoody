@@ -19,10 +19,10 @@ public partial class Account : BaseEntity
 
     [Column("phone_number")]
     [StringLength(20)]
-    public string PhoneNumber { get; set; } = null!;
+    public string? PhoneNumber { get; set; }
 
     [Column("password")]
-    [StringLength(250)]
+    [StringLength(1000)]
     public string Password { get; set; } = null!;
 
     [Column("avatar_url")]
@@ -53,6 +53,13 @@ public partial class Account : BaseEntity
 
     [Column("building_id")]
     public int? BuildingId { get; set; }
+    
+    [Column("refresh_token")]
+    [StringLength(2000)]
+    public string? RefreshToken { get; set; }
+    
+    [Column("account_type")]
+    public int AccountType { get; set; }
 
     [ForeignKey("BuildingId")]
     [InverseProperty("Accounts")]
@@ -82,4 +89,7 @@ public partial class Account : BaseEntity
 
     [InverseProperty("Account")]
     public virtual ICollection<Shop> Shops { get; set; } = new List<Shop>();
+    
+    [InverseProperty("Account")]
+    public virtual ICollection<VerificationCode> VerificationCodes { get; set; } = new List<VerificationCode>();
 }

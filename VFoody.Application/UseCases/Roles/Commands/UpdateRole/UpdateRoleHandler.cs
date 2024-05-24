@@ -30,7 +30,7 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRoleCommand, Result>
         }catch (Exception ex)
         {
             this.unitOfWork.RollbackTransaction();
-            return Result.Failure(new Error("500", "Fail"));
+            return Result.Failure(new Error("500", $"Not found role with id: {request.Role.Id}"));
         }
     }
 }
