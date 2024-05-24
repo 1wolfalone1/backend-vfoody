@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UseCases\Category\Commands\" />
+    <Folder Include="UseCases\Category\Models\" />
     <Folder Include="UseCases\Roles\Queries\" />
   </ItemGroup>
 
