@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.Common.Services;
-using VFoody.Application.UseCases.Accounts.Commands;
-using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
-using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
 
