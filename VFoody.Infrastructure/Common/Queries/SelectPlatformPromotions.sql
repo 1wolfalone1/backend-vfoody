@@ -1,69 +1,75 @@
 ﻿/*
     CreatedBy: DucDMD
-    Date: 21/05/2024
+    Date: 25/05/2024
 
     @PageIndex int
     @PageSize int
-    @ShopId int
-    @SearchText string
+    @Status int
+    @StartDate DATETIME
+    @EndDate DATETIME
+    @Available boolean
 */
 -- SET @PageIndex = 1;
 -- SET @PageSize = 12;
--- SET @ShopId = 1; -- ID of the shop to filter products
--- SET @SearchText = ''; -- Search keyword
+-- SET @Status = 1; -- 1 : active ; 2: locked ; 3: cancelled/deleted
+-- SET @StartDate = NULL;
+-- SET @EndDate = NULL;
+-- SET @Available = TRUE; -- number_of_used < usage_limit or not
 
-WITH ProductSearch AS (
+WITH FilteredPromotions AS (
     SELECT
-        p.id AS product_id,
-        p.name AS product_name,
-        p.description AS product_description,
-        p.price AS product_price,
-        p.image_url AS product_image_url,
-        p.total_order AS product_total_order,
-        p.status AS product_status,
-        p.shop_id AS product_shop_id,
-        s.name AS shop_name,
-        s.logo_url AS shop_logo_url,
-        s.active AS shop_active,
-        s.active_from AS shop_active_from,
-        s.active_to AS shop_active_to,
+        id,
+        banner_url,
+        amount_rate,
+        minimum_order_value,
+        maximum_apply_value,
+        amount_value,
+        apply_type,
+        start_date,
+        end_date,
+        usage_limit,
+        number_of_used,
+        created_date,
+        updated_date,
+        status,
         ROW_NUMBER() OVER (
-            ORDER BY 
-                CASE 
-                    WHEN p.name LIKE CONCAT('%', @SearchText, '%') THEN 0 
-                    ELSE 1 
-                END, -- Priority to products with SearchText in name
-                p.total_order DESC
+            ORDER BY
+                CASE WHEN apply_type = 1 THEN 0 ELSE 1 END,
+                CASE WHEN apply_type = 1 THEN amount_rate ELSE amount_value END DESC
         ) AS RowNum,
-        COUNT(p.id) OVER () AS TotalItems
+        COUNT(id) OVER () AS TotalItems
     FROM
-        v_foody.product p
-    INNER JOIN
-        v_foody.shop s ON p.shop_id = s.id
+        v_foody.platform_promotion
     WHERE
-        p.status = true
-        AND s.status = true
-        AND p.shop_id = @ShopId
+        CURTIME() BETWEEN start_date AND end_date
+        AND usage_limit > number_of_used
+        AND (@Status = 0 OR status = @Status)
+        AND (@StartDate IS NULL OR start_date >= @StartDate)
+        AND (@EndDate IS NULL OR start_date <= @EndDate)
+        AND (@Available = FALSE OR number_of_used < usage_limit)
 )
 
 SELECT
-    product_id AS Id,
-    product_name AS Name,
-    product_description AS Description,
-    product_price AS Price,
-    product_image_url AS ImageUrl,
-    product_total_order AS TotalOrder,
-    product_status AS Status,
-    product_shop_id AS ShopId,
-    shop_name AS ShopName,
-    shop_logo_url AS ShopLogoUrl,
-    shop_active AS ShopActive,
-    shop_active_from AS ShopActiveFrom,
-    shop_active_to AS ShopActiveTo,
+    id AS Id,    
+    start_date AS StartDate,
+    end_date AS EndDate,
+    banner_url AS BannerUrl,
+    
+    apply_type AS ApplyType,
+    amount_rate AS AmountRate,
+    amount_value AS AmountValue,
+    minimum_order_value AS MinimumOrderValue,
+    maximum_apply_value AS MaximumApplyValue,
+
+    usage_limit AS UsageLimit,
+    number_of_used AS NumberOfUsed,
+    created_date AS CreatedDate,
+    updated_date AS UpdatedDate,
+    status AS Status,
     TotalItems,
     CEILING(TotalItems * 1.0 / @PageSize) AS TotalPages
 FROM
-    ProductSearch
+    FilteredPromotions
 WHERE
     RowNum BETWEEN (@PageIndex - 1) * @PageSize + 1 AND @PageIndex * @PageSize
 ORDER BY
