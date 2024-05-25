@@ -32,6 +32,9 @@ public partial class PlatformPromotion : BaseEntity
     [Column("apply_type")]
     public int ApplyType { get; set; }
 
+    [Column("status")]
+    public int Status { get; set; }
+
     [Column("start_date", TypeName = "datetime")]
     public DateTime StartDate { get; set; }
 

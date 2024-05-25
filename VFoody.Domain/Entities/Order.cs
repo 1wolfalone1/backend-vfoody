@@ -37,6 +37,9 @@ public partial class Order : BaseEntity
     [Column("total_promotion")]
     public float TotalPromotion { get; set; }
 
+    [Column("charge_fee")]
+    public float ChargeFee { get; set; }
+
     [Column("transaction_id")]
     public int TransactionId { get; set; }
 
