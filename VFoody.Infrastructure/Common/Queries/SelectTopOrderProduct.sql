@@ -30,7 +30,7 @@ WITH ProductOrders AS (
     INNER JOIN
         v_foody.shop s ON p.shop_id = s.id
     WHERE
-        p.status = true
+        p.status = 2
         AND s.status = true
 )
 
