@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UseCases\Accounts\Commands\ForgotPassword\" />
     <Folder Include="UseCases\Category\Commands\" />
     <Folder Include="UseCases\Category\Models\" />
     <Folder Include="UseCases\Roles\Queries\" />

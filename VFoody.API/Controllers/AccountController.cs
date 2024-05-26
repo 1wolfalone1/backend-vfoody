@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
-using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
+using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Accounts.Queries;
 
@@ -42,10 +42,10 @@ public class AccountController : BaseApiController
         return HandleResult(await Mediator.Send(command));
     }
 
-    [HttpPost("customer/resend-code")]
-    public async  Task<IActionResult> ResendCodeVerify([FromBody] AccountReVerifyRequest accountReVerifyRequest)
+    [HttpPost("customer/send-code")]
+    public async  Task<IActionResult> SendCodeVerify([FromBody] AccountSendCodeRequest accountSendCodeRequest)
     {
-        var command = _mapper.Map<AccountReVerifyCommand>(accountReVerifyRequest);
+        var command = _mapper.Map<AccountSendCodeCommand>(accountSendCodeRequest);
         return HandleResult(await Mediator.Send(command));
     }
 
