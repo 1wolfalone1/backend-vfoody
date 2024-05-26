@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.Common.Services;
-using VFoody.Application.UseCases.Accounts.Commands;
-using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
-using VFoody.Application.UseCases.Accounts.Commands.Verify;
-using VFoody.Application.UseCases.Promotion.Queries;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
@@ -24,7 +20,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion")]
-    public async  Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
     {
         return this.HandleResult(await this.Mediator.Send(new GetCustomerPromotionListQuery
         {
