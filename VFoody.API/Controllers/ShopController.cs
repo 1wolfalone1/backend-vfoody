@@ -4,6 +4,8 @@ using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Shop.Queries;
+using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
+using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 
 namespace VFoody.API.Controllers;
 

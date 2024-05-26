@@ -14,7 +14,7 @@ using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Shared;
 
-namespace VFoody.Application.UseCases.Shop.Queries;
+namespace VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 
 public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Result>
 {
@@ -24,7 +24,7 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
     public GetSearchingShopHandler(IDapperService dapperService, ILogger<GetSearchingShopHandler> logger)
     {
         this.dapperService = dapperService;
-        this._logger = logger;
+        _logger = logger;
     }
 
 
@@ -32,24 +32,24 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
     {
         try
         {
-            var list = await this.dapperService.SelectAsync<SelectDetailsShopDTO>(QueryName.SelectSearchingShop, new
+            var list = await dapperService.SelectAsync<SelectDetailsShopDTO>(QueryName.SelectSearchingShop, new
             {
-                PageIndex = request.PageIndex,
-                PageSize = request.PageSize,
-                SearchText = request.SearchText,
-                OrderType = request.OrderType,
-                CurrentBuildingId = request.CurrentBuildingId,
+                request.PageIndex,
+                request.PageSize,
+                request.SearchText,
+                request.OrderType,
+                request.CurrentBuildingId,
             }).ConfigureAwait(false);
 
             var MAX_GET_PRODUCT_LIST_SIZE = 32;
-            foreach(var shop in list)
+            foreach (var shop in list)
             {
-                var products = await this.dapperService.SelectAsync<SelectSimpleProductOfShopDTO>(QueryName.SelectAvailableProductListOfShop, new
+                var products = await dapperService.SelectAsync<SelectSimpleProductOfShopDTO>(QueryName.SelectAvailableProductListOfShop, new
                 {
-                    PageIndex = request.PageIndex,
+                    request.PageIndex,
                     PageSize = MAX_GET_PRODUCT_LIST_SIZE,
                     ShopId = shop.Id,
-                    SearchText = request.SearchText,
+                    request.SearchText,
                 }).ConfigureAwait(false);
 
                 shop.Products = products.ToList();

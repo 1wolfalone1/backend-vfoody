@@ -2,13 +2,15 @@
     CreatedBy: DucDMD
     Date: 25/05/2024
 
+    @ShopId int
     @PageIndex int
     @PageSize int
     @Status int
     @StartDate DATETIME
     @EndDate DATETIME
-    @Available boolean
+    @Available boolean    
 */
+-- SET @ShopId = 1;
 -- SET @PageIndex = 1;
 -- SET @PageSize = 12;
 -- SET @Status = 1; -- 1 : active ; 2: locked ; 3: cancelled/deleted
@@ -40,7 +42,8 @@ WITH FilteredShopPromotions AS (
     FROM
         v_foody.shop_promotion
     WHERE
-        CURTIME() BETWEEN start_date AND end_date
+        (@ShopId <= 0 OR shop_id = @ShopId)
+        AND CURTIME() BETWEEN start_date AND end_date
         AND usage_limit > used
         AND (@Status = 0 OR status = @Status)
         AND (@StartDate IS NULL OR start_date >= @StartDate)

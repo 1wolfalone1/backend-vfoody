@@ -2,7 +2,7 @@
     CreatedBy: DucDMD
     Date: 25/05/2024
 
-    @Email string
+    @AccountId int
     @PageIndex int
     @PageSize int
     @Status int
@@ -16,7 +16,7 @@
 -- SET @StartDate = NULL;
 -- SET @EndDate = NULL;
 -- SET @Available = TRUE; -- number_of_used < usage_limit or not
--- SET @Email = 'tienhoangbmt2911@gmail.com';
+-- SET @AccountId = 1;
 
 WITH FilteredPersonPromotions AS (
     SELECT
@@ -41,7 +41,6 @@ WITH FilteredPersonPromotions AS (
         COUNT(p.id) OVER () AS TotalItems
     FROM
         person_promotion p
-        INNER JOIN account a ON p.account_id = a.id
     WHERE
         CURTIME() BETWEEN p.start_date AND p.end_date
         AND p.usage_limit > p.number_of_used
@@ -49,7 +48,7 @@ WITH FilteredPersonPromotions AS (
         AND (@StartDate IS NULL OR p.start_date >= @StartDate)
         AND (@EndDate IS NULL OR p.start_date <= @EndDate)
         AND (@Available = FALSE OR p.number_of_used < p.usage_limit)
-        AND (@Email IS NULL OR a.email = @Email)
+        AND (@AccountId = 0 OR @AccountId = p.account_id)
 )
 
 SELECT
