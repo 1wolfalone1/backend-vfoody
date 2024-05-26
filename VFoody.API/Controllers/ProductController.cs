@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.Common.Services;
-using VFoody.Application.UseCases.Accounts.Commands;
-using VFoody.Application.UseCases.Accounts.Commands.ReVerify;
-using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
+using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
+using VFoody.Application.UseCases.Product.Queries.ShopProduct;
 
 namespace VFoody.API.Controllers;
 
@@ -22,7 +21,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
-    public async  Task<IActionResult> GetTopProduct(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTopProduct(int pageIndex = 1, int pageSize = 20)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
         {
@@ -43,8 +42,21 @@ public class ProductController : BaseApiController
         }));
     }
 
+    [HttpGet("shop/product")]
+    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetShopProductQuery(shopId, pageNum, pageSize)));
+    }
+
+
+    [HttpGet("shop/product/detail")]
+    public async Task<IActionResult> GetProductDetailToOrder(int productId)
+    {
+        return HandleResult(await Mediator.Send(new GetProductDetailToOrderQuery(productId)));
+    }
+
     [HttpPost("shop/product/create")]
-    public async  Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
+    public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
     {
         return HandleResult(await Mediator.Send(new CreateProductCommand
         {
