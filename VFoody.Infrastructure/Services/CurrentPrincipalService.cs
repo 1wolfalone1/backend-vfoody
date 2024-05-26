@@ -38,6 +38,22 @@ public class CurrentPrincipalService : ICurrentPrincipalService, IBaseService
         }
     }
     
+    public int? CurrentPrincipalId
+    {
+        get
+        {
+            var identity = _accessor?.HttpContext?.User.Identity as ClaimsIdentity;
+                
+            if (identity == null || !identity.IsAuthenticated) return null;
+
+            var claims = identity.Claims;
+
+            var id = claims.FirstOrDefault(o => o.Type == ClaimTypes.Sid)?.Value ?? null;
+
+            return int.Parse(id);
+        }
+    }
+    
     public ClaimsPrincipal GetCurrentPrincipalFromToken(string token)
     {
         var tokenValidationParams = new TokenValidationParameters()
