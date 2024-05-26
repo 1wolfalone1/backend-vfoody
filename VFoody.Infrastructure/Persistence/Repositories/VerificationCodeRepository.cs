@@ -14,8 +14,9 @@ public class VerificationCodeRepository : BaseRepository<VerificationCode>, IVer
         return DbSet.Where(v => v.AccountId == accountId && v.CodeType == codeType && v.Status == status).ToList();
     }
 
-    public VerificationCode? FindByCodeAndStatusAndEmail(string code, int status, string email)
+    public VerificationCode? FindByCodeAndStatusAndEmail(string code, int codeType, int status, string email)
     {
-        return DbSet.FirstOrDefault(v => v.Code == code && v.Status == status && v.Account.Email == email);
+        return DbSet.FirstOrDefault(v =>
+            v.Code == code && v.CodeType == codeType && v.Status == status && v.Account.Email == email);
     }
 }
