@@ -1,0 +1,7 @@
+namespace VFoody.Domain.Enums;
+
+public enum OptionStatus
+{
+    Active = 1,
+    UnActive = 2,
+}
