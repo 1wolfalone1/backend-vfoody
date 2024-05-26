@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.UseCases.Shop.Queries;
+using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
+using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 
 namespace VFoody.API.Controllers;
 
