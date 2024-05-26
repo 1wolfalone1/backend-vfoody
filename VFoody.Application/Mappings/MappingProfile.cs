@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using VFoody.Application.UseCases.Accounts.Commands;
+using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Accounts.Models;
@@ -14,6 +15,7 @@ public class MappingProfile : Profile
     {
         CreateMap<Account, AccountResponse>();
         CreateMap<CustomerRegisterRequest, CustomerRegisterCommand>();
+        CreateMap<ForgotPasswordRequest, ForgotPasswordCommand>();
         CreateMap<AccountVerifyRequest, AccountVerifyCommand>();
         CreateMap<AccountSendCodeRequest, AccountSendCodeCommand>();
         CreateMap<Product, ProductDetailResponse>();

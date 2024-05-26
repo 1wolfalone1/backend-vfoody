@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
+using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Accounts.Queries;
@@ -35,7 +36,14 @@ public class AccountController : BaseApiController
         return HandleResult(await Mediator.Send(command));
     }
 
-    [HttpPost("customer/verify")]
+    [HttpPost("customer/forgot-password")]
+    public async  Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+    {
+        var command = _mapper.Map<ForgotPasswordCommand>(forgotPasswordRequest);
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("customer/register/verify")]
     public async  Task<IActionResult> Verify([FromBody] AccountVerifyRequest accountVerifyRequest)
     {
         var command = _mapper.Map<AccountVerifyCommand>(accountVerifyRequest);
