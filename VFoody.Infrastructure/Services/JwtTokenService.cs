@@ -29,6 +29,7 @@ public class JwtTokenService : IJwtTokenService, IBaseService
                        ?? throw new UnauthorizedAccessException($"Role id of account id: {account.Id} not correct");
         var claims = new[]
         {
+            new Claim(ClaimTypes.Sid, account.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, account.Email),
             new Claim(ClaimTypes.Name, account.FirstName),
             new Claim(ClaimTypes.Role, role.Name)
