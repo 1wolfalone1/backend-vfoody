@@ -5,10 +5,14 @@ using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Shared;
 
-namespace VFoody.Application.UseCases.Shop.Queries;
+namespace VFoody.Application.UseCases.Promotion.Queries.Platform;
 
-public class GetTopShopQuery :  IQuery<Result>
+public class GetPlatformPromotionListQuery : IQuery<Result>
 {
+    public int Status { get; set; }
+    public DateTime? StartDate { get; set; } = null;
+    public DateTime? EndDate { get; set; } = null;
+    public bool Available { get; set; }
     public int PageIndex { get; set; }
     public int PageSize { get; set; }
 }
