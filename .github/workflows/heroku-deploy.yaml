@@ -11,10 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       # Check-out your repository.
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: test
         run: echo $HEROKU_EMAIL 
