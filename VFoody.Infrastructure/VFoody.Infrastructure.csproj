@@ -8,10 +8,13 @@
 
   <ItemGroup>
     <None Remove="Common\Queries\SelectAvailableProductListOfShop.sql" />
+    <None Remove="Common\Queries\SelectPlatformPromotions.sql" />
     <None Remove="Common\Queries\SelectRecentOrderedProduct.sql" />
     <None Remove="Common\Queries\SelectSearchingShop.sql" />
+    <None Remove="Common\Queries\SelectShopPromotions.sql" />
     <None Remove="Common\Queries\SelectTopOrderProduct.sql" />
     <None Remove="Common\Queries\SelectTopRatingShop.sql" />
+    <None Remove="Common\Queries\SelectUserPromotions.sql" />
     <None Remove="Common\Queries\TestQuery.sql" />
   </ItemGroup>
 
@@ -42,6 +45,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Common\Queries\SelectUserPromotions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectShopPromotions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectPlatformPromotions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Common\Queries\SelectRecentOrderedProduct.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

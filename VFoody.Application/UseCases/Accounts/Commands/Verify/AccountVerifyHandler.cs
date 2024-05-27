@@ -38,51 +38,49 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
     {
         //1. Check existed verification code
         var verificationCode = _verificationCodeRepository.FindByCodeAndStatusAndEmail(
-            request.Code.ToString(), (int)VerificationCodeStatus.Active, request.Email
+            request.Code.ToString(), (int)VerificationCodeTypes.Register, (int)VerificationCodeStatus.Active, request.Email
         );
         if (verificationCode == null)
         {
             // 1.1 Response not found verification code
             return Result.Failure(new Error("400", "Not correct verification code."));
         }
-        else
+
+        //1.2 Revoke verification code, check expired time and update account status
+        //1.2.1 Revoke verification code
+        var revokeSuccess = await RevokeVerificationCode(verificationCode);
+        if (!revokeSuccess)
         {
-            //1.2 Revoke verification code, check expired time and update account status
-            //1.2.1 Revoke verification code
-            var revokeSuccess = await RevokeVerificationCode(verificationCode);
-            if (!revokeSuccess)
-            {
-                return Result.Failure(new Error("500", "Internal server error."));
-            }
-            //1.2.2 Check expired time of code
-            if (verificationCode.ExpiredTịme < DateTime.Now)
-            {
-                return Result.Failure(new Error("400", "Verification code expired."));
-            }
-
-            //1.2.3 Update account status
-            var account = _accountRepository.GetAccountByEmail(request.Email)!;
-            var updateSuccess = await UpdateAccountStatus(account);
-            if (!updateSuccess)
-            {
-                return Result.Failure(new Error("500", "Internal server error."));
-            }
-
-            //1.2.4 Response
-            var accountResponse = new AccountResponse();
-            var token = _jwtTokenService.GenerateJwtToken(account);
-            _mapper.Map(account, accountResponse);
-            accountResponse.RoleName = Domain.Enums.Roles.Customer.GetDescription();
-            return Result.Success(new LoginResponse
-            {
-                AccountResponse = accountResponse,
-                AccessTokenResponse = new AccessTokenResponse
-                {
-                    AccessToken = token,
-                    RefreshToken = account.RefreshToken!
-                }
-            });
+            return Result.Failure(new Error("500", "Internal server error."));
         }
+        //1.2.2 Check expired time of code
+        if (verificationCode.ExpiredTịme < DateTime.Now)
+        {
+            return Result.Failure(new Error("400", "Verification code expired."));
+        }
+
+        //1.2.3 Update account status
+        var account = _accountRepository.GetAccountByEmail(request.Email)!;
+        var updateSuccess = await UpdateAccountStatus(account);
+        if (!updateSuccess)
+        {
+            return Result.Failure(new Error("500", "Internal server error."));
+        }
+
+        //1.2.4 Response
+        var accountResponse = new AccountResponse();
+        var token = _jwtTokenService.GenerateJwtToken(account);
+        _mapper.Map(account, accountResponse);
+        accountResponse.RoleName = Domain.Enums.Roles.Customer.GetDescription();
+        return Result.Success(new LoginResponse
+        {
+            AccountResponse = accountResponse,
+            AccessTokenResponse = new AccessTokenResponse
+            {
+                AccessToken = token,
+                RefreshToken = account.RefreshToken!
+            }
+        });
     }
 
     private async Task<bool> UpdateAccountStatus(Account account)

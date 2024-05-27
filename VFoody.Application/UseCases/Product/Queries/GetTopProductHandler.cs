@@ -9,7 +9,7 @@ using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Application.UseCases.Product.Models;
-using VFoody.Application.UseCases.Shop.Queries;
+using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Shared;
 

@@ -30,5 +30,8 @@ public enum QueryName
     SelectTopOrderProduct,
     SelectRecentOrderedProduct,
     SelectSearchingShop,
-    SelectAvailableProductListOfShop
+    SelectAvailableProductListOfShop,
+    SelectShopPromotions,
+    SelectPlatformPromotions,
+    SelectUserPromotions,
 }
