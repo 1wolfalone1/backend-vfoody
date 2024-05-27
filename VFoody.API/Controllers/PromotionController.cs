@@ -23,10 +23,10 @@ public class PromotionController : BaseApiController
     [HttpGet("customer/promotion")]
     public async Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
     {
-        //if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
-        //{
-        //    return Result.Failure(new Error("401", "Unauthorized"));
-        //}
+        if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
+        {
+            throw new Exception("401 unauthorized but set 500 for while!");
+        }
 
         return this.HandleResult(await this.Mediator.Send(new GetCustomerPromotionListQuery
         {
