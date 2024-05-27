@@ -17,6 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: "Create env file"
+        run: |
+           echo "${{ secrets.ENV }}" > ./
+
       - name: test
         run: echo $HEROKU_EMAIL 
 ### ⬇ IMPORTANT PART ⬇ ###
