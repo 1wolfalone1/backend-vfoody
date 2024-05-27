@@ -4,6 +4,7 @@ using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
+using VFoody.Domain.Shared;
 
 namespace VFoody.API.Controllers;
 
@@ -22,9 +23,14 @@ public class PromotionController : BaseApiController
     [HttpGet("customer/promotion")]
     public async Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
     {
+        //if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
+        //{
+        //    return Result.Failure(new Error("401", "Unauthorized"));
+        //}
+
         return this.HandleResult(await this.Mediator.Send(new GetCustomerPromotionListQuery
         {
-            AccountId = 1,
+            AccountId = _currentPrincipalService.CurrentPrincipalId.Value,
             Status = 1,
             Available = true,
             PageIndex = pageIndex,
