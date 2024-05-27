@@ -19,7 +19,7 @@ jobs:
 
       - name: "Create env file"
         run: |
-           echo "${{ secrets.ENV }}" > ./
+           echo "${{ secrets.ENV }}" > ./.env
 
       - name: test
         run: echo $HEROKU_EMAIL 
