@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 
@@ -36,5 +37,11 @@ public class ShopController : BaseApiController
             OrderType = orderType,
             CurrentBuildingId = currentBuildingId,
         }));
+    }
+
+    [HttpGet("shop/info")]
+    public async Task<IActionResult> GetShopInfo(int shopId)
+    {
+        return HandleResult(await Mediator.Send(new GetShopInfoQuery(shopId)));
     }
 }

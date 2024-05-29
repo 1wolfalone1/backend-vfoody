@@ -38,7 +38,7 @@ WITH RecentOrderedProducts AS (
         INNER JOIN v_foody.shop s ON p.shop_id = s.id
     WHERE
         a.email = @Email
-        AND p.status = 2
+        AND p.status = 1
         AND s.status = TRUE
 )
 
