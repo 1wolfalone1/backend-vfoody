@@ -25,14 +25,16 @@ public class GetProductDetailToOrderHandler : IQueryHandler<GetProductDetailToOr
 
     public async Task<Result<Result>> Handle(GetProductDetailToOrderQuery request, CancellationToken cancellationToken)
     {
-        var product = await _productRepository.DbSet
-            .Include(p => p.Questions).ThenInclude(q => q.Options)
-            .FirstOrDefaultAsync(
-                p => p.Id == request.productId
-                     && p.Status == (int)ProductStatus.Active, cancellationToken: cancellationToken
-            );
-        return product != null
-            ? Result.Success(_mapper.Map<ProductDetailResponse>(product))
-            : Result.Failure(new Error("400", "Not found this product."));
+        // var product = await _productRepository.DbSet
+        //     .Include(p => p.Questions).ThenInclude(q => q.Options)
+        //     .FirstOrDefaultAsync(
+        //         p => p.Id == request.productId
+        //              && p.Status == (int)ProductStatus.Active, cancellationToken: cancellationToken
+        //     );
+        // return product != null
+        //     ? Result.Success(_mapper.Map<ProductDetailResponse>(product))
+        //     : Result.Failure(new Error("400", "Not found this product."));
+        
+        return Result.Success();
     }
 }

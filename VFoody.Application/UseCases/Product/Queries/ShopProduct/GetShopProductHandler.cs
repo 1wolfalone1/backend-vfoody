@@ -24,11 +24,13 @@ public class GetShopProductHandler : IQueryHandler<GetShopProductQuery, Result>
 
     public async Task<Result<Result>> Handle(GetShopProductQuery request, CancellationToken cancellationToken)
     {
-        var products = await _productRepository.DbSet
-            .Where(p => p.ShopId == request.shopId && p.Status == (int)ProductStatus.Active)
-            .Skip((request.pageNum - 1) * request.pageSize)
-            .Take(request.pageSize)
-            .ToListAsync(cancellationToken: cancellationToken);
-        return Result.Success(_mapper.Map<List<ProductResponse>>(products));
+        // var products = await _productRepository.DbSet
+        //     .Where(p => p.ShopId == request.shopId && p.Status == (int)ProductStatus.Active)
+        //     .Skip((request.pageNum - 1) * request.pageSize)
+        //     .Take(request.pageSize)
+        //     .ToListAsync(cancellationToken: cancellationToken);
+        // return Result.Success(_mapper.Map<List<ProductResponse>>(products));
+
+        return Result.Success();
     }
 }
