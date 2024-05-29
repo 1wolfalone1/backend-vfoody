@@ -31,4 +31,14 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .Take(pageSize)
             .ToList();
     }
+
+    public List<Product> GetTopProductByShopId(int shopId, int pageNum, int pageSize)
+    {
+        return DbSet
+            .Where(p => p.ShopId == shopId && p.Status == (int)ProductStatus.Active)
+            .OrderByDescending(p => p.TotalOrder)
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
 }
