@@ -35,7 +35,7 @@ public class StorageService : IStorageService, IBaseService
         var bucketName = _configuration["AWS_BUCKET_NAME"] ?? "";
         using var ms = new MemoryStream();
         await file.CopyToAsync(ms);
-        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}-{file.FileName}";
+        var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}-{Guid.NewGuid()}";
         if (file.ContentType.StartsWith("image/"))
         {
             fileName = "image/" + fileName;
