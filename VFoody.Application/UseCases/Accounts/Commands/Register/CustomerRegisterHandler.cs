@@ -96,7 +96,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
             {
                 Account = account,
                 Code = code,
-                ExpiredTịme = DateTime.Now.AddMinutes(1),
+                ExpiredTịme = DateTime.Now.AddMinutes(3),
                 CodeType = (int)VerificationCodeTypes.Register,
                 Status = (int)VerificationCodeStatus.Active
             };
@@ -156,7 +156,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
             {
                 AccountId = account.Id,
                 Code = code,
-                ExpiredTịme = DateTime.Now.AddMinutes(1),
+                ExpiredTịme = DateTime.Now.AddMinutes(3),
                 CodeType = (int)VerificationCodeTypes.Register,
                 Status = (int)VerificationCodeStatus.Active
             };
