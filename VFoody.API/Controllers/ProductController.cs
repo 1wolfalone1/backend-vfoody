@@ -5,6 +5,7 @@ using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
 using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
 using VFoody.Application.UseCases.Product.Queries.ShopProduct;
+using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 
 namespace VFoody.API.Controllers;
 
@@ -42,8 +43,14 @@ public class ProductController : BaseApiController
         }));
     }
 
+    [HttpGet("shop/info")]
+    public async Task<IActionResult> GetShopInfo(int shopId)
+    {
+        return HandleResult(await Mediator.Send(new GetShopInfoQuery(shopId)));
+    }
+
     [HttpGet("shop/product")]
-    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum, int pageSize)
+    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum = 1, int pageSize = 10)
     {
         return HandleResult(await Mediator.Send(new GetShopProductQuery(shopId, pageNum, pageSize)));
     }
