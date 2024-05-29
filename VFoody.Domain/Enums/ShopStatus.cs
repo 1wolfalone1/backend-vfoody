@@ -1,8 +1,8 @@
 namespace VFoody.Domain.Enums;
 
-public enum QuestionStatus
+public enum ShopStatus
 {
     Active = 1,
     UnActive = 2,
-    Delete = 3
+    Delete = 3,
 }
