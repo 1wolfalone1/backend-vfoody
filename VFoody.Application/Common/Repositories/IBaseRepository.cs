@@ -6,7 +6,7 @@ namespace VFoody.Application.Common.Repositories;
 
 public interface IBaseRepository<TEntity> where TEntity : BaseEntity
 {
-    public DbSet<TEntity> DbSet { get; }
+    // protected DbSet<TEntity> DbSet { get; }
 
     Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? predicate = null,
       Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
