@@ -22,15 +22,9 @@ public class GetShopProductHandler : IQueryHandler<GetShopProductQuery, Result>
         _logger = logger;
     }
 
-    public async Task<Result<Result>> Handle(GetShopProductQuery request, CancellationToken cancellationToken)
+    public Task<Result<Result>> Handle(GetShopProductQuery request, CancellationToken cancellationToken)
     {
-        // var products = await _productRepository.DbSet
-        //     .Where(p => p.ShopId == request.shopId && p.Status == (int)ProductStatus.Active)
-        //     .Skip((request.pageNum - 1) * request.pageSize)
-        //     .Take(request.pageSize)
-        //     .ToListAsync(cancellationToken: cancellationToken);
-        // return Result.Success(_mapper.Map<List<ProductResponse>>(products));
-
-        return Result.Success();
+        var products = _productRepository.GetShopProduct(request.shopId, request.pageNum, request.pageSize);
+        return Task.FromResult<Result<Result>>(Result.Success(_mapper.Map<List<ProductResponse>>(products)));
     }
 }
