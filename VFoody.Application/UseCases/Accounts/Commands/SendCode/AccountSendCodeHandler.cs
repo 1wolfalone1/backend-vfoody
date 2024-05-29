@@ -56,7 +56,7 @@ public class AccountSendCodeHandler : ICommandHandler<AccountSendCodeCommand, Re
             {
                 AccountId = account.Id,
                 Code = code,
-                ExpiredTịme = DateTime.Now.AddMinutes(1),
+                ExpiredTịme = DateTime.Now.AddMinutes(3),
                 Status = (int)VerificationCodeStatus.Active
             };
 
