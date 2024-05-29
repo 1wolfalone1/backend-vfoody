@@ -41,7 +41,7 @@ WITH ProductSearch AS (
     INNER JOIN
         v_foody.shop s ON p.shop_id = s.id
     WHERE
-        p.status = 2
+        p.status = 1
         AND s.status = true
         AND p.shop_id = @ShopId
 )
