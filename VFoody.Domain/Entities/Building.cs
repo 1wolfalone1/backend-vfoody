@@ -29,5 +29,8 @@ public partial class Building : BaseEntity
     public virtual ICollection<Distance> DistanceBuildingIdToNavigations { get; set; } = new List<Distance>();
 
     [InverseProperty("Building")]
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    
+    [InverseProperty("Building")]
     public virtual ICollection<Shop> Shops { get; set; } = new List<Shop>();
 }

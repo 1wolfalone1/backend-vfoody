@@ -57,10 +57,17 @@ public partial class Order : BaseEntity
 
     [Column("account_id")]
     public int AccountId { get; set; }
+    
+    [Column("building_id")]
+    public int BuildingId { get; set; }
 
     [ForeignKey("AccountId")]
     [InverseProperty("Orders")]
     public virtual Account Account { get; set; } = null!;
+    
+    [ForeignKey("BuildingId")]
+    [InverseProperty("Orders")]
+    public virtual Building Building { get; set; } = null!;
 
     [InverseProperty("Order")]
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();

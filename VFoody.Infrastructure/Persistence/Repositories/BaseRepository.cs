@@ -17,7 +17,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         this.unitOfWork = unitOfWork as UnitOfWork;
     }
 
-    public DbSet<TEntity> DbSet => this.unitOfWork.Context.Set<TEntity>();
+    internal DbSet<TEntity> DbSet => this.unitOfWork.Context.Set<TEntity>();
 
     public async Task AddAsync(TEntity entity)
     {
