@@ -6,7 +6,7 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 
-public class VerifyCodeForgotPasswordHandler : ICommandHandler<AccountVerifyCommand, Result>
+public class VerifyCodeForgotPasswordHandler : ICommandHandler<VerifyCodeForgotPasswordCommand, Result>
 {
     private readonly IVerificationCodeRepository _verificationCodeRepository;
 
@@ -15,7 +15,7 @@ public class VerifyCodeForgotPasswordHandler : ICommandHandler<AccountVerifyComm
         _verificationCodeRepository = verificationCodeRepository;
     }
 
-    public async Task<Result<Result>> Handle(AccountVerifyCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Result>> Handle(VerifyCodeForgotPasswordCommand request, CancellationToken cancellationToken)
     {
         //1. Check existed verification code
         var verificationCode = _verificationCodeRepository.FindByCodeAndStatusAndEmail(
