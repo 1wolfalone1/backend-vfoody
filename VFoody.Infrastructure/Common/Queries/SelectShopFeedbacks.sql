@@ -1,4 +1,5 @@
 ﻿/*
+ FileName: SelectShopFeedbacks.sql
  CreatedAt: 29/05/2024
  CreateBy:ThongNV
  
@@ -6,8 +7,6 @@
  -- @PageIndex int
  -- @PageSize int
  */
-
-
 WITH WithFeedBack AS (
     SELECT
         id,
@@ -16,52 +15,59 @@ WITH WithFeedBack AS (
         rating,
         comment,
         created_date,
-        updated_date
+        updated_date,
+        ROW_NUMBER() OVER (
+            ORDER BY
+                created_date DESC
+        ) AS RowNum,
+        COUNT(id) OVER () AS TotalRecords
     FROM
         feedback
     WHERE
-            order_id IN (
+        order_id IN (
             SELECT
                 id
             FROM
                 `order` o
             WHERE
-                    o.id = @ShopId
+                o.id = @ShopId
         )
 ),
-     WithFeedbackAndOrderProductName  AS (
-         SELECT
-             order_id,
-             GROUP_CONCAT(
-                     name
-                         ORDER BY
+WithFeedbackAndOrderProductName AS (
+    SELECT
+        order_id,
+        GROUP_CONCAT(
+            name
+            ORDER BY
                 name SEPARATOR ', '
-                 ) AS product_names
-         FROM
-             (
-                 SELECT
-                     od.order_id,
-                     p.name
-                 FROM
-                     order_detail od
-                         INNER JOIN product p ON od.product_id = p.id
-                 WHERE
-                         od.order_id IN (
-                         SELECT
-                             id
-                         FROM
-                             `order` o
-                         WHERE
-                                 o.id = @ShopId
-                     )
-             ) AS WithFeedbackAndOrderProductName
-         GROUP BY
-             order_id
-     )
-
+        ) AS product_names
+    FROM
+        (
+            SELECT
+                od.order_id,
+                p.name
+            FROM
+                order_detail od
+                INNER JOIN product p ON od.product_id = p.id
+            WHERE
+                od.order_id IN (
+                    SELECT
+                        id
+                    FROM
+                        `order` o
+                    WHERE
+                        o.id = @ShopId
+                )
+        ) AS WithFeedbackAndOrderProductName
+    GROUP BY
+        order_id
+)
 SELECT
+    @PageIndex AS PageIndex,
+    @PageSize AS PageSize,
+    feed.TotalRecords AS NumberOfItems,
     a.id AS AccountId,
-    CONCAT(a.last_name,CONCAT(" ", a.first_name))  AS AccountName,
+    CONCAT(a.last_name, CONCAT(" ", a.first_name)) AS AccountName,
     feed.id AS FeedbackId,
     feed.rating AS Rating,
     feed.comment AS Comment,
@@ -70,4 +76,7 @@ SELECT
 FROM
     WithFeedBack AS feed
     INNER JOIN account AS a ON feed.account_id = a.id
-    INNER JOIN WithFeedbackAndOrderProductName AS feedOrder ON feed.order_id = feedOrder.order_id;
+    INNER JOIN WithFeedbackAndOrderProductName AS feedOrder ON feed.order_id = feedOrder.order_id
+WHERE
+    feed.RowNum BETWEEN (@PageIndex - 1) * @PageSize + 1
+    AND @PageIndex * @PageSize;

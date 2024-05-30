@@ -1,5 +1,6 @@
 using AutoMapper;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Models.Responses;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.UseCases.Product.Models;
 using VFoody.Domain.Shared;
@@ -17,9 +18,13 @@ public class GetTopProductShopHandler : IQueryHandler<GetTopProductShopQuery, Re
         _mapper = mapper;
     }
 
-    public Task<Result<Result>> Handle(GetTopProductShopQuery request, CancellationToken cancellationToken)
+    public async Task<Result<Result>> Handle(GetTopProductShopQuery request, CancellationToken cancellationToken)
     {
-        var products = _productRepository.GetTopProductByShopId(request.shopId, request.pageNum, request.pageSize);
-        return Task.FromResult<Result<Result>>(Result.Success(_mapper.Map<List<ProductResponse>>(products)));
+        var products = _productRepository.GetTopProductByShopId(request.ShopId, request.PageIndex, request.PageSize);
+        var totalProducts = _productRepository.CountTotalActiveProductByShopId(request.ShopId);
+        var result = new PaginationResponse<ProductResponse>(_mapper.Map<List<ProductResponse>>(products),
+            request.PageIndex, request.PageSize,
+            (int)Math.Ceiling((double)totalProducts / request.PageSize));
+        return Result.Success(result);
     }
 }

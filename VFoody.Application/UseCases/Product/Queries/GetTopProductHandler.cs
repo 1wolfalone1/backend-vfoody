@@ -37,7 +37,7 @@ public class GetTopProductHandler : IQueryHandler<GetTopProductQuery, Result>
                 PageSize = request.PageSize
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
 
             return Result.Success(result);
         }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
@@ -9,6 +11,7 @@ using VFoody.Domain.Shared;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class PromotionController : BaseApiController
 {
     private readonly IMapper _mapper;
@@ -21,7 +24,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion")]
-    public async Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetCustomerPromotion(int pageIndex, int pageSize)
     {
         if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
         {
@@ -39,7 +42,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/shop/{id}")]
-    public async Task<IActionResult> GetShopPromotion(int id, int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetShopPromotion(int id, int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetShopPromotionListQuery
         {
@@ -52,7 +55,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/platform")]
-    public async Task<IActionResult> GetPlatformPromotion(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetPlatformPromotion(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetPlatformPromotionListQuery
         {

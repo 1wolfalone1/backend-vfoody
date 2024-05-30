@@ -41,7 +41,7 @@ public class GetPlatformPromotionListHandler : IQueryHandler<GetPlatformPromotio
                 request.PageSize,
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectPlatformPromotionDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectPlatformPromotionDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
 
             return Result.Success(result);
         }

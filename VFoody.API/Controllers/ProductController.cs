@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
@@ -10,6 +12,7 @@ using VFoody.Application.UseCases.Product.Queries.TopProductShop;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ProductController : BaseApiController
 {
     private readonly ICurrentPrincipalService _currentPrincipalService;
@@ -22,7 +25,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
-    public async Task<IActionResult> GetTopProduct(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTopProduct(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
         {
@@ -32,7 +35,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
-    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize)
     {
         string email = _currentPrincipalService.CurrentPrincipal;
         return this.HandleResult(await this.Mediator.Send(new GetRecentOrderedProductQuery
@@ -44,15 +47,25 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/{shopId}/product/top")]
-    public async Task<IActionResult> GetTopProductByShop(int shopId, int pageNum = 1, int pageSize = 10)
+    public async Task<IActionResult> GetTopProductByShop(int shopId, int pageIndex, int pageSize)
     {
-        return HandleResult(await Mediator.Send(new GetTopProductShopQuery(shopId, pageNum, pageSize)));
+        return HandleResult(await Mediator.Send(new GetTopProductShopQuery
+        {
+            ShopId = shopId,
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        }));
     }
 
     [HttpGet("shop/product")]
-    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum = 1, int pageSize = 10)
+    public async Task<IActionResult> GetShopProduct(int shopId, int pageIndex, int pageSize)
     {
-        return HandleResult(await Mediator.Send(new GetShopProductQuery(shopId, pageNum, pageSize)));
+        return HandleResult(await Mediator.Send(new GetShopProductQuery
+        {
+            ShopId = shopId,
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        }));
     }
 
 
