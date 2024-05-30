@@ -32,6 +32,12 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .ToList();
     }
 
+    public int CountTotalActiveProductByShopId(int shopId)
+    {
+        return DbSet
+            .Count(p => p.ShopId == shopId && p.Status == (int)ProductStatus.Active);
+    }
+
     public List<Product> GetTopProductByShopId(int shopId, int pageNum, int pageSize)
     {
         return DbSet

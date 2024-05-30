@@ -25,7 +25,9 @@ public class MappingProfile : Profile
         CreateMap<Question, ProductDetailResponse.QuestionResponse>();
         CreateMap<Option, ProductDetailResponse.OptionResponse>();
         CreateMap<Product, ProductResponse>();
-        CreateMap<Shop, ShopInfoResponse>();
+        CreateMap<Shop, ShopInfoResponse>()
+            .ForMember(dest => dest.Rating,
+                opt => opt.MapFrom(src => src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)));
         CreateMap<Building, ShopInfoResponse.BuildingResponse>();
     }
 }

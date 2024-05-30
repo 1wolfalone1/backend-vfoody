@@ -47,18 +47,23 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/{shopId}/product/top")]
-    public async Task<IActionResult> GetTopProductByShop(int shopId, int pageNum = 1, int pageSize = 10)
+    public async Task<IActionResult> GetTopProductByShop(int shopId, int pageIndex, int pageSize)
     {
-        return HandleResult(await Mediator.Send(new GetTopProductShopQuery(shopId, pageNum, pageSize)));
+        return HandleResult(await Mediator.Send(new GetTopProductShopQuery
+        {
+            ShopId = shopId,
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        }));
     }
 
     [HttpGet("shop/product")]
-    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum, int pageSize)
+    public async Task<IActionResult> GetShopProduct(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetShopProductQuery
         {
             ShopId = shopId,
-            PageIndex = pageNum,
+            PageIndex = pageIndex,
             PageSize = pageSize
         }));
     }
