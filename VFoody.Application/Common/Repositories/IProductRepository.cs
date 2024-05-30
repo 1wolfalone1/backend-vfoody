@@ -6,5 +6,6 @@ public interface IProductRepository : IBaseRepository<Product>
 {
     Product? GetProductDetail(int productId);
     List<Product> GetShopProduct(int shopId, int pageNum, int pageSize);
+    int CountTotalActiveProductByShopId(int shopId);
     List<Product> GetTopProductByShopId(int shopId, int pageNum, int pageSize);
 }
