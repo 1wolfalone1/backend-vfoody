@@ -6,6 +6,7 @@ using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.Verify;
+using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Queries;
 
 namespace VFoody.API.Controllers;
@@ -43,8 +44,15 @@ public class AccountController : BaseApiController
         return HandleResult(await Mediator.Send(command));
     }
 
+    [HttpPost("customer/forgot-password/verify")]
+    public async  Task<IActionResult> VerifyCodeForgotPassword([FromBody] VerifyCodeForgotPasswordRequest verifyCodeForgotPasswordRequest)
+    {
+        var command = _mapper.Map<VerifyCodeForgotPasswordCommand>(verifyCodeForgotPasswordRequest);
+        return HandleResult(await Mediator.Send(command));
+    }
+
     [HttpPost("customer/register/verify")]
-    public async  Task<IActionResult> Verify([FromBody] AccountVerifyRequest accountVerifyRequest)
+    public async  Task<IActionResult> VerifyCodeRegister([FromBody] AccountVerifyRequest accountVerifyRequest)
     {
         var command = _mapper.Map<AccountVerifyCommand>(accountVerifyRequest);
         return HandleResult(await Mediator.Send(command));

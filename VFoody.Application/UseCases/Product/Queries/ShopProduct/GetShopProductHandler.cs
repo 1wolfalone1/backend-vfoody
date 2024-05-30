@@ -1,10 +1,8 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.UseCases.Product.Models;
-using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Product.Queries.ShopProduct;
