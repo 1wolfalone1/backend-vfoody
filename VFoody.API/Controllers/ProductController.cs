@@ -22,7 +22,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
-    public async Task<IActionResult> GetTopProduct(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetTopProduct(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
         {
@@ -32,7 +32,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
-    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize)
     {
         string email = _currentPrincipalService.CurrentPrincipal;
         return this.HandleResult(await this.Mediator.Send(new GetRecentOrderedProductQuery
@@ -50,9 +50,14 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/product")]
-    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum = 1, int pageSize = 10)
+    public async Task<IActionResult> GetShopProduct(int shopId, int pageNum, int pageSize)
     {
-        return HandleResult(await Mediator.Send(new GetShopProductQuery(shopId, pageNum, pageSize)));
+        return HandleResult(await Mediator.Send(new GetShopProductQuery
+        {
+            ShopId = shopId,
+            PageIndex = pageNum,
+            PageSize = pageSize
+        }));
     }
 
 

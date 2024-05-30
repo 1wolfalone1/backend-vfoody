@@ -16,7 +16,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/top")]
-    public async  Task<IActionResult> GetTopShop(int pageIndex = 1, int pageSize = 20)
+    public async  Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
         {
@@ -26,7 +26,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/search")]
-    public async Task<IActionResult> GetSearchingProductQuery(int pageIndex = 1, int pageSize = 20, string searchText = "", int orderType = 0, int currentBuildingId = 0)
+    public async Task<IActionResult> GetSearchingProductQuery(int pageIndex, int pageSize, string searchText = "", int orderType = 0, int currentBuildingId = 0)
     {
         return this.HandleResult(await this.Mediator.Send(new GetSearchingShopQuery
         {

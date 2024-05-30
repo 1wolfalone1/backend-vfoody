@@ -24,7 +24,7 @@ public class GetShopProductHandler : IQueryHandler<GetShopProductQuery, Result>
 
     public Task<Result<Result>> Handle(GetShopProductQuery request, CancellationToken cancellationToken)
     {
-        var products = _productRepository.GetShopProduct(request.shopId, request.pageNum, request.pageSize);
+        var products = _productRepository.GetShopProduct(request.ShopId, request.PageIndex, request.PageSize);
         return Task.FromResult<Result<Result>>(Result.Success(_mapper.Map<List<ProductResponse>>(products)));
     }
 }

@@ -21,7 +21,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion")]
-    public async Task<IActionResult> GetCustomerPromotion(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetCustomerPromotion(int pageIndex, int pageSize)
     {
         if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
         {
@@ -39,7 +39,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/shop/{id}")]
-    public async Task<IActionResult> GetShopPromotion(int id, int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetShopPromotion(int id, int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetShopPromotionListQuery
         {
@@ -52,7 +52,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/platform")]
-    public async Task<IActionResult> GetPlatformPromotion(int pageIndex = 1, int pageSize = 20)
+    public async Task<IActionResult> GetPlatformPromotion(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetPlatformPromotionListQuery
         {

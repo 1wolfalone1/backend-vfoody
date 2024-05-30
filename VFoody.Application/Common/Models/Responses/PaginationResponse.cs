@@ -2,6 +2,10 @@
 
 public class PaginationResponse<TEntity, TResponse> where TEntity : class where TResponse : class
 {
+    public PaginationResponse()
+    {
+    }
+
     public PaginationResponse(IList<TResponse> items, int pageIndex, int pageSize, int totalOfPages)
     {  
         PageIndex = pageIndex;
@@ -35,23 +39,34 @@ public class PaginationResponse<TEntity, TResponse> where TEntity : class where 
         Items = items.Select(mapper).ToList();
     }
 
-    public int PageIndex { get; }
+    public int PageIndex { get; set; }
 
-    public int TotalOfPages { get; }
+    public int TotalOfPages
+    {
+        set { }
+        get
+        {
+            return (int)Math.Ceiling((NumberOfItems * 1.0) / (PageSize * 1.0));
+        }
+    }
 
     public int PageSize { get; set; }
 
-    public int NumberOfItems { get; }
+    public int NumberOfItems { get; set; }
 
     public bool HasPrevious => PageIndex > 1;
 
     public bool HasNext => PageIndex < TotalOfPages;
 
-    public IList<TResponse> Items { get; }
+    public IList<TResponse> Items { get; set; }
 }
 
 public class PaginationResponse<TEntity> : PaginationResponse<TEntity, TEntity> where TEntity : class
 {
+    public PaginationResponse()
+    {
+    }
+
     public PaginationResponse(IList<TEntity> items, int pageIndex, int pageSize, int totalOfPages)
         : base(items, pageIndex, pageSize, totalOfPages, entity => entity)
     {
