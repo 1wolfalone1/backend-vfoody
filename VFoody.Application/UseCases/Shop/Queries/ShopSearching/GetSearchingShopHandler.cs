@@ -54,7 +54,7 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
 
                 shop.Products = products.ToList();
             }
-            var result = new PaginationResponse<SelectDetailsShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectDetailsShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
 
             return Result.Success(result);
         }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
@@ -10,6 +12,7 @@ using VFoody.Application.UseCases.Product.Queries.TopProductShop;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ProductController : BaseApiController
 {
     private readonly ICurrentPrincipalService _currentPrincipalService;

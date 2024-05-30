@@ -38,7 +38,7 @@ public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
                 request.PageSize
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectSimpleShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalPages);
+            var result = new PaginationResponse<SelectSimpleShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
 
             return Result.Success(result);
         }

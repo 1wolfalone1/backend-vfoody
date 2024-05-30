@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
@@ -7,6 +9,7 @@ using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ShopController : BaseApiController
 {
     private readonly IMapper _mapper;

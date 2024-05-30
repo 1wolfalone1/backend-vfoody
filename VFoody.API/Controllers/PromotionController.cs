@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
@@ -9,6 +11,7 @@ using VFoody.Domain.Shared;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class PromotionController : BaseApiController
 {
     private readonly IMapper _mapper;
