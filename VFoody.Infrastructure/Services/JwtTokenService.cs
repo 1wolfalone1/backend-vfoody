@@ -31,7 +31,7 @@ public class JwtTokenService : IJwtTokenService, IBaseService
         {
             new Claim(ClaimTypes.Sid, account.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, account.Email),
-            new Claim(ClaimTypes.Name, account.FirstName),
+            // new Claim(ClaimTypes.Name, account.FirstName),
             new Claim(ClaimTypes.Role, role.Name)
         };
 
