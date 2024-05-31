@@ -31,8 +31,8 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
     public async Task<Result<Result>> Handle(CustomerLoginCommand request, CancellationToken cancellationToken)
     {
         var customerAccount =
-            this._accountRepository.GetCustomerAccount(request.AccountLogin.Email, BCrypUnitls.Hash(request.AccountLogin.Password));
-        if (customerAccount == null)
+            this._accountRepository.GetAccountByEmail(request.AccountLogin.Email);
+        if (customerAccount == null || !BCrypUnitls.Verify(request.AccountLogin.Password, customerAccount.Password))
             return Result.Failure(new Error("401", "Email or Password not correct"));
         
         if(customerAccount.RoleId != (int) Domain.Enums.Roles.Customer)
