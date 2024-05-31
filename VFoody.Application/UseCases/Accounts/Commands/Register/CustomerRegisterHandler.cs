@@ -66,6 +66,8 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
                 PhoneNumber = request.PhoneNumber,
                 Password = BCrypUnitls.Hash(request.Password),
                 AvatarUrl = "https://www.freecodecamp.org/news/content/images/2021/10/golang.png",
+                FirstName = "",
+                LastName = "",
                 RoleId = (int)Domain.Enums.Roles.Customer,
                 AccountType = (int)AccountTypes.Local,
                 Status = (int)AccountStatus.UnVerify
