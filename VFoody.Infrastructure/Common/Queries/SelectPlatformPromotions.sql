@@ -19,6 +19,7 @@
 WITH FilteredPromotions AS (
     SELECT
         id,
+        title,
         banner_url,
         amount_rate,
         minimum_order_value,
@@ -50,7 +51,8 @@ WITH FilteredPromotions AS (
 )
 
 SELECT
-    id AS Id,    
+    id AS Id,
+    title AS Title,
     start_date AS StartDate,
     end_date AS EndDate,
     banner_url AS BannerUrl,

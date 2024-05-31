@@ -21,6 +21,7 @@
 WITH FilteredShopPromotions AS (
     SELECT
         id,
+        title,
         amount_rate,
         minimum_order_value,
         maximum_apply_value,
@@ -52,7 +53,8 @@ WITH FilteredShopPromotions AS (
 )
 
 SELECT
-    id AS Id,    
+    id AS Id,
+    title AS Title,
     start_date AS StartDate,
     end_date AS EndDate,
     

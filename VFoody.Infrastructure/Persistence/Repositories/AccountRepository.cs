@@ -12,7 +12,7 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     public Account GetCustomerAccount(string email, string password)
     {
         return this.DbSet.SingleOrDefault(a => a.Email == email 
-                                               && password == password);
+                                               && a.Password == password);
     }
 
     public Account? GetAccountByEmail(string email)
