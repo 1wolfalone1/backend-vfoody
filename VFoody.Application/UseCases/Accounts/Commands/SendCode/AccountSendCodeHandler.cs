@@ -33,7 +33,7 @@ public class AccountSendCodeHandler : ICommandHandler<AccountSendCodeCommand, Re
     {
         var account = _accountRepository.GetAccountByEmail(request.Email);
         //1. Check existed account.
-        if (account == null) return Result.Failure(new Error("400", "Not found email."));
+        if (account == null) return Result.Failure(new Error("400", "Không tìm thấy email."));
         //2. Revoke old verification code
         var revokeSuccess = await RevokeVerificationCode(account.Id, request.VerifyType);
         if (!revokeSuccess)
@@ -43,7 +43,7 @@ public class AccountSendCodeHandler : ICommandHandler<AccountSendCodeCommand, Re
 
         //3. Re create verification code
         var code = new Random().Next(1000, 10000).ToString();
-        var isSendMail = SendVerifyCode(account.Email, code, request.VerifyType);
+        var isSendMail = _emailService.SendVerifyCode(account.Email, code, request.VerifyType);
         if (!isSendMail)
         {
             return Result.Failure(new Error("500", "Internal server error."));
@@ -80,56 +80,6 @@ public class AccountSendCodeHandler : ICommandHandler<AccountSendCodeCommand, Re
             _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error."));
         }
-    }
-
-    private bool SendVerifyCode(string email, string code, int verifyType)
-    {
-        if (verifyType == (int)VerificationCodeTypes.Register)
-        {
-            return _emailService.SendEmail(email, "VFoody Account Verification Code",
-                @"
-                    <html>
-                        <body style='font-family: Arial, sans-serif; color: #333;'>
-                            <div style='margin-bottom: 20px; text-align: center;'>
-                                <img src='https://www.freecodecamp.org/news/content/images/2021/10/golang.png' alt='VFoody Logo' style='display: block; margin: 0 auto;' />
-                            </div>
-                            <p>Hello,</p>
-                            <p>Thank you for signing up for VFoody! Please use the following code to verify your account:</p>
-                            <div style='text-align: center; margin: 20px;'>
-                                <span style='font-size: 24px; padding: 10px; border: 1px solid #ccc;'>" + code +
-                @"</span>
-                            </div>
-                            <p>If you did not sign up for an VFoody account, please ignore this email or contact our support team.</p>
-                            <p>Best regards,</p>
-                            <p>The VFoody Team</p>
-                        </body>
-                    </html>"
-            );
-        }
-        else if (verifyType == (int)VerificationCodeTypes.ForgotPassword)
-        {
-            return _emailService.SendEmail(email, "VFoody Account Forgot Password Code",
-                @"
-                    <html>
-                        <body style='font-family: Arial, sans-serif; color: #333;'>
-                            <div style='margin-bottom: 20px; text-align: center;'>
-                                <img src='https://www.freecodecamp.org/news/content/images/2021/10/golang.png' alt='VFoody Logo' style='display: block; margin: 0 auto;' />
-                            </div>
-                            <p>Hello,</p>
-                            <p>We received a request to reset your password for your VFoody account. Please use the following code to reset your password:</p>
-                            <div style='text-align: center; margin: 20px;'>
-                                <span style='font-size: 24px; padding: 10px; border: 1px solid #ccc;'>" + code +
-                @"</span>
-                            </div>
-                            <p>If you did not request a password reset, please ignore this email or contact our support team.</p>
-                            <p>Best regards,</p>
-                            <p>The VFoody Team</p>
-                        </body>
-                    </html>"
-            );
-        }
-
-        return true;
     }
 
     private async Task<bool> RevokeVerificationCode(int accountId, int verifyType)

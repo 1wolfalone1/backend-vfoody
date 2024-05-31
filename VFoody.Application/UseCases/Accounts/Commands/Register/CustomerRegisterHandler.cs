@@ -8,7 +8,7 @@ using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
-namespace VFoody.Application.UseCases.Accounts.Commands;
+namespace VFoody.Application.UseCases.Accounts.Commands.Register;
 
 public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, Result>
 {
@@ -34,14 +34,14 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
 
     public async Task<Result<Result>> Handle(CustomerRegisterCommand request, CancellationToken cancellationToken)
     {
-        var account = _accountRepository.GetAccountByEmail(request.Email);
+        var account = _accountRepository.GetAccountByEmailAndPhoneNumber(request.Email, request.PhoneNumber);
         //1. Check existed account
         if (account != null)
         {
             // 1.1 Return an error if the account exists and its status is not unverified.
             if (account.Status != (int)AccountStatus.UnVerify)
             {
-                return Result.Failure(new Error("400", "Account already existed."));
+                return Result.Failure(new Error("400", "Tài khoản đã tồn tại."));
             }
             // 1.2 Update the account if the account is unverified.
             // 1.2.1 Revoke verification code
@@ -51,8 +51,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
                 return Result.Failure(new Error("500", "Internal server error."));
             }
 
-            account.FirstName = request.FirstName;
-            account.LastName = request.LastName;
+            account.PhoneNumber = request.PhoneNumber;
             account.Password = BCrypUnitls.Hash(request.Password);
             var refreshToken = _jwtTokenService.GenerateJwtRefreshToken(account);
             account.RefreshToken = refreshToken;
@@ -64,8 +63,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
             var newAccount = new Account
             {
                 Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                PhoneNumber = request.PhoneNumber,
                 Password = BCrypUnitls.Hash(request.Password),
                 AvatarUrl = "https://www.freecodecamp.org/news/content/images/2021/10/golang.png",
                 RoleId = (int)Domain.Enums.Roles.Customer,
@@ -83,7 +81,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
     private async Task<Result<Result>> CreateAccount(Account account)
     {
         var code = new Random().Next(1000, 10000).ToString();
-        var isSendMail = SendVerifyCode(account.Email, code);
+        var isSendMail = _emailService.SendVerifyCode(account.Email, code, (int)VerificationCodeTypes.Register);
         if (!isSendMail)
         {
             return Result.Failure(new Error("500", "Internal server error."));
@@ -143,7 +141,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
     private async Task<Result<Result>> UpdateAccount(Account account)
     {
         var code = new Random().Next(1000, 10000).ToString();
-        var isSendMail = SendVerifyCode(account.Email, code);
+        var isSendMail = _emailService.SendVerifyCode(account.Email, code, (int)VerificationCodeTypes.Register);
         if (!isSendMail)
         {
             return Result.Failure(new Error("500", "Internal server error."));
@@ -174,27 +172,5 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
             _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error."));
         }
-    }
-
-    private bool SendVerifyCode(string email, string code)
-    {
-        return _emailService.SendEmail(email, "VFoody Account Verification Code",
-            @"
-                    <html>
-                        <body style='font-family: Arial, sans-serif; color: #333;'>
-                            <div style='margin-bottom: 20px; text-align: center;'>
-                                <img src='https://www.freecodecamp.org/news/content/images/2021/10/golang.png' alt='VFoody Logo' style='display: block; margin: 0 auto;' />
-                            </div>
-                            <p>Hello,</p>
-                            <p>Thank you for signing up for VFoody! Please use the following code to verify your account:</p>
-                            <div style='text-align: center; margin: 20px;'>
-                                <span style='font-size: 24px; padding: 10px; border: 1px solid #ccc;'>" + code + @"</span>
-                            </div>
-                            <p>If you did not sign up for an VFoody account, please ignore this email or contact our support team.</p>
-                            <p>Best regards,</p>
-                            <p>The VFoody Team</p>
-                        </body>
-                    </html>"
-        );
     }
 }

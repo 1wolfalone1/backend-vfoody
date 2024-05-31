@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
@@ -43,7 +44,7 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         if (verificationCode == null)
         {
             // 1.1 Response not found verification code
-            return Result.Failure(new Error("400", "Not correct verification code."));
+            return Result.Failure(new Error("400", "Mã xác minh không chính xác."));
         }
 
         //1.2 Revoke verification code, check expired time and update account status
@@ -56,7 +57,7 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         //1.2.2 Check expired time of code
         if (verificationCode.ExpiredTịme < DateTime.Now)
         {
-            return Result.Failure(new Error("400", "Verification code expired."));
+            return Result.Failure(new Error("400", "Mã xác minh đã hết hạn."));
         }
 
         //1.2.3 Update account status
