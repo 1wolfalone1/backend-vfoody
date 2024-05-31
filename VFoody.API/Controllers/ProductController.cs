@@ -12,7 +12,7 @@ using VFoody.Application.UseCases.Product.Queries.TopProductShop;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
+// [Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ProductController : BaseApiController
 {
     private readonly ICurrentPrincipalService _currentPrincipalService;

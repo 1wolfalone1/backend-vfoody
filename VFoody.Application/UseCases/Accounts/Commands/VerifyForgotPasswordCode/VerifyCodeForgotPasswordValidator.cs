@@ -12,7 +12,6 @@ public class VerifyCodeForgotPasswordValidator : AbstractValidator<VerifyCodeFor
             .WithMessage("Code must be a 4-digit number.");
         RuleFor(a => a.Email)
             .NotEmpty()
-            .Matches(@"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$")
-            .WithMessage("Email address provided is not in a valid format.");
+            .WithMessage("Email is required.");
     }
 }

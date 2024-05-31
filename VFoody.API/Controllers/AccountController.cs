@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
+using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
-using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
+using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
 
 namespace VFoody.API.Controllers;

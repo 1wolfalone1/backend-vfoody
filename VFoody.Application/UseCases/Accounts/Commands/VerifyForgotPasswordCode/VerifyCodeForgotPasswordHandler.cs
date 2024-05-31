@@ -24,17 +24,15 @@ public class VerifyCodeForgotPasswordHandler : ICommandHandler<VerifyCodeForgotP
         if (verificationCode == null)
         {
             // 1.1 Response not found verification code
-            return Result.Failure(new Error("400", "Not correct verification code."));
+            return Result.Failure(new Error("400", "Mã xác minh không chính xác."));
         }
-        else
-        {
-            if (verificationCode.ExpiredTịme < DateTime.Now)
-            {
-                return Result.Failure(new Error("400", "Verification code expired."));
-            }
 
-            return Result.Success("The verification code is correct.");
+        if (verificationCode.ExpiredTịme < DateTime.Now)
+        {
+            return Result.Failure(new Error("400", "Mã xác minh đã hết hạn."));
         }
+
+        return Result.Success("The verification code is correct.");
 
     }
 }
