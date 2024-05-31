@@ -19,5 +19,10 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     {
         return DbSet.SingleOrDefault(a => a.Email == email);
     }
+
+    public bool CheckExistAccountByPhoneNumber(string phoneNumber)
+    {
+        return DbSet.Any(a => a.PhoneNumber == phoneNumber);
+    }
 }
 
