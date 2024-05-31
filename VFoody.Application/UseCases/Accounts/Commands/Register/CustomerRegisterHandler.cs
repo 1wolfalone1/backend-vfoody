@@ -34,7 +34,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
 
     public async Task<Result<Result>> Handle(CustomerRegisterCommand request, CancellationToken cancellationToken)
     {
-        var account = _accountRepository.GetAccountByEmailAndPhoneNumber(request.Email, request.PhoneNumber);
+        var account = _accountRepository.GetAccountByEmail(request.Email);
         //1. Check existed account
         if (account != null)
         {
