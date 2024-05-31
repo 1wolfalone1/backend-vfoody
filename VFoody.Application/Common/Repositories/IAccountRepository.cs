@@ -6,4 +6,6 @@ public interface IAccountRepository : IBaseRepository<Account>
 {
     Account GetCustomerAccount(string email, string password);
     Account? GetAccountByEmail(string email);
+
+    bool CheckExistAccountByPhoneNumber(string phoneNumber);
 }

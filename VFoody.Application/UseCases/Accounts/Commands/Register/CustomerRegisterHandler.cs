@@ -41,7 +41,12 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
             // 1.1 Return an error if the account exists and its status is not unverified.
             if (account.Status != (int)AccountStatus.UnVerify)
             {
-                return Result.Failure(new Error("400", "Tài khoản đã tồn tại."));
+                return Result.Failure(new Error("400", "Email đã tồn tại."));
+            }
+
+            if (account.PhoneNumber != request.PhoneNumber && _accountRepository.CheckExistAccountByPhoneNumber(request.PhoneNumber))
+            {
+                return Result.Failure(new Error("400", "Số điện thoại đã tồn tại."));
             }
             // 1.2 Update the account if the account is unverified.
             // 1.2.1 Revoke verification code
@@ -59,6 +64,11 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
         }
         else
         {
+            if (_accountRepository.CheckExistAccountByPhoneNumber(request.PhoneNumber))
+            {
+                return Result.Failure(new Error("400", "Số điện thoại đã tồn tại."));
+            }
+
             //1.3 Create a new account.
             var newAccount = new Account
             {
