@@ -12,6 +12,12 @@ public partial class PlatformPromotion : BaseEntity
     [Key]
     [Column("id")]
     public int Id { get; set; }
+
+    [Column("title")]
+    [StringLength(300)]
+    [MySqlCharSet("utf8mb3")]
+    [MySqlCollation("utf8mb3_general_ci")]
+    public string? Title { get; set; }
     
     [Column("banner_url")]
     [StringLength(300)]
