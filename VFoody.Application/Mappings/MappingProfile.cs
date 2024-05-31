@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
+using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
-using VFoody.Application.UseCases.Accounts.Commands.Verify;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
+using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
 using VFoody.Application.UseCases.Product.Models;
 using VFoody.Application.UseCases.Shop.Models;

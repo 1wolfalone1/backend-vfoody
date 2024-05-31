@@ -35,7 +35,7 @@ public class ForgotPasswordHandler : ICommandHandler<ForgotPasswordCommand, Resu
         if (verificationCode == null)
         {
             // 1.1 Response not found verification code
-            return Result.Failure(new Error("400", "Not correct verification code."));
+            return Result.Failure(new Error("400", "Mã xác minh không chính xác."));
         }
 
         //1.2 Revoke verification code, check expired time and update new password
@@ -49,7 +49,7 @@ public class ForgotPasswordHandler : ICommandHandler<ForgotPasswordCommand, Resu
         //1.2.2 Check expired time of code
         if (verificationCode.ExpiredTịme < DateTime.Now)
         {
-            return Result.Failure(new Error("400", "Verification code expired."));
+            return Result.Failure(new Error("400", "Mã xác minh đã hết hạn."));
         }
 
         //1.2.3 Update account status

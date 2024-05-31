@@ -2,5 +2,5 @@ namespace VFoody.Application.Common.Services;
 
 public interface IEmailService
 {
-    bool SendEmail(string toEmail, string subject, string body);
+    bool SendVerifyCode(string email, string code, int verifyType);
 }
