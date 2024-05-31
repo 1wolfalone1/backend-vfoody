@@ -23,8 +23,7 @@ public class GetShopProductHandler : IQueryHandler<GetShopProductQuery, Result>
         var totalProducts = _productRepository.CountTotalActiveProductByShopId(request.ShopId);
         var products = _productRepository.GetShopProduct(request.ShopId, request.PageIndex, request.PageSize);
         var result = new PaginationResponse<ProductResponse>(_mapper.Map<List<ProductResponse>>(products),
-            request.PageIndex, request.PageSize,
-            (int)Math.Ceiling((double)totalProducts / request.PageSize));
+            request.PageIndex, request.PageSize, totalProducts);
         return Result.Success(result);
     }
 }
