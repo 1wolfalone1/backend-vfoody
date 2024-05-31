@@ -21,6 +21,7 @@
 WITH FilteredPersonPromotions AS (
     SELECT
         p.id,
+        p.title,
         p.amount_rate,
         p.minimum_order_value,
         p.maximum_apply_value,
@@ -52,7 +53,8 @@ WITH FilteredPersonPromotions AS (
 )
 
 SELECT
-    id AS Id,    
+    id AS Id,
+    title AS Title,
     start_date AS StartDate,
     end_date AS EndDate,
     
