@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Enums;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Utils;
@@ -33,14 +34,16 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
         var customerAccount =
             this._accountRepository.GetAccountByEmail(request.AccountLogin.Email);
         if (customerAccount == null || !BCrypUnitls.Verify(request.AccountLogin.Password, customerAccount.Password))
-            return Result.Failure(new Error("401", "Email or Password not correct"));
-        
-        if(customerAccount.RoleId != (int) Domain.Enums.Roles.Customer)
-            return Result.Failure(new Error("401", "Your account not have permission to access this"));
+            return Result.Failure(new Error("401", ResponseCode.AuthErrorInvalidUsernameOrPassword.GetDescription()));
 
         if (customerAccount.Status != (int)AccountStatus.Verify)
-            return Result.Failure(new Error("401", "Your account haven't verify"));
+            return Result.Failure(new Error("401", ResponseCode.VerifyErrorInvalidAccount.GetDescription()));
 
+        if (customerAccount.Status == (int)AccountStatus.Ban)
+        {
+            return Result.Failure(new Error("400", ResponseCode.BanErrorAccount.GetDescription()));
+        }
+        
         var token = this._jwtTokenService.GenerateJwtToken(customerAccount);
         var refreshToken = this._jwtTokenService.GenerateJwtRefreshToken(customerAccount);
         // Update token
