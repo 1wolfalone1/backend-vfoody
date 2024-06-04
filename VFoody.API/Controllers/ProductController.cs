@@ -5,6 +5,7 @@ using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Product.Commands;
 using VFoody.Application.UseCases.Product.Queries;
+using VFoody.Application.UseCases.Product.Queries.CardProducts;
 using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
 using VFoody.Application.UseCases.Product.Queries.ShopProduct;
 using VFoody.Application.UseCases.Product.Queries.TopProductShop;
@@ -81,6 +82,15 @@ public class ProductController : BaseApiController
         return HandleResult(await Mediator.Send(new CreateProductCommand
         {
             CreateProductRequest = createProductRequest
+        }));
+    }
+
+    [HttpGet("customer/product")]
+    public async Task<IActionResult> GetProductCard([FromQuery] int[] ids)
+    {
+        return this.HandleResult(await this.Mediator.Send(new GetListProductInCardQuery
+        {
+            ProductIds = ids
         }));
     }
 }

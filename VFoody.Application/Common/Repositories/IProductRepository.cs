@@ -8,4 +8,5 @@ public interface IProductRepository : IBaseRepository<Product>
     List<Product> GetShopProduct(int shopId, int pageNum, int pageSize);
     int CountTotalActiveProductByShopId(int shopId);
     List<Product> GetTopProductByShopId(int shopId, int pageNum, int pageSize);
+    Task<List<Product>> GetListProductInCard(int[] requestProductIds);
 }

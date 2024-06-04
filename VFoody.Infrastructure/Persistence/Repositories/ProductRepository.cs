@@ -47,4 +47,10 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .Take(pageSize)
             .ToList();
     }
+
+    public async Task<List<Product>> GetListProductInCard(int[] requestProductIds)
+    {
+        return await this.DbSet.Where(p => requestProductIds.Contains(p.Id) && p.Status != (int)ProductStatus.Delete)
+            .ToListAsync();
+    }
 }
