@@ -29,5 +29,6 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Rating,
                 opt => opt.MapFrom(src => src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)));
         CreateMap<Building, ShopInfoResponse.BuildingResponse>();
+        CreateMap<Product, ProductCardResponse>();
     }
 }

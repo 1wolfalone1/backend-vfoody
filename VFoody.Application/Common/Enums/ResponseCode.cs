@@ -14,7 +14,13 @@ public enum ResponseCode
     
     // Auth
         
-    [Description("Invalid username or password")] AuthErrorInvalidUsernameOrPassword = 20,
+    [Description("Email hoặc Mật Khẩu không chính xác")] AuthErrorInvalidUsernameOrPassword = 20,
     
     [Description("Invalid refresh token")] AuthErrorInvalidRefreshToken = 21,
+    
+    //Very
+    [Description("Tài khoản của bạn chưa được xác thực")] VerifyErrorInvalidAccount = 31,
+    
+    //Ban
+    [Description("Tài khoản bạn đã bị khóa")] BanErrorAccount = 41,
 }

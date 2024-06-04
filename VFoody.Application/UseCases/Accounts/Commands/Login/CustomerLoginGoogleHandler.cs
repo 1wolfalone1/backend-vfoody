@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Enums;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Accounts.Models;
@@ -51,12 +52,12 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         {
             if (accTemp.Status == (int)AccountStatus.UnVerify)
             {
-                return Result.Failure(new Error("400", "This account hasn't verify yet!"));
+                return Result.Failure(new Error("400", ResponseCode.VerifyErrorInvalidAccount.GetDescription()));
             }
 
             if (accTemp.Status == (int)AccountStatus.Ban)
             {
-                return Result.Failure(new Error("400", "This account got banned"));
+                return Result.Failure(new Error("400", ResponseCode.BanErrorAccount.GetDescription()));
             }
 
             return await this.GenerateJwtTokenAsync(accTemp).ConfigureAwait(false);
@@ -94,7 +95,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         {
             this._unitOfWork.RollbackTransaction();
             this._logger.LogError(e, e.Message);
-            throw new ("Create account whent login with google fail");
+            throw new ("Create account when login with google fail");
         }
     }
     

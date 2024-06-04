@@ -74,6 +74,8 @@
     </EmbeddedResource>
     <None Remove="Common\Queries\SelectShopFeedbacks.sql" />
     <EmbeddedResource Include="Common\Queries\SelectShopFeedbacks.sql" />
+    <None Remove="Common\Queries\SelectShopByIds.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectShopByIds.sql" />
   </ItemGroup>
 
 </Project>

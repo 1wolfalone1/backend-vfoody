@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
+using VFoody.Application.UseCases.Shop.Queries.ListShop;
 using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
@@ -46,5 +47,14 @@ public class ShopController : BaseApiController
     public async Task<IActionResult> GetShopInfo(int shopId)
     {
         return HandleResult(await Mediator.Send(new GetShopInfoQuery(shopId)));
+    }
+    
+    [HttpGet("customer/shop")]
+    public async Task<IActionResult> GetShopInfo([FromQuery] int[] ids)
+    {
+        return HandleResult(await Mediator.Send(new GetListShopQuery
+        {
+            shopIds = ids
+        }));
     }
 }

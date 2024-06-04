@@ -35,4 +35,5 @@ public enum QueryName
     SelectPlatformPromotions,
     SelectUserPromotions,
     SelectShopFeedbacks,
+    SelectShopByIds,
 }
