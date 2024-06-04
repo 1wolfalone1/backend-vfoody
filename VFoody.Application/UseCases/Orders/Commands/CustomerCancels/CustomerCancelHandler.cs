@@ -26,18 +26,22 @@ public class CustomerCancelHandler : ICommandHandler<CustomerCancelCommand,Resul
         try
         {
             var order = this._orderRepository.Get(predicate: a => a.Id == request.Id
-                                                                  && a.Status == (int)OrderStatus.OrderPLaced);
+                                                                  && a.Status == (int)OrderStatus.OrderPLaced).FirstOrDefault();
             if (order == null)
             {
-                return Result.Failure(new Error("404", "Không tìm thấy order"));
+                return Result.Failure(new Error("404", $"Không tìm thấy order với id: {request.Id}"));
             }
 
-            return Result.Success();
+            order.Status = (int)OrderStatus.Cancelled;
+
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+            return Result.Success("Hủy order thành công");
         }
         catch (Exception e)
         {
             this._logger.LogError(e, e.Message);
-            return Result.Failure(new Error("500", ""));
+            this._unitOfWork.RollbackTransaction();
+            return Result.Failure(new Error("500", "Hủy order thất bại"));
         }
     }
 }

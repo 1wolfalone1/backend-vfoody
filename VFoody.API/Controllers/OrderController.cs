@@ -9,7 +9,7 @@ namespace VFoody.API.Controllers;
 [Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class OrderController : BaseApiController
 {
-    [HttpPut("customer/order/{id}")]
+    [HttpPut("customer/order/{id}/cancel")]
     public async Task<IActionResult> CancelOrderAsync(int id)
     {
         return this.HandleResult(await this.Mediator.Send(new CustomerCancelCommand
