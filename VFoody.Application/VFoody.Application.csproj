@@ -25,6 +25,8 @@
     <Folder Include="UseCases\Category\Commands\" />
     <Folder Include="UseCases\Category\Models\" />
     <Folder Include="UseCases\Feedbacks\Commands\" />
+    <Folder Include="UseCases\Firebases\Models\" />
+    <Folder Include="UseCases\Firebases\Queries\" />
     <Folder Include="UseCases\Orders\Models\" />
     <Folder Include="UseCases\Orders\Queries\" />
     <Folder Include="UseCases\Roles\Queries\" />

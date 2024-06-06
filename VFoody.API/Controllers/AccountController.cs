@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
+using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
+using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
 
 namespace VFoody.API.Controllers;
 
@@ -78,5 +80,23 @@ public class AccountController : BaseApiController
     public async Task<IActionResult> GetCustomerInfor()
     {
         return this.HandleResult(await this.Mediator.Send(new GetCustomerInforQuery()));
+    }
+    
+    [HttpPost("firebase/verify")]
+    public async Task<IActionResult> VerifyIdToken([FromBody] string idToken)
+    {
+        return this.HandleResult(await this.Mediator.Send(new VerifyIDTokensCommand()
+        {
+            IdToken = idToken
+        }));
+    }
+    
+    [HttpPost("customer/forgot-password")]
+    public async  Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordFirebaseRequest forgotPasswordFirebaseRequest)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ForgotPasswordFirebaseCommand()
+        {
+            ForgotPasswordFirebaseRequest = forgotPasswordFirebaseRequest
+        }));
     }
 }

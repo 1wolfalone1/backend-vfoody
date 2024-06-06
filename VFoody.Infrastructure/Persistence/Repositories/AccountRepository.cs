@@ -1,4 +1,5 @@
-﻿using VFoody.Application.Common.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using VFoody.Application.Common.Repositories;
 using VFoody.Domain.Entities;
 
 namespace VFoody.Infrastructure.Persistence.Repositories;
@@ -23,6 +24,11 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     public bool CheckExistAccountByPhoneNumber(string phoneNumber)
     {
         return DbSet.Any(a => a.PhoneNumber == phoneNumber);
+    }
+
+    public async Task<Account> GetAccountByPhoneNumber(string firebaseUserPhoneNumber)
+    {
+        return await this.DbSet.SingleOrDefaultAsync(a => a.PhoneNumber == firebaseUserPhoneNumber).ConfigureAwait(false);
     }
 }
 
