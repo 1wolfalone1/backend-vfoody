@@ -1,6 +1,7 @@
 ﻿using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
+using Microsoft.Extensions.Configuration;
 using VFoody.Application.Common.Services;
 using VFoody.Domain.Shared;
 
@@ -8,14 +9,22 @@ namespace VFoody.Infrastructure.Services;
 
 public class FirebaseVerifyIDTokenService : IBaseService, IFirebaseVerifyIDTokenService
 {
+    private readonly IConfiguration _configuration;
+
+    public FirebaseVerifyIDTokenService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     public void CreateFirebaseAuth()
     {
         if (FirebaseApp.DefaultInstance == null)
         {
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile("./firebase_credentials.json")
-            }); 
+                Credential = GoogleCredential.GetApplicationDefault(),
+                ProjectId = _configuration["PROJECT_ID"],
+            });
         }
         
     }
