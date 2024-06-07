@@ -20,7 +20,7 @@ public class GetShopInfoHandler : IQueryHandler<GetShopInfoQuery, Result>
 
     public Task<Result<Result>> Handle(GetShopInfoQuery request, CancellationToken cancellationToken)
     {
-        var shop = _shopRepository.GetInfoByShopIdAndStatusIn(request.shopId, [(int)ShopStatus.Active]);
+        var shop = _shopRepository.GetInfoByShopIdAndStatusIn(request.shopId, new int[(int)ShopStatus.Active]);
         return Task.FromResult<Result<Result>>(shop != null
             ? Result.Success(_mapper.Map<ShopInfoResponse>(shop))
             : Result.Failure(new Error("400", "Not found this shop.")));

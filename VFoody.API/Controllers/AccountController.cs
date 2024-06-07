@@ -8,6 +8,8 @@ using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
+using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UpdateProfile;
+using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
@@ -99,11 +101,34 @@ public class AccountController : BaseApiController
     }
     
     [HttpPost("customer/firebase/forgot-password")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async  Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordFirebaseRequest forgotPasswordFirebaseRequest)
     {
         return this.HandleResult(await this.Mediator.Send(new ForgotPasswordFirebaseCommand()
         {
             ForgotPasswordFirebaseRequest = forgotPasswordFirebaseRequest
+        }));
+    }
+
+    [HttpPut("customer/profile/{id}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
+    public async Task<IActionResult> UpdateCustomerProfile([FromBody] UpdateProfileRequest updateProfileRequest, int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new UpdateProfileCommand
+        {
+            UpdateProfileRequest = updateProfileRequest,
+            Id = id
+        }));
+    }
+    
+    [HttpPut("customer/updload/{id}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
+    public async Task<IActionResult> UpdateCustomerProfile(IFormFile avatarImageFile, int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new UpdateLoadAvatarCommand()
+        {
+            AvatarImageFile = avatarImageFile,
+            Id = id
         }));
     }
 }
