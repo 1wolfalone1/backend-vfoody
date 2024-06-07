@@ -6,6 +6,7 @@ using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
+using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
@@ -38,6 +39,12 @@ public class AccountController : BaseApiController
     {
         var command = _mapper.Map<CustomerRegisterCommand>(registerRequest);
         return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("customer/firebase/register")]
+    public async  Task<IActionResult> Register([FromBody] RegisterFireBaseCommand registerFireBaseCommand)
+    {
+        return HandleResult(await Mediator.Send(registerFireBaseCommand));
     }
 
     [HttpPost("customer/forgot-password")]
@@ -91,7 +98,7 @@ public class AccountController : BaseApiController
         }));
     }
     
-    [HttpPost("customer/forgot-password")]
+    [HttpPost("customer/firebase/forgot-password")]
     public async  Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordFirebaseRequest forgotPasswordFirebaseRequest)
     {
         return this.HandleResult(await this.Mediator.Send(new ForgotPasswordFirebaseCommand()
