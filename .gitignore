@@ -280,3 +280,5 @@ appsettings.Development.json
 
 out/
 out2/
+
+firebase_credentials.json
