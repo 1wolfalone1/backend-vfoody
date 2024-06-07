@@ -83,15 +83,15 @@ public class AccountController : BaseApiController
     }
     
     [HttpPost("firebase/verify")]
-    public async Task<IActionResult> VerifyIdToken([FromBody] string idToken)
+    public async Task<IActionResult> VerifyIdToken([FromBody] VerifyIDTokenRequest verifyIdTokenRequest)
     {
         return this.HandleResult(await this.Mediator.Send(new VerifyIDTokensCommand()
         {
-            IdToken = idToken
+            IdToken = verifyIdTokenRequest.IdToken
         }));
     }
     
-    [HttpPost("customer/forgot-password")]
+    [HttpPost("customer/firebase/forgot-password")]
     public async  Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordFirebaseRequest forgotPasswordFirebaseRequest)
     {
         return this.HandleResult(await this.Mediator.Send(new ForgotPasswordFirebaseCommand()
