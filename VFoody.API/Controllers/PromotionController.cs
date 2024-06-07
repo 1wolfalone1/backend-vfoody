@@ -6,7 +6,7 @@ using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
-using VFoody.Domain.Shared;
+using VFoody.Domain.Enums;
 
 namespace VFoody.API.Controllers;
 
@@ -34,7 +34,7 @@ public class PromotionController : BaseApiController
         return this.HandleResult(await this.Mediator.Send(new GetCustomerPromotionListQuery
         {
             AccountId = _currentPrincipalService.CurrentPrincipalId.Value,
-            Status = 1,
+            Status = (int) PersonPromotionStatus.Active,
             Available = true,
             PageIndex = pageIndex,
             PageSize = pageSize,
@@ -47,7 +47,7 @@ public class PromotionController : BaseApiController
         return this.HandleResult(await this.Mediator.Send(new GetShopPromotionListQuery
         {
             ShopId = id,
-            Status = 1,
+            Status = (int) ShopPromotionStatus.Active,
             Available = true,
             PageIndex = pageIndex,
             PageSize = pageSize,
@@ -59,7 +59,7 @@ public class PromotionController : BaseApiController
     {
         return this.HandleResult(await this.Mediator.Send(new GetPlatformPromotionListQuery
         {
-            Status = 1,
+            Status = (int) PlatformPromotionStatus.Active,
             Available = true,
             PageIndex = pageIndex,
             PageSize = pageSize,
