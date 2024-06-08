@@ -13,7 +13,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 WORKDIR /App
 COPY --from=build-env /App/out .
-COPY --from=build-env /App/.env .
-RUN cat .env
 
-ENTRYPOINT ["dotnet", "VFoody.API.dll", "--urls http://0.0.0.0:$PORT"]
+ENTRYPOINT ["dotnet", "VFoody.API.dll"]
