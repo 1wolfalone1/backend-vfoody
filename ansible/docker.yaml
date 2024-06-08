@@ -5,6 +5,18 @@
   become_method: sudo
 
   tasks:
+  - name: Copy .env file to /tmp directory
+    become: true
+    copy:
+      src: ./env
+      dest: /tmp/env
+
+  - name: Copy .firebase_credentials.json file to /tmp directory
+    become: true
+    copy:
+      src: ./firebase_credentials.json
+      dest: /tmp/firebase_credentials.json
+
   - name: Set up Docker ECR login
     become: true
     environment:
@@ -34,4 +46,4 @@
 
   - name: Run new container
     become: true
-    command: docker run -d -p 80:8080 --name bs2nd "{{ docker_images }}"
+    command: docker run -d -p 80:8080 --env-file /tmp/env -v /tmp:/tmp/mnt -e GOOGLE_APPLICATION_CREDENTIALS="/tmp/mnt/firebase_credentials.json"  "{{ docker_images }}"

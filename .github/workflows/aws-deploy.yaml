@@ -62,7 +62,8 @@ jobs:
         run: |
           echo "${{ secrets.INVENTORY }}" > ./inventory
           echo "${{ secrets.PEM }}" > ./vfoody.pem
-
+          echo "${{ secrets.ENV }}" > ./env
+          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > ./firebase_credentials.json          
       - name: "Create env file"
         run: |
           sudo chmod 400 ./vfoody.pem
@@ -70,7 +71,7 @@ jobs:
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          playbook: docker.yml
+          playbook: docker.yaml
           directory: ./ansible/
           options: |
             --inventory inventory
