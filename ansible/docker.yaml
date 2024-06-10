@@ -15,7 +15,7 @@
     become: true
     copy:
       src: ./firebase_credentials.json
-      dest: /tmp/firebase_credentials.json
+      dest: /mnt/firebase_credentials.json
 
   - name: Set up Docker ECR login
     become: true
@@ -46,4 +46,4 @@
 
   - name: Run new container
     become: true
-    command: docker run -d -p 80:8080 --name vfoody --env-file /tmp/env -v /tmp:/tmp/mnt -e GOOGLE_APPLICATION_CREDENTIALS="/tmp/mnt/firebase_credentials.json"  "{{ docker_images }}"
+    command: docker run -d -p 80:8080 --name vfoody --env-file /tmp/env -v /mnt:/tmp/mnt -e GOOGLE_APPLICATION_CREDENTIALS="/tmp/mnt/firebase_credentials.json"  "{{ docker_images }}"
