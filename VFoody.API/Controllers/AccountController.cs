@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
+using VFoody.Application.UseCases.Accounts.Commands.CheckAccount;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
@@ -130,5 +131,11 @@ public class AccountController : BaseApiController
             AvatarImageFile = avatarImageFile,
             Id = id
         }));
+    }
+
+    [HttpPost("customer/account/check")]
+    public async  Task<IActionResult> CheckExistedAccount(CheckAccountCommand checkAccountCommand)
+    {
+        return HandleResult(await this.Mediator.Send(checkAccountCommand));
     }
 }
