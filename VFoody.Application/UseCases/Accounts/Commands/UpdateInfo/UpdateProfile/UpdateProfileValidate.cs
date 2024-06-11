@@ -11,6 +11,6 @@ public class UpdateProfileValidate : AbstractValidator<UpdateProfileRequest>
             .WithMessage("Số điện thoại là bắt buộc");
         RuleFor(a => a.FullName)
             .NotEmpty()
-            .WithMessage("Email là bắt buộc");
+            .WithMessage("Họ và Tên là bắt buộc");
     }
 }
