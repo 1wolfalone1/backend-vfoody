@@ -36,7 +36,7 @@ public class UpdateLoadAvatarHandler : ICommandHandler<UpdateLoadAvatarCommand, 
             throw new AuthenticationException("Id của account và token không map");
         } 
 
-        var account = this._accountRepository.GetAccountByEmail(this._currentPrincipalService.CurrentPrincipal);
+        var account = this._accountRepository.GetAccountWithBuildingByEmail(this._currentPrincipalService.CurrentPrincipal);
         if (account.AvatarUrl != null && account.AvatarUrl.Trim().Length > 0)
         {
             var fileNameImage = account.AvatarUrl.Split("/");

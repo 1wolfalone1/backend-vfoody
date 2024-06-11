@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Utils;
 using VFoody.Application.UseCases.Accounts.Models;
@@ -13,19 +14,23 @@ public class GetCustomerInforHandler : IQueryHandler<GetCustomerInforQuery, Resu
     private readonly ICurrentAccountService _currentAccountService;
     private readonly ILogger<GetCustomerInforHandler> _logger;
     private readonly IMapper _mapper;
+    private readonly ICurrentPrincipalService _currentPrincipal;
+    private readonly IAccountRepository _accountRepository;
 
-    public GetCustomerInforHandler(ICurrentAccountService currentAccountService, ILogger<GetCustomerInforHandler> logger, IMapper mapper)
+    public GetCustomerInforHandler(ICurrentAccountService currentAccountService, ILogger<GetCustomerInforHandler> logger, IMapper mapper, ICurrentPrincipalService currentPrincipal, IAccountRepository accountRepository)
     {
         _currentAccountService = currentAccountService;
         _logger = logger;
         _mapper = mapper;
+        _currentPrincipal = currentPrincipal;
+        _accountRepository = accountRepository;
     }
 
     public async Task<Result<Result>> Handle(GetCustomerInforQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var account = this._currentAccountService.GetCurrentAccount();
+            var account = this._accountRepository.GetAccountWithBuildingByEmail(this._currentPrincipal.CurrentPrincipal);
             var accountResponse = new AccountResponse();
             this._mapper.Map(account, accountResponse);
             accountResponse.RoleName = EnumHelper.GetEnumDescription<Domain.Enums.Roles>(account.RoleId);
