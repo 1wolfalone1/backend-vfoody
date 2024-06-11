@@ -9,4 +9,6 @@ public interface IAccountRepository : IBaseRepository<Account>
 
     bool CheckExistAccountByPhoneNumber(string phoneNumber);
     Task<Account> GetAccountByPhoneNumber(string firebaseUserPhoneNumber);
+    
+    Account? GetAccountWithBuildingByEmail(string email);
 }
