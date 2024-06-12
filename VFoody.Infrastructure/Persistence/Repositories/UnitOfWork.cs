@@ -3,6 +3,7 @@ using VFoody.Application.Common.Repositories;
 using VFoody.Infrastructure.Persistence.Contexts;
 
 namespace VFoody.Infrastructure.Persistence.Repositories;
+
 public class UnitOfWork : IUnitOfWork
 {
     private const string ErrorNotOpenTransaction = "You not open transaction yet!";
@@ -17,13 +18,13 @@ public class UnitOfWork : IUnitOfWork
 
     public bool IsTransaction
     {
-        get
-        {
-            return this.isTransaction;
-        }
+        get { return this.isTransaction; }
     }
 
-    internal VFoodyContext Context { get => this.context; }
+    internal VFoodyContext Context
+    {
+        get => this.context;
+    }
 
     public async Task BeginTransactionAsync()
     {
@@ -33,6 +34,7 @@ public class UnitOfWork : IUnitOfWork
         }
 
         isTransaction = true;
+        await this.context.Database.BeginTransactionAsync();
     }
 
     public async Task CommitTransactionAsync()
@@ -43,7 +45,18 @@ public class UnitOfWork : IUnitOfWork
         }
 
         await this.context.SaveChangeAsync().ConfigureAwait(false);
+        await this.context.Database.CommitTransactionAsync();
         this.isTransaction = false;
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        if (!this.isTransaction)
+        {
+            throw new InvalidOperationException(ErrorNotOpenTransaction);
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public void RollbackTransaction()
@@ -53,6 +66,7 @@ public class UnitOfWork : IUnitOfWork
             throw new Exception(ErrorNotOpenTransaction);
         }
 
+        context.Database.RollbackTransaction();
         this.isTransaction = false;
 
         foreach (var entry in this.context.ChangeTracker.Entries())

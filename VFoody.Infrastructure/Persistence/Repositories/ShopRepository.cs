@@ -14,4 +14,9 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
     {
         return DbSet.Include(s => s.Building).SingleOrDefault(s => s.Id == shopId && statusList.Contains(s.Status));
     }
+
+    public async Task<Shop> GetShopByAccountId(int id)
+    {
+        return await DbSet.Where(shop => shop.AccountId == id).SingleAsync();
+    }
 }
