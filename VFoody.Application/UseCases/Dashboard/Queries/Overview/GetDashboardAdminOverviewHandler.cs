@@ -48,13 +48,40 @@ public class GetDashboardAdminOverviewHandler : IQueryHandler<GetDashboardAdminO
                 currentOverview.CalTotalUserRate(previousOverview.TotalUser);
                 currentOverview.DayCompareRate = dayCompareRate;
             }
+            else
+            {
+                var currentMonthOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
+                    QueryName.SelectDashboardOverview, new
+                    {
+                        DateFrom = request.DateTo.AddDays(-30),
+                        DateTo = request.DateTo
+                    }).ConfigureAwait(false);
+                
+                var lastMonthOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
+                    QueryName.SelectDashboardOverview, new
+                    {
+                        DateFrom = request.DateTo.AddDays(-60),
+                        DateTo = request.DateTo.AddDays(-30)
+                    }).ConfigureAwait(false);
+                
+                currentMonthOverview.CalTotalOrderRate(lastMonthOverview.TotalOrder);
+                currentMonthOverview.CalTotalRevenueRate(lastMonthOverview.TotalRevenue);
+                currentMonthOverview.CalTotalTradingRate(lastMonthOverview.TotalTrading);
+                currentMonthOverview.CalTotalUserRate(lastMonthOverview.TotalUser);
+
+                currentOverview.TotalOrderRate = currentMonthOverview.TotalOrderRate;
+                currentOverview.TotalRevenueRate = currentMonthOverview.TotalRevenueRate;
+                currentOverview.TotalTradingRate = currentMonthOverview.TotalTradingRate;
+                currentOverview.TotalUserRate = currentMonthOverview.TotalUserRate;
+                currentOverview.DayCompareRate = 30;
+            }
 
             return Result.Success(currentOverview);
         }
         catch (Exception e)
         {
             this._logger.LogError(e, e.Message);
-            return Result.Failure(new Error("500", "Data hiện tại đang không có sẵn"));
+            return Result.Failure(new Error("500", "Dữ liệu không khả dụng"));
         }
     }
 }
