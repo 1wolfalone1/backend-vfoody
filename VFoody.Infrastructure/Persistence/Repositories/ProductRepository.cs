@@ -11,6 +11,27 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
     }
 
+    public async Task<Product?> GetProductByIdAndShopId(int productId, int shopId)
+    {
+        return await DbSet.Where(product =>
+                product.Id == productId
+                && product.ShopId == shopId
+                && product.Status != (int)ProductStatus.Delete
+            )
+            .SingleOrDefaultAsync();
+    }
+
+    public Product? GetProductIncludeProductCategoryByIdAndShopId(int productId, int shopId)
+    {
+        return DbSet.Where(product =>
+                product.Id == productId
+                && product.ShopId == shopId
+                && product.Status != (int)ProductStatus.Delete
+            )
+            .Include(product => product.ProductCategories)
+            .SingleOrDefault();
+    }
+
     public Product? GetProductDetail(int productId)
     {
         return DbSet
@@ -52,5 +73,19 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         return await this.DbSet.Where(p => requestProductIds.Contains(p.Id) && p.Status != (int)ProductStatus.Delete)
             .ToListAsync();
+    }
+
+    public async Task<List<Product>> GetListProductByShopId(int id, int pageNum, int pageSize)
+    {
+        return await this.DbSet.Where(p => p.ShopId == id && p.Status != (int)ProductStatus.Delete)
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public int CountTotalProductByShopId(int id)
+    {
+        return DbSet
+            .Count(p => p.ShopId == id && p.Status != (int)ProductStatus.Delete);
     }
 }

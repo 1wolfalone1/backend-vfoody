@@ -1,19 +1,22 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
-using VFoody.Application.UseCases.Product.Commands;
+using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
+using VFoody.Application.UseCases.Product.Commands.DeleteProductOfShopOwner;
+using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries;
 using VFoody.Application.UseCases.Product.Queries.CardProducts;
 using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
+using VFoody.Application.UseCases.Product.Queries.ProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries.ShopProduct;
 using VFoody.Application.UseCases.Product.Queries.TopProductShop;
 
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ProductController : BaseApiController
 {
     private readonly ICurrentPrincipalService _currentPrincipalService;
@@ -26,6 +29,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetTopProduct(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
@@ -36,6 +40,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize)
     {
         string email = _currentPrincipalService.CurrentPrincipal;
@@ -48,6 +53,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/{shopId}/product/top")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetTopProductByShop(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetTopProductShopQuery
@@ -59,6 +65,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/product")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetShopProduct(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetShopProductQuery
@@ -71,26 +78,54 @@ public class ProductController : BaseApiController
 
 
     [HttpGet("shop/product/detail")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetProductDetailToOrder(int productId)
     {
         return HandleResult(await Mediator.Send(new GetProductDetailToOrderQuery(productId)));
     }
 
-    [HttpPost("shop/product/create")]
-    public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
-    {
-        return HandleResult(await Mediator.Send(new CreateProductCommand
-        {
-            CreateProductRequest = createProductRequest
-        }));
-    }
-
     [HttpGet("customer/product")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetProductCard([FromQuery] int[] ids)
     {
         return this.HandleResult(await this.Mediator.Send(new GetListProductInCardQuery
         {
             ProductIds = ids
+        }));
+    }
+
+    [HttpPost("shop-owner/product/create")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
+    {
+        return HandleResult(await Mediator.Send(_mapper.Map<CreateProductCommand>(createProductRequest)));
+    }
+
+    [HttpGet("shop-owner/product")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetProductOfShopOwner(int pageIndex, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetProductShopOwnerQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        }));
+    }
+
+    [HttpPut("shop-owner/product/update")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequest updateProductRequest)
+    {
+        return HandleResult(await Mediator.Send(_mapper.Map<UpdateProductCommand>(updateProductRequest)));
+    }
+
+    [HttpDelete("shop-owner/product/delete")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> DeleteProduct([Required] int id)
+    {
+        return HandleResult(await Mediator.Send(new DeleteProductCommand
+        {
+            Id = id
         }));
     }
 }
