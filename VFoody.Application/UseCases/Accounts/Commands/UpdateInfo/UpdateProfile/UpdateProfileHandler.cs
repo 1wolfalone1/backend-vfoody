@@ -45,12 +45,16 @@ public class UpdateProfileHandler : ICommandHandler<UpdateProfileCommand, Result
             if (account.Building != null)
             {
                 account.Building.Name = request.UpdateProfileRequest.Address;
+                account.Building.Latitude = request.UpdateProfileRequest.Latitude;
+                account.Building.Longitude = request.UpdateProfileRequest.Longitude;
             }
             else
             {
                 var building = new Building
                 {
-                    Name = request.UpdateProfileRequest.Address
+                    Name = request.UpdateProfileRequest.Address,
+                    Latitude = request.UpdateProfileRequest.Latitude,
+                    Longitude = request.UpdateProfileRequest.Longitude
                 };
                 account.Building = building;
             }
