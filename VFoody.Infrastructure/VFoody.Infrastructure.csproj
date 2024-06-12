@@ -79,6 +79,8 @@
     <EmbeddedResource Include="Common\Queries\SelectShopByIds.sql" />
     <None Remove="Common\Queries\SelectDashboardOverview.sql" />
     <EmbeddedResource Include="Common\Queries\SelectDashboardOverview.sql" />
+    <None Remove="Common\Queries\SelectDashboardChartOrder.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectDashboardChartOrder.sql" />
   </ItemGroup>
 
 </Project>

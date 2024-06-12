@@ -3,7 +3,7 @@
 public class OverviewResponse
 {
     public double TotalTrading { get; set; }
-    public double TotalTradingRateRate { get; set; }
+    public double TotalTradingRate { get; set; }
     public double TotalRevenue { get; set; }
     public double TotalRevenueRate { get; set; }
     public int TotalOrder { get; set; }
@@ -15,9 +15,9 @@ public class OverviewResponse
     public void CalTotalTradingRate(double previousRevenue)
     {
         if(this.TotalTrading != 0)
-            this.TotalTradingRateRate = (this.TotalTrading - previousRevenue) / this.TotalTrading * 100;
+            this.TotalTradingRate = (this.TotalTrading - previousRevenue) / this.TotalTrading * 100;
         else 
-            this.TotalTradingRateRate = 0;
+            this.TotalTradingRate = 0;
     }
     
     public void CalTotalRevenueRate(double previousProfit)
