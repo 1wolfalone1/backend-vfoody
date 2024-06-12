@@ -21,30 +21,33 @@ public class GetDashboardAdminOverviewHandler : IQueryHandler<GetDashboardAdminO
     {
         try
         {
-            var dayMinus = 0;
+            var dayCompareRate = 0;
             if (request.DateFrom != default)
             {
-                dayMinus = (request.DateTo - request.DateFrom).Days;
+                dayCompareRate = (request.DateTo - request.DateFrom).Days;
             }
 
             var currentOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
                 QueryName.SelectDashboardOverview, new
                 {
-                    DateFrom = request.DateFrom != default ? request.DateFrom : request.DateTo.AddMonths(-1),
+                    DateFrom = request.DateFrom,
                     DateTo = request.DateTo
                 }).ConfigureAwait(false);
             
-            var previousOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
-                QueryName.SelectDashboardOverview, new
-                {
-                    DateFrom = request.DateFrom != default ? request.DateFrom.AddDays(-dayMinus) : request.DateTo.AddMonths(-2),
-                    DateTo = request.DateFrom != default ? request.DateFrom : request.DateTo.AddMonths(-1)
-                }).ConfigureAwait(false);
+            if(request.DateFrom != default && dayCompareRate <= 365){
+                var previousOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
+                    QueryName.SelectDashboardOverview, new
+                    {
+                        DateFrom = request.DateFrom.AddDays(-dayCompareRate),
+                        DateTo = request.DateFrom
+                    }).ConfigureAwait(false);
             
-            currentOverview.CalTotalOrderRate(previousOverview.TotalOrder);
-            currentOverview.CalTotalProfitRate(previousOverview.TotalProfit);
-            currentOverview.CalTotalRevenueRate(previousOverview.TotalRevenue);
-            currentOverview.CalTotalUserRate(previousOverview.TotalUser);
+                currentOverview.CalTotalOrderRate(previousOverview.TotalOrder);
+                currentOverview.CalTotalRevenueRate(previousOverview.TotalRevenue);
+                currentOverview.CalTotalTradingRate(previousOverview.TotalTrading);
+                currentOverview.CalTotalUserRate(previousOverview.TotalUser);
+                currentOverview.DayCompareRate = dayCompareRate;
+            }
 
             return Result.Success(currentOverview);
         }
