@@ -18,6 +18,12 @@ public partial class Building : BaseEntity
     [MySqlCharSet("utf8mb3")]
     [MySqlCollation("utf8mb3_general_ci")]
     public string Name { get; set; } = null!;
+    
+    [Column("latitude")]
+    public float? Latitude { get; set; }
+
+    [Column("longitude")]
+    public float? Longitude { get; set; }
 
     [InverseProperty("Building")]
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
