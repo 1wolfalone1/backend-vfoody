@@ -1,0 +1,1 @@
+[![Deploy to ECR](https://github.com/1wolfalone1/backend-vfoody/actions/workflows/deploy.yml/badge.svg)](https://github.com/1wolfalone1/backend-vfoody/actions/workflows/deploy.yml)
