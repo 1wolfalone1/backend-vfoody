@@ -5,6 +5,7 @@ using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Domain.Entities;
 using VFoody.Domain.Exceptions.Base;
 using VFoody.Domain.Shared;
 
@@ -38,9 +39,21 @@ public class UpdateProfileHandler : ICommandHandler<UpdateProfileCommand, Result
                 throw new AuthenticationException("Id của account và token không map");
             }
             
-            var account = this._accountRepository.GetAccountByEmail(email);
+            var account = this._accountRepository.GetAccountWithBuildingByEmail(email);
             account.PhoneNumber = request.UpdateProfileRequest.PhoneNumber;
             account.LastName = request.UpdateProfileRequest.FullName;
+            if (account.Building != null)
+            {
+                account.Building.Name = request.UpdateProfileRequest.Address;
+            }
+            else
+            {
+                var building = new Building
+                {
+                    Name = request.UpdateProfileRequest.Address
+                };
+                account.Building = building;
+            }
             this._accountRepository.Update(account);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var accounResponse = this._mapper.Map<AccountResponse>(account);

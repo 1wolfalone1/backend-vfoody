@@ -17,7 +17,14 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Account, AccountResponse>();
+        CreateMap<Building, BuildingResponse>()
+            .ForMember(dest => dest.Address,
+                opt => opt.MapFrom(src => src.Name));
+        CreateMap<Account, AccountResponse>()
+            .ForMember(dest => dest.FullName,
+                opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.Building,
+                opt => opt.MapFrom(src => src.Building));
         CreateMap<CustomerRegisterRequest, CustomerRegisterCommand>();
         CreateMap<ForgotPasswordRequest, ForgotPasswordCommand>();
         CreateMap<VerifyCodeForgotPasswordRequest, VerifyCodeForgotPasswordCommand>();

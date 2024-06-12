@@ -30,5 +30,10 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     {
         return await this.DbSet.SingleOrDefaultAsync(a => a.PhoneNumber == firebaseUserPhoneNumber).ConfigureAwait(false);
     }
+
+    public Account? GetAccountWithBuildingByEmail(string email)
+    {
+        return this.DbSet.Include(acc => acc.Building).SingleOrDefault(a => a.Email == email);
+    }
 }
 

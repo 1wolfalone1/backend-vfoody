@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.Json;
 using Newtonsoft.Json;
+using VFoody.Domain.Exceptions.Base;
 using VFoody.Domain.Shared;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -35,6 +36,11 @@ public class ExceptionMiddleware
             _logger.LogError(exception, exception.Message);
             await HandleValidationExceptionASync(context, exception);
         }
+        catch (BadRequestException exception)
+        {
+            _logger.LogError(exception, exception.Message);
+            await HandleBadRequestExceptionASync(context, exception);
+        }
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
@@ -48,6 +54,11 @@ public class ExceptionMiddleware
     }
 
     private async Task HandleValidationExceptionASync(HttpContext context, ValidationException exception)
+    {
+        await HandleExceptionAsync(context, HttpStatusCode.BadRequest, new ExceptionResponse(exception));
+    }
+    
+    private async Task HandleBadRequestExceptionASync(HttpContext context, BadRequestException exception)
     {
         await HandleExceptionAsync(context, HttpStatusCode.BadRequest, new ExceptionResponse(exception));
     }

@@ -32,7 +32,7 @@ public class CustomerLoginHandler : ICommandHandler<CustomerLoginCommand, Result
     public async Task<Result<Result>> Handle(CustomerLoginCommand request, CancellationToken cancellationToken)
     {
         var customerAccount =
-            this._accountRepository.GetAccountByEmail(request.AccountLogin.Email);
+            this._accountRepository.GetAccountWithBuildingByEmail(request.AccountLogin.Email);
         if (customerAccount == null || !BCrypUnitls.Verify(request.AccountLogin.Password, customerAccount.Password))
             return Result.Failure(new Error("401", ResponseCode.AuthErrorInvalidUsernameOrPassword.GetDescription()));
 
