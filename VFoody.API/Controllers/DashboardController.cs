@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VFoody.Application.UseCases.Dashboard.Queries.ChartOrder;
+using VFoody.Application.UseCases.Dashboard.Queries.ChartRevenue;
 using VFoody.Application.UseCases.Dashboard.Queries.Overview;
 
 namespace VFoody.API.Controllers;
@@ -16,6 +17,12 @@ public class DashboardController : BaseApiController
 
     [HttpGet("chart/order")]
     public async Task<IActionResult> GetChartShowOrder([FromQuery] GetChartOrderAdminDashboardQuery query)
+    {
+        return this.HandleResult(await this.Mediator.Send(query).ConfigureAwait(false));
+    }
+    
+    [HttpGet("chart/revenue")]
+    public async Task<IActionResult> GetChartShowRevenue([FromQuery] GetChartRevenueAdminDashboardQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query).ConfigureAwait(false));
     }

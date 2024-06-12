@@ -34,7 +34,7 @@ TotalTrading AS (
     WHERE
         t.status = 1 -- PAID SUCCESS
         AND o.status = 5 -- Delivered
-        AND DATE_FORMAT(t.created_date, '%Y-%m-%d') BETWEEN @DateFrom
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
         AND @DateTo
 ),
 TotalRevenue AS (
