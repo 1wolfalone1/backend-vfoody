@@ -26,9 +26,9 @@ WITH TotalUser AS (
 		AND a.created_date BETWEEN @DateFrom
 		AND @DateTo
 ),
-TotalRevenue AS (
+TotalTrading AS (
 	SELECT
-		SUM(amount) AS total_revenue
+		SUM(amount) AS total_trading
 	FROM
 		`transaction` t
 	WHERE
@@ -36,10 +36,10 @@ TotalRevenue AS (
 		AND t.created_date BETWEEN @DateFrom
 		AND @DateTo
 ),
-TotalProfit AS (
+TotalRevenue AS (
 	SELECT
 		(
-			total_revenue * (
+			total_trading * (
 				SELECT
 					cc.commission_rate
 				FROM
@@ -49,9 +49,9 @@ TotalProfit AS (
 				LIMIT
 					1
 			) / 100
-		) AS total_profit
+		) AS total_revenue
 	FROM
-		TotalRevenue
+		TotalTrading
 ),
 TotalOrder AS (
 	SELECT
@@ -64,13 +64,13 @@ TotalOrder AS (
 		AND @DateTo
 )
 SELECT
-	t.total_revenue AS TotalRevenue,
+	t.total_trading AS TotalTrading,
 	(
 		SELECT
-			total_profit
+            total_revenue
 		FROM
-			TotalProfit
-	) AS TotalProfit,
+			TotalRevenue
+	) AS TotalRevenue,
 	(
 		SELECT
 			total_order
@@ -84,4 +84,4 @@ SELECT
 			TotalUser
 	) AS TotalUser
 FROM
-	TotalRevenue AS t
+	TotalTrading AS t

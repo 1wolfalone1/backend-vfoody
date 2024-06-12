@@ -2,29 +2,30 @@
 
 public class OverviewResponse
 {
+    public double TotalTrading { get; set; }
+    public double TotalTradingRateRate { get; set; }
     public double TotalRevenue { get; set; }
     public double TotalRevenueRate { get; set; }
-    public double TotalProfit { get; set; }
-    public double TotalProfitRate { get; set; }
     public int TotalOrder { get; set; }
     public double TotalOrderRate { get; set; }
     public int TotalUser { get; set; }
     public double TotalUserRate { get; set; }
+    public int DayCompareRate { get; set; }
 
-    public void CalTotalRevenueRate(double previousRevenue)
+    public void CalTotalTradingRate(double previousRevenue)
     {
-        if(this.TotalRevenue != 0)
-            this.TotalRevenueRate = (this.TotalRevenue - previousRevenue) / this.TotalRevenue * 100;
+        if(this.TotalTrading != 0)
+            this.TotalTradingRateRate = (this.TotalTrading - previousRevenue) / this.TotalTrading * 100;
         else 
-            this.TotalRevenueRate = 0;
+            this.TotalTradingRateRate = 0;
     }
     
-    public void CalTotalProfitRate(double previousProfit)
+    public void CalTotalRevenueRate(double previousProfit)
     {
-        if(this.TotalProfit != 0)
-            this.TotalProfitRate = (this.TotalProfit - previousProfit) / this.TotalProfit * 100;
+        if(this.TotalRevenue != 0)
+            this.TotalRevenueRate = (this.TotalRevenue - previousProfit) / this.TotalRevenue * 100;
         else 
-            this.TotalProfitRate = 0;
+            this.TotalRevenueRate = 0;
     }
     
     public void CalTotalOrderRate(double previousOrder)
