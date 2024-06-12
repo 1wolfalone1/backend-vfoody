@@ -5,6 +5,8 @@ using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
+using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Models;
 using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
@@ -37,5 +39,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)));
         CreateMap<Building, ShopInfoResponse.BuildingResponse>();
         CreateMap<Product, ProductCardResponse>();
+        CreateMap<CreateProductRequest, CreateProductCommand>();
+        CreateMap<UpdateProductRequest, UpdateProductCommand>();
+        CreateMap<Product, ProductShopOwnerResponse>();
     }
 }
