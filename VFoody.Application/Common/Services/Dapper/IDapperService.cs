@@ -37,4 +37,5 @@ public enum QueryName
     SelectShopFeedbacks,
     SelectShopByIds,
     SelectDashboardOverview,
+    SelectDashboardChartOrder,
 }
