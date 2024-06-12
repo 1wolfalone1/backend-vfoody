@@ -34,23 +34,63 @@ OrderSummary AS (
             FROM
                 OrderStatus
             WHERE
-                status IN (1, 2, 3, 4) -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS pending,
+                status = 1 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
+        ) AS order_placed,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                status IN (6, 7) -- Cancel Refund
-        ) AS cancel,
+                    status = 2 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
+        ) AS order_confirmed,
         (
             SELECT
-                SUM(total_price - total_promotion)
+                COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                status = 5 -- Deliveried
+                    status = 3 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
+        ) AS preparing,
+        (
+            SELECT
+                COUNT(status)
+            FROM
+                OrderStatus
+            WHERE
+                    status = 4 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
+        ) AS out_for_delivery,
+        (
+            SELECT
+                COUNT(status)
+            FROM
+                OrderStatus
+            WHERE
+                    status = 5 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
+        ) AS delivered,
+        (
+            SELECT
+                COUNT(status)
+            FROM
+                OrderStatus
+            WHERE
+                status = 6 -- Cancel Refund
+        ) AS cancel,
+        (
+            SELECT
+                COUNT(status)
+            FROM
+                OrderStatus
+            WHERE
+                    status = 7 -- Cancel Refund
+        ) AS refund,
+        (
+            SELECT
+                SUM(amount)
+            FROM
+                OrderStatus
+            WHERE
+                status = 5 -- delivered
         ) AS total_successfull_amount,
         (
             SELECT
@@ -69,14 +109,19 @@ OrderSummary AS (
             FROM
                 OrderStatus
             WHERE
-                status = 5 -- Deliveried
+                status = 5 -- delivered
         ) AS revenue
 )
 SELECT
     total_of_order AS TotalOfOrder,
-    pending AS Pending,
+    order_placed AS OrderPLaced,
+    order_confirmed AS OrderConfirmed,
+    preparing AS Preparing,
+    out_for_delivery AS OutForDelivery,
+    delivered AS Delivered,
     cancel AS Cancel,
-    total_successfull_amount AS TotalSuccessfullAmount,
+    refund AS Refund,
+    total_successfull_amount AS TotalTradingAmount,
     revenue AS Revenue,
     @DateTo AS Day
 FROM
