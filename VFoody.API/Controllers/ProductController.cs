@@ -11,6 +11,7 @@ using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries;
 using VFoody.Application.UseCases.Product.Queries.CardProducts;
 using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
+using VFoody.Application.UseCases.Product.Queries.ProductDetailShopOwner;
 using VFoody.Application.UseCases.Product.Queries.ProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries.ShopProduct;
 using VFoody.Application.UseCases.Product.Queries.TopProductShop;
@@ -79,7 +80,7 @@ public class ProductController : BaseApiController
 
 
     [HttpGet("shop/product/detail")]
-    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetProductDetailToOrder(int productId)
     {
         return HandleResult(await Mediator.Send(new GetProductDetailToOrderQuery(productId)));
@@ -93,6 +94,13 @@ public class ProductController : BaseApiController
         {
             ProductIds = ids
         }));
+    }
+
+    [HttpGet("shop-owner/product/detail")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetProductDetailShopOwner(int productId)
+    {
+        return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId)));
     }
 
     [HttpPost("shop-owner/product/image/upload")]

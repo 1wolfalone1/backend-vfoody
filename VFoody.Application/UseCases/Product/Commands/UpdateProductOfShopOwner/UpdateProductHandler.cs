@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Product.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
@@ -19,13 +21,14 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
     private readonly IQuestionRepository _questionRepository;
     private readonly IOptionRepository _optionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public UpdateProductHandler(
         ILogger<UpdateProductHandler> logger,
         ICategoryRepository categoryRepository, IProductRepository productRepository,
         IProductCategoryRepository productCategoryRepository, IUnitOfWork unitOfWork,
         ICurrentPrincipalService currentPrincipalService, IShopRepository shopRepository,
-        IQuestionRepository questionRepository, IOptionRepository optionRepository)
+        IQuestionRepository questionRepository, IOptionRepository optionRepository, IMapper mapper)
     {
         _logger = logger;
         _categoryRepository = categoryRepository;
@@ -36,18 +39,18 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
         _shopRepository = shopRepository;
         _questionRepository = questionRepository;
         _optionRepository = optionRepository;
+        _mapper = mapper;
     }
 
     public async Task<Result<Result>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
+        var accountId = _currentPrincipalService.CurrentPrincipalId;
+        var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
+        var product = _productRepository.GetIncludeProductCategoryAndQuestionByIdAndShopId(request.Id, shop.Id);
         try
         {
             //Begin transaction
             await _unitOfWork.BeginTransactionAsync();
-
-            var accountId = _currentPrincipalService.CurrentPrincipalId;
-            var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
-            var product = _productRepository.GetIncludeProductCategoryAndQuestionByIdAndShopId(request.Id, shop.Id);
             var newQuestionIds = new List<int>();
 
             //Return failure when product not found
@@ -149,7 +152,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                         {
                             ProductId = product.Id,
                             Description = requestQuestion.Description,
-                            Status = (int)QuestionStatus.Active,
+                            Status = requestQuestion.Status,
                             QuestionType = requestQuestion.Type
                         };
                         _questionRepository.AddAsync(question);
@@ -164,7 +167,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                                 IsPricing = requestOption.IsPricing,
                                 Price = requestOption.Price,
                                 ImageUrl = requestOption.ImgUrl,
-                                Status = (int)OptionStatus.Active
+                                Status = requestOption.Status
                             };
                             _optionRepository.AddAsync(option);
                             await _unitOfWork.SaveChangesAsync();
@@ -230,11 +233,12 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                                 {
                                     var option = new Option
                                     {
+                                        QuestionId = question.Id,
                                         Description = requestOption.Description,
                                         IsPricing = requestOption.IsPricing,
                                         Price = requestOption.Price,
                                         ImageUrl = requestOption.ImgUrl,
-                                        Status = (int)OptionStatus.Active
+                                        Status = requestOption.Status
                                     };
                                     _optionRepository.AddAsync(option);
                                 });
@@ -326,7 +330,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
             _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error."));
         }
-
-        return Result.Success("Update product successfully!");
+        var updateProduct = _productRepository.GetProductDetailShopOwner(product.Id);
+        return Result.Success(_mapper.Map<ProductDetailResponse>(updateProduct));
     }
 }
