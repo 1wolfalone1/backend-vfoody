@@ -21,7 +21,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .SingleOrDefaultAsync();
     }
 
-    public Product? GetProductIncludeProductCategoryByIdAndShopId(int productId, int shopId)
+    public Product? GetIncludeProductCategoryAndQuestionByIdAndShopId(int productId, int shopId)
     {
         return DbSet.Where(product =>
                 product.Id == productId
@@ -29,6 +29,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
                 && product.Status != (int)ProductStatus.Delete
             )
             .Include(product => product.ProductCategories)
+            .Include(product => product.Questions)
             .SingleOrDefault();
     }
 
