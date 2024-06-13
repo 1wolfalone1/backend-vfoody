@@ -21,7 +21,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .SingleOrDefaultAsync();
     }
 
-    public Product? GetProductIncludeProductCategoryByIdAndShopId(int productId, int shopId)
+    public Product? GetIncludeProductCategoryAndQuestionByIdAndShopId(int productId, int shopId)
     {
         return DbSet.Where(product =>
                 product.Id == productId
@@ -29,10 +29,11 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
                 && product.Status != (int)ProductStatus.Delete
             )
             .Include(product => product.ProductCategories)
+            .Include(product => product.Questions)
             .SingleOrDefault();
     }
 
-    public Product? GetProductDetail(int productId)
+    public Product? GetProductDetailCustomer(int productId)
     {
         return DbSet
             .Include(p => p.Questions.Where(q =>
@@ -87,5 +88,17 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         return DbSet
             .Count(p => p.ShopId == id && p.Status != (int)ProductStatus.Delete);
+    }
+
+    public Product? GetProductDetailShopOwner(int productId)
+    {
+        return DbSet
+            .Include(p => p.Questions.Where(q =>
+                q.Status == (int)QuestionStatus.Active || q.Status == (int)QuestionStatus.UnActive))
+            .ThenInclude(q =>
+                q.Options.Where(o => o.Status == (int)OptionStatus.Active || o.Status == (int)OptionStatus.UnActive))
+            .FirstOrDefault(
+                p => p.Id == productId
+                     && (p.Status == (int)ProductStatus.Active || p.Status == (int)ProductStatus.UnActive));
     }
 }

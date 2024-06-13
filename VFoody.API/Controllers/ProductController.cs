@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.DeleteProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries;
 using VFoody.Application.UseCases.Product.Queries.CardProducts;
 using VFoody.Application.UseCases.Product.Queries.DetailToOrder;
+using VFoody.Application.UseCases.Product.Queries.ProductDetailShopOwner;
 using VFoody.Application.UseCases.Product.Queries.ProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries.ShopProduct;
 using VFoody.Application.UseCases.Product.Queries.TopProductShop;
@@ -78,7 +80,7 @@ public class ProductController : BaseApiController
 
 
     [HttpGet("shop/product/detail")]
-    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetProductDetailToOrder(int productId)
     {
         return HandleResult(await Mediator.Send(new GetProductDetailToOrderQuery(productId)));
@@ -94,9 +96,23 @@ public class ProductController : BaseApiController
         }));
     }
 
+    [HttpGet("shop-owner/product/detail")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetProductDetailShopOwner(int productId)
+    {
+        return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId)));
+    }
+
+    [HttpPost("shop-owner/product/image/upload")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> CreateProductImage([FromForm] CreateProductImageRequest createProductImageRequest)
+    {
+        return HandleResult(await Mediator.Send(_mapper.Map<CreateProductImageCommand>(createProductImageRequest)));
+    }
+
     [HttpPost("shop-owner/product/create")]
     [Authorize(Roles = IdentityConst.ShopClaimName)]
-    public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequest createProductRequest)
+    public async Task<IActionResult> CreateProduct(CreateProductRequest createProductRequest)
     {
         return HandleResult(await Mediator.Send(_mapper.Map<CreateProductCommand>(createProductRequest)));
     }
@@ -114,7 +130,7 @@ public class ProductController : BaseApiController
 
     [HttpPut("shop-owner/product/update")]
     [Authorize(Roles = IdentityConst.ShopClaimName)]
-    public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductRequest updateProductRequest)
+    public async Task<IActionResult> UpdateProduct(UpdateProductRequest updateProductRequest)
     {
         return HandleResult(await Mediator.Send(_mapper.Map<UpdateProductCommand>(updateProductRequest)));
     }

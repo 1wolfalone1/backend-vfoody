@@ -25,7 +25,7 @@ public class GetProductDetailToOrderHandler : IQueryHandler<GetProductDetailToOr
 
     public Task<Result<Result>> Handle(GetProductDetailToOrderQuery request, CancellationToken cancellationToken)
     {
-        var product = _productRepository.GetProductDetail(request.productId);
+        var product = _productRepository.GetProductDetailCustomer(request.productId);
         return Task.FromResult<Result<Result>>(product != null
             ? Result.Success(_mapper.Map<ProductDetailResponse>(product))
             : Result.Failure(new Error("400", "Not found this product.")));
