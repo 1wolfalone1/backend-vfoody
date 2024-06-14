@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VFoody.Application.Common.Repositories;
 using VFoody.Domain.Entities;
+using VFoody.Domain.Enums;
 
 namespace VFoody.Infrastructure.Persistence.Repositories;
 
@@ -14,7 +15,7 @@ public class OptionRepository : BaseRepository<Option>, IOptionRepository
     {
         // Query the database to get the list of IDs that match the questionId
         var existingOptionIds = await DbSet
-            .Where(o => o.QuestionId == questionId && optionIds.Contains(o.Id))
+            .Where(o => o.QuestionId == questionId && optionIds.Contains(o.Id) && o.Status != (int)OptionStatus.Delete)
             .Select(o => o.Id)
             .ToListAsync();
 
@@ -24,6 +25,8 @@ public class OptionRepository : BaseRepository<Option>, IOptionRepository
 
     public async Task<List<Option>> GetByQuestionIds(List<int> questionIds)
     {
-        return await DbSet.Where(option => questionIds.Contains(option.QuestionId)).ToListAsync();
+        return await DbSet
+            .Where(option => questionIds.Contains(option.QuestionId) && option.Status != (int)OptionStatus.Delete)
+            .ToListAsync();
     }
 }
