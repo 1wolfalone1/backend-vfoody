@@ -46,7 +46,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
     {
         var accountId = _currentPrincipalService.CurrentPrincipalId;
         var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
-        var product = _productRepository.GetIncludeProductCategoryAndQuestionByIdAndShopId(request.Id, shop.Id);
+        var product = _productRepository.GetIncludeProductCategoryByIdAndShopId(request.Id, shop.Id);
         try
         {
             //Begin transaction
@@ -58,6 +58,8 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
             {
                 return Result.Failure(new Error("400", "Product not found."));
             }
+
+            var questions = await _questionRepository.GetQuestionByProductId(product.Id);
 
             //Update product information
             product.Name = request.Name;
@@ -111,20 +113,16 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
             }
 
             //Remove all option and question present in product when update questions null or empty
-            if ((request.Questions == null || request.Questions.Count == 0) && product.Questions.Count > 0)
+            if ((request.Questions == null || request.Questions.Count == 0) && questions.Count > 0)
             {
                 //Remove option
-                var questionIds = product.Questions.Select(question => question.Id).ToList();
+                var questionIds = questions.Select(question => question.Id).ToList();
                 var optionsRemove = await _optionRepository.GetByQuestionIds(questionIds);
                 optionsRemove.ForEach(option => option.Status = (int)OptionStatus.Delete);
-                foreach (var productQuestion in product.Questions)
-                {
-                    productQuestion.Status = (int)QuestionStatus.Delete;
-                }
-
+                questions.ForEach(question => { question.Status = (int)QuestionStatus.Delete; });
                 // Update status question and option to delete
                 _optionRepository.UpdateRange(optionsRemove);
-                _questionRepository.UpdateRange(product.Questions);
+                _questionRepository.UpdateRange(questions);
             }
 
             if (request.Questions != null && request.Questions.Count > 0)
@@ -155,7 +153,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                             Status = requestQuestion.Status,
                             QuestionType = requestQuestion.Type
                         };
-                        _questionRepository.AddAsync(question);
+                        await _questionRepository.AddAsync(question);
                         await _unitOfWork.SaveChangesAsync();
                         newQuestionIds.Add(question.Id);
                         foreach (var requestOption in requestQuestion.Options)
@@ -169,19 +167,16 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                                 ImageUrl = requestOption.ImgUrl,
                                 Status = requestOption.Status
                             };
-                            _optionRepository.AddAsync(option);
+                            await _optionRepository.AddAsync(option);
                             await _unitOfWork.SaveChangesAsync();
                         }
                     }
                 }
 
-                if (questionsRequestUpdateId.Count == 0 && product.Questions.Count > 0)
+                if (questionsRequestUpdateId.Count == 0 && questions.Count > 0)
                 {
-                    product.Questions.ToList().ForEach(question =>
-                    {
-                        question.Status = (int)OptionStatus.Delete;
-                        _questionRepository.Update(question);
-                    });
+                    questions.ForEach(question => { question.Status = (int)QuestionStatus.Delete; });
+                    _questionRepository.UpdateRange(questions);
                 }
 
                 if (questionsRequestUpdateId.Count > 0)
@@ -197,8 +192,9 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                         return Result.Failure(new Error("400", "Question not found."));
                     }
 
-                    var questionsUpdate = product.Questions.ToList()
-                        .Where(question => questionsRequestUpdateId.Contains(question.Id))
+                    var questionsUpdate = questions.Where(
+                            question => questionsRequestUpdateId.Contains(question.Id)
+                        )
                         .ToList();
 
                     if (questionsUpdate.Count > 0)
@@ -206,7 +202,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                         foreach (var questionRequest in questionsRequestUpdate)
                         {
                             var question =
-                                await _questionRepository.GetQuestionIncludeOptionById(questionRequest.Id!.Value);
+                                await _questionRepository.GetByIdAsync(questionRequest.Id!.Value);
                             question!.Description = questionRequest.Description;
                             question.QuestionType = questionRequest.Type;
                             question.Status = questionRequest.Status;
@@ -299,18 +295,20 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
                         }
                     }
 
-                    var questionsRemove = product.Questions.ToList()
-                        .Where(question => !questionsRequestUpdateId.Contains(question.Id) && !newQuestionIds.Contains(question.Id))
+                    var questionsRemove = questions.Where(
+                            question =>
+                                !questionsRequestUpdateId.Contains(question.Id) &&
+                                !newQuestionIds.Contains(question.Id))
                         .ToList();
 
                     if (questionsRemove.Count > 0)
                     {
                         foreach (var question in questionsRemove)
                         {
-                            var questionRemove = await _questionRepository.GetQuestionIncludeOptionById(question.Id);
-                            questionRemove!.Status = (int)QuestionStatus.Delete;
-                            _questionRepository.Update(questionRemove);
-                            foreach (var option in questionRemove.Options)
+                            question.Status = (int)QuestionStatus.Delete;
+                            _questionRepository.Update(question);
+                            var optionsRemove = await _optionRepository.GetByQuestionIds([question.Id]);
+                            foreach (var option in optionsRemove)
                             {
                                 option.Status = (int)OptionStatus.Delete;
                                 _optionRepository.Update(option);
@@ -330,6 +328,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
             _logger.LogError(e, e.Message);
             return Result.Failure(new Error("500", "Internal server error."));
         }
+
         var updateProduct = _productRepository.GetProductDetailShopOwner(product.Id);
         return Result.Success(_mapper.Map<ProductDetailResponse>(updateProduct));
     }

@@ -21,15 +21,15 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .SingleOrDefaultAsync();
     }
 
-    public Product? GetIncludeProductCategoryAndQuestionByIdAndShopId(int productId, int shopId)
+    public Product? GetIncludeProductCategoryByIdAndShopId(int productId, int shopId)
     {
-        return DbSet.Where(product =>
-                product.Id == productId
-                && product.ShopId == shopId
-                && product.Status != (int)ProductStatus.Delete
+        return DbSet
+            .Where(p =>
+                p.Id == productId
+                && p.ShopId == shopId
+                && p.Status != (int)ProductStatus.Delete
             )
-            .Include(product => product.ProductCategories)
-            .Include(product => product.Questions)
+            .Include(p => p.ProductCategories)
             .SingleOrDefault();
     }
 
