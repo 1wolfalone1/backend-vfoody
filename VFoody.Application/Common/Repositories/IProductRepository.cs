@@ -5,7 +5,7 @@ namespace VFoody.Application.Common.Repositories;
 public interface IProductRepository : IBaseRepository<Product>
 {
     Task<Product?> GetProductByIdAndShopId(int productId, int shopId);
-    Product? GetIncludeProductCategoryAndQuestionByIdAndShopId(int productId, int shopId);
+    Product? GetIncludeProductCategoryByIdAndShopId(int productId, int shopId);
     Product? GetProductDetailCustomer(int productId);
     List<Product> GetShopProduct(int shopId, int pageNum, int pageSize);
     int CountTotalActiveProductByShopId(int shopId);

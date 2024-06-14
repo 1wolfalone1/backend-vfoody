@@ -122,7 +122,7 @@ public class AccountController : BaseApiController
         }));
     }
     
-    [HttpPut("customer/updload/{id}")]
+    [HttpPut("customer/upload/{id}")]
     [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> UpdateCustomerProfile(IFormFile avatarImageFile, int id)
     {
