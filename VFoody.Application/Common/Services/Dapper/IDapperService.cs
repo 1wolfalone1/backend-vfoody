@@ -39,4 +39,5 @@ public enum QueryName
     SelectDashboardOverview,
     SelectDashboardChartOrder,
     SelectDashboardChartRevenue,
+    SelectAllPromotionForOrderCard,
 }

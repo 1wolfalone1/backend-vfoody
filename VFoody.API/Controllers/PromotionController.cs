@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
@@ -64,5 +65,11 @@ public class PromotionController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize,
         }));
+    }
+
+    [HttpGet("customer/promotion/all")]
+    public async Task<IActionResult> GetAllPlatformPromotion([FromQuery] GetAllPromotionForCustomerQuery query)
+    {
+        return this.HandleResult(await this.Mediator.Send(query));
     }
 }
