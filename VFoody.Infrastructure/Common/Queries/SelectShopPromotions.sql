@@ -30,7 +30,7 @@ WITH FilteredShopPromotions AS (
         start_date,
         end_date,
         usage_limit,
-        used,
+        number_of_used,
         created_date,
         updated_date,
         status,
@@ -45,11 +45,11 @@ WITH FilteredShopPromotions AS (
     WHERE
         (@ShopId <= 0 OR shop_id = @ShopId)
         AND CURTIME() BETWEEN start_date AND end_date
-        AND usage_limit > used
+        AND usage_limit > number_of_used
         AND (@Status = 0 OR status = @Status)
         AND (@StartDate IS NULL OR start_date >= @StartDate)
         AND (@EndDate IS NULL OR start_date <= @EndDate)
-        AND (@Available = FALSE OR used < usage_limit)
+        AND (@Available = FALSE OR number_of_used < usage_limit)
 )
 
 SELECT
@@ -65,7 +65,7 @@ SELECT
     maximum_apply_value AS MaximumApplyValue,
 
     usage_limit AS UsageLimit,
-    used AS NumberOfUsed,
+    number_of_used AS NumberOfUsed,
     created_date AS CreatedDate,
     updated_date AS UpdatedDate,
     status AS Status,

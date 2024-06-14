@@ -47,8 +47,8 @@ public partial class ShopPromotion : BaseEntity
     [Column("usage_limit")]
     public int UsageLimit { get; set; }
 
-    [Column("used")]
-    public int Used { get; set; }
+    [Column("number_of_used")]
+    public int NumberOfUsed { get; set; }
 
     [Column("shop_id")]
     public int ShopId { get; set; }
