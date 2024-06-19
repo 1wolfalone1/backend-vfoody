@@ -33,7 +33,7 @@ TotalTrading AS (
         INNER JOIN `order` o ON t.id = o.transaction_id
     WHERE
         t.status = 1 -- PAID SUCCESS
-        AND o.status = 5 -- Delivered
+        AND o.status = 4 -- Successful
         AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
         AND @DateTo
 ),
@@ -60,7 +60,7 @@ TotalOrder AS (
     FROM
         `order` o
     WHERE
-        o.status = 5 -- DELIVERIED
+        o.status = 4 -- Successful
         AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
         AND @DateTo
 )

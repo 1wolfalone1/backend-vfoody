@@ -52,6 +52,10 @@ public partial class ShopPromotion : BaseEntity
 
     [Column("shop_id")]
     public int ShopId { get; set; }
+    
+    [Column("description")]
+    [StringLength(512)]
+    public string? Description { get; set; }
 
     [InverseProperty("ShopPromotion")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

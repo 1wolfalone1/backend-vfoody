@@ -1,6 +1,7 @@
 ﻿/*
  CreatedBy: ThongNV
- Date: 12/06/2024
+ CreatedDate: 12/06/2024
+ UpdatedDate: 19/06/2024
  
  @DateFrom datetime
  @DateTo datetime
@@ -34,56 +35,56 @@ OrderSummary AS (
             FROM
                 OrderStatus
             WHERE
-                status = 1 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS order_placed,
+                status = 1 -- pending
+        ) AS pending,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                    status = 2 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS order_confirmed,
+                    status = 2 -- confirmed
+        ) AS confirmed,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                    status = 3 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS preparing,
+                    status = 3 -- delivering
+        ) AS delivering,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                    status = 4 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS out_for_delivery,
+                    status = 4 -- successful
+        ) AS successful,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                    status = 5 -- OrderPLaced OrderConfirmed Preparing OutForDelivery
-        ) AS delivered,
+                    status = 5 -- cancelled
+        ) AS cancelled,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                status = 6 -- Cancel Refund
-        ) AS cancel,
+                status = 6 -- fail
+        ) AS fail,
         (
             SELECT
                 COUNT(status)
             FROM
                 OrderStatus
             WHERE
-                    status = 7 -- Cancel Refund
-        ) AS refund,
+                    status = 7 -- reject
+        ) AS reject,
         (
             SELECT
                 SUM(amount)
@@ -114,13 +115,13 @@ OrderSummary AS (
 )
 SELECT
     total_of_order AS TotalOfOrder,
-    order_placed AS OrderPLaced,
-    order_confirmed AS OrderConfirmed,
-    preparing AS Preparing,
-    out_for_delivery AS OutForDelivery,
-    delivered AS Delivered,
-    cancel AS Cancel,
-    refund AS Refund,
+    pending AS Pending,
+    confirmed AS Confirmed,
+    delivering AS Delivering,
+    successful AS Successful,
+    cancelled AS Cancelled,
+    fail AS Fail,
+    reject AS Reject,
     total_successfull_amount AS TotalTradingAmount,
     revenue AS Revenue,
     @DateTo AS Day

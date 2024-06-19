@@ -52,6 +52,10 @@ public partial class PersonPromotion : BaseEntity
 
     [Column("account_id")]
     public int AccountId { get; set; }
+    
+    [Column("description")]
+    [StringLength(512)]
+    public string? Description { get; set; }
 
     [ForeignKey("AccountId")]
     [InverseProperty("PersonPromotions")]

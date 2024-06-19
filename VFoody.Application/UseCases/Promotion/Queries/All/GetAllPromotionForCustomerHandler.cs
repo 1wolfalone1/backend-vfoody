@@ -42,8 +42,10 @@ public class GetAllPromotionForCustomerHandler : IQueryHandler<GetAllPromotionFo
                 Mode = 2
             }).ConfigureAwait(false);
             
-            var resultActive = new PaginationResponse<AllPromotionResponse>(listPromotionActive.ToList(), request.PageIndex, request.PageSize, listPromotionActive.First().TotalItems);
-            var resultInActive = new PaginationResponse<AllPromotionResponse>(listPromotionInActive.ToList(), request.PageIndex, request.PageSize, listPromotionInActive.First().TotalItems);
+            var resultActive = new PaginationResponse<AllPromotionResponse>(listPromotionActive.ToList(), request.PageIndex, request.PageSize,
+                listPromotionActive.Count() > 0 ? listPromotionActive.First().TotalItems : 0);
+            var resultInActive = new PaginationResponse<AllPromotionResponse>(listPromotionInActive.ToList(), request.PageIndex, request.PageSize, 
+                listPromotionInActive.Count() > 0 ? listPromotionInActive.First().TotalItems : 0);
 
             return Result.Success(new
             {
