@@ -26,7 +26,7 @@ public class CustomerCancelHandler : ICommandHandler<CustomerCancelCommand,Resul
         try
         {
             var order = this._orderRepository.Get(predicate: a => a.Id == request.Id
-                                                                  && a.Status == (int)OrderStatus.OrderPLaced).FirstOrDefault();
+                                                                  && a.Status == (int)OrderStatus.Pending).FirstOrDefault();
             if (order == null)
             {
                 return Result.Failure(new Error("404", $"Không tìm thấy order với id: {request.Id}"));

@@ -52,6 +52,10 @@ public partial class PlatformPromotion : BaseEntity
 
     [Column("number_of_used")]
     public int NumberOfUsed { get; set; }
+    
+    [Column("description")]
+    [StringLength(512)]
+    public string? Description { get; set; }
 
     [InverseProperty("PlatformPromotion")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

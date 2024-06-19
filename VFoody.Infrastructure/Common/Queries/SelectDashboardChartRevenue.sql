@@ -13,7 +13,7 @@ WITH Revenue AS (
         `transaction` t
         INNER JOIN `order` o ON t.id = o.transaction_id
     WHERE
-        o.status = 5
+        o.status = 4 -- Successful
         AND YEAR(o.created_date) = YEAR(@DateOfYear)
 ),
 PreviousRevenue AS (
@@ -24,7 +24,7 @@ PreviousRevenue AS (
         `transaction` t
         INNER JOIN `order` o ON t.id = o.transaction_id
     WHERE
-        o.status = 5
+        o.status = 4 -- Successful
         AND YEAR(o.created_date) = YEAR(DATE_SUB(@DateOfYear, INTERVAL 1 YEAR))
 ),
 TwelveMonthRevenue AS (
@@ -256,6 +256,8 @@ TwelveMonthRevenue AS (
         ) AS last_year
 )
 SELECT
+    YEAR(@DateOfYear) AS ThisYear,
+    YEAR(DATE_SUB(@DateOfYear, INTERVAL 1 YEAR)) AS LastYear,
     (
         SELECT
             SUM(amount)
