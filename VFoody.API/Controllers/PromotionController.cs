@@ -74,7 +74,7 @@ public class PromotionController : BaseApiController
         return this.HandleResult(await this.Mediator.Send(query));
     }
 
-    [HttpPost("admin/promotion/platform")]
+    [HttpPost("admin/promotion")]
     public async Task<IActionResult> CreatePlatformPromotion([FromBody] CreatePromotionRequest promotion)
     {
         return this.HandleResult(await this.Mediator.Send(new CreatePromotionCommand{CreatePromotion = promotion}));
