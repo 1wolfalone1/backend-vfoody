@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
+using VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
@@ -71,5 +72,11 @@ public class PromotionController : BaseApiController
     public async Task<IActionResult> GetAllPlatformPromotion([FromQuery] GetAllPromotionForCustomerQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
+    }
+
+    [HttpPost("admin/promotion/platform")]
+    public async Task<IActionResult> CreatePlatformPromotion([FromBody] CreatePromotionRequest promotion)
+    {
+        return this.HandleResult(await this.Mediator.Send(new CreatePromotionCommand{CreatePromotion = promotion}));
     }
 }

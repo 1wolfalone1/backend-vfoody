@@ -52,12 +52,12 @@ public static class ApplicationServiceExtensions
         // FluentAPI validation
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssembly(applicationAssembly);
-        
-        // Config Jsonconvert
-        services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
+        // fix disable 400 request filter auto
+        services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
         //Config service
         var assembly = typeof(BaseService).Assembly;

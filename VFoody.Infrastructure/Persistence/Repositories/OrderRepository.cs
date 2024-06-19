@@ -13,7 +13,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository
 
     public async Task<bool> CheckInOrderByProductId(int id)
     {
-        int[] orderStatusDone = { (int)OrderStatus.Cancelled, (int)OrderStatus.Delivered, (int)OrderStatus.Refunded };
+        int[] orderStatusDone = { (int)OrderStatus.Cancelled, (int)OrderStatus.Successful, (int)OrderStatus.Fail };
 
         // Use AnyAsync for asynchronous execution and proper LINQ query
         return await DbSet.Include(o => o.OrderDetails)
