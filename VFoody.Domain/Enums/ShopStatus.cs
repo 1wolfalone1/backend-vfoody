@@ -4,5 +4,6 @@ public enum ShopStatus
 {
     Active = 1,
     UnActive = 2,
-    Delete = 3,
+    Ban = 3,
+    Delete = 4,
 }
