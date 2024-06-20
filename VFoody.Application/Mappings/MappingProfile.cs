@@ -11,6 +11,7 @@ using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Models;
 using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
+using VFoody.Domain.Enums;
 
 namespace VFoody.Application.Mappings;
 
@@ -37,7 +38,8 @@ public class MappingProfile : Profile
         CreateMap<Product, ProductResponse>();
         CreateMap<Shop, ShopInfoResponse>()
             .ForMember(dest => dest.Rating,
-                opt => opt.MapFrom(src => src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)));
+                opt => opt.MapFrom(src =>
+                    src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)));
         CreateMap<Building, ShopInfoResponse.BuildingResponse>();
         CreateMap<Product, ProductCardResponse>();
         CreateMap<CreateProductImageRequest, CreateProductImageCommand>();
@@ -48,5 +50,25 @@ public class MappingProfile : Profile
         CreateMap<UpdateProductRequest.UpdateQuestionRequest, UpdateProductCommand.UpdateQuestionCommand>();
         CreateMap<UpdateProductRequest.UpdateOptionRequest, UpdateProductCommand.UpdateOptionCommand>();
         CreateMap<Product, ProductShopOwnerResponse>();
+        CreateMap<Account, ManageAccountResponse>()
+            .ForMember(
+                dest => dest.Role,
+                opt => opt.MapFrom(
+                    src =>
+                        src.RoleId == (int)Roles.Customer ? "Khách hàng" :
+                        src.RoleId == (int)Roles.Shop ? "Chủ cửa hàng" :
+                        string.Empty
+                )
+            ).ForMember(dest => dest.FullName,
+                opt => opt.MapFrom(src => src.LastName))
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)AccountStatus.UnVerify ? "Chưa xác thực" :
+                        src.Status == (int)AccountStatus.Verify ? "Đang hoạt động" :
+                        src.Status == (int)AccountStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                )
+            );
     }
 }

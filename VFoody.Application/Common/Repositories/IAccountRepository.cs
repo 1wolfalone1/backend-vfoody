@@ -4,6 +4,8 @@ namespace VFoody.Application.Common.Repositories;
 
 public interface IAccountRepository : IBaseRepository<Account>
 {
+    int CountAll(int excludedRoleId);
+    List<Account> GetAll(int excludedRoleId, int pageNum, int pageSize);
     Account GetCustomerAccount(string email, string password);
     Account? GetAccountByEmail(string email);
 

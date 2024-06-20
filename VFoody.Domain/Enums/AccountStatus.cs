@@ -5,5 +5,6 @@ public enum AccountStatus
     UnVerify = 1,
     Verify = 2,
     Ban = 3,
+    Delete = 4
 }
 
