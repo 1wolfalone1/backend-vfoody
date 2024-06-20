@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using VFoody.Domain.Enums;
 
 namespace VFoody.Application.UseCases.Promotion.Models;
 
@@ -20,7 +21,7 @@ public class AllPromotionResponse
     public int NumberOfUsed { get; set; }
     public int Status { get; set; }
     
-    public string PromotionName { get; set; }
+    public PromotionTypes PromotionType { get; set; }
 
     [JsonIgnore]
     public int TotalItems { get; set; }
