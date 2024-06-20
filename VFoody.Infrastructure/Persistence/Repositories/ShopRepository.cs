@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VFoody.Application.Common.Repositories;
 using VFoody.Domain.Entities;
+using VFoody.Domain.Enums;
 
 namespace VFoody.Infrastructure.Persistence.Repositories;
 
@@ -8,6 +9,21 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
 {
     public ShopRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
+    }
+
+    public int CountAll()
+    {
+        return DbSet.Count(s => s.Status != (int)ShopStatus.Delete);
+    }
+
+    public List<Shop> GetAllShopIncludeAddress(int pageNum, int pageSize)
+    {
+        return DbSet.Include(s => s.Building)
+            .Where(s => s.Status != (int)ShopStatus.Delete)
+            .OrderBy(s => s.Id)
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
     public Shop? GetInfoByShopIdAndStatusIn(int shopId, int[] statusList)
