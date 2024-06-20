@@ -70,5 +70,27 @@ public class MappingProfile : Profile
                         string.Empty
                 )
             );
+        CreateMap<Shop, ManageShopResponse>()
+            .ForMember(dest => dest.RatingPercent,
+                opt => opt.MapFrom(src =>
+                    src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)))
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
+                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
+                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                )
+            ).ForMember(dest => dest.Active,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Active == 1 ? "Đang hoạt động" :
+                        src.Status == 0 ? "Đang đóng cửa" :
+                        string.Empty
+                )
+            )
+            ;
+        CreateMap<Building, ManageShopResponse.BuildingResponse>();
     }
 }

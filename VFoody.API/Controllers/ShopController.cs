@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Shop.Queries.ListShop;
+using VFoody.Application.UseCases.Shop.Queries.ManageShop;
 using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
@@ -10,7 +11,6 @@ using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class ShopController : BaseApiController
 {
     private readonly IMapper _mapper;
@@ -21,6 +21,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/top")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async  Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
@@ -31,6 +32,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/search")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetSearchingProductQuery(int pageIndex, int pageSize, string searchText = "", int orderType = 0, int currentBuildingId = 0)
     {
         return this.HandleResult(await this.Mediator.Send(new GetSearchingShopQuery
@@ -44,17 +46,30 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("shop/info")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetShopInfo(int shopId)
     {
         return HandleResult(await Mediator.Send(new GetShopInfoQuery(shopId)));
     }
     
     [HttpGet("customer/shop")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> GetShopInfo([FromQuery] int[] ids)
     {
         return HandleResult(await Mediator.Send(new GetListShopQuery
         {
             shopIds = ids
+        }));
+    }
+
+    [HttpGet("admin/shop/all")]
+    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    public async Task<IActionResult> GetAllShop(int pageIndex, int pageSize)
+    {
+        return this.HandleResult(await Mediator.Send(new GetAllShopQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize
         }));
     }
 }
