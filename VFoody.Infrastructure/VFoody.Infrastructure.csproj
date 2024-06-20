@@ -46,6 +46,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Common\Queries\CountAllOrder.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Queries\SelectAllOrder.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Common\Queries\SelectUserPromotions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

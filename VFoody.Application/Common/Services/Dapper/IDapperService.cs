@@ -40,5 +40,7 @@ public enum QueryName
     SelectDashboardChartOrder,
     SelectDashboardChartRevenue,
     SelectAllPromotionForOrderCard,
-    SelectAllPromotionForAdminPageWithPaging
+    SelectAllPromotionForAdminPageWithPaging,
+    SelectAllOrder,
+    CountAllOrder
 }
