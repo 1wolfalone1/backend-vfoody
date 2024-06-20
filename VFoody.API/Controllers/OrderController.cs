@@ -2,19 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
+using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class OrderController : BaseApiController
 {
     [HttpPut("customer/order/{id}/cancel")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
     public async Task<IActionResult> CancelOrderAsync(int id)
     {
         return this.HandleResult(await this.Mediator.Send(new CustomerCancelCommand
         {
             Id = id
+        }));
+    }
+
+    [HttpGet("admin/order/all")]
+    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    public async Task<IActionResult> GetAllOrder(int pageIndex, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetAllOrderQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize
         }));
     }
 }
