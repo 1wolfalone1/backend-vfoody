@@ -14,6 +14,7 @@ using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
+using VFoody.Application.UseCases.Accounts.Queries.ManageAccount;
 using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
 
 namespace VFoody.API.Controllers;
@@ -137,5 +138,16 @@ public class AccountController : BaseApiController
     public async  Task<IActionResult> CheckExistedAccount(CheckAccountCommand checkAccountCommand)
     {
         return HandleResult(await this.Mediator.Send(checkAccountCommand));
+    }
+
+    [HttpGet("admin/account/all")]
+    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> GetAllAccount(int pageIndex, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetAllAccountQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        }));
     }
 }
