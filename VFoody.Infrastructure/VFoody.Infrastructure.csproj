@@ -85,6 +85,8 @@
     <EmbeddedResource Include="Common\Queries\SelectDashboardChartRevenue.sql" />
     <None Remove="Common\Queries\SelectAllPromotionForOrderCard.sql" />
     <EmbeddedResource Include="Common\Queries\SelectAllPromotionForOrderCard.sql" />
+    <None Remove="Common\Queries\SelectAllPromotionForAdminPageWithPaging.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectAllPromotionForAdminPageWithPaging.sql" />
   </ItemGroup>
 
 </Project>

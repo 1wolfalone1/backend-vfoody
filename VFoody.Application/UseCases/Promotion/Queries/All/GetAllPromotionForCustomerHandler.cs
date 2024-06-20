@@ -29,6 +29,8 @@ public class GetAllPromotionForCustomerHandler : IQueryHandler<GetAllPromotionFo
                 Distance = request.Distance,
                 OrderValue = request.OrderValue,
                 CurrentDate = "2024-06-01",
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
                 Mode = 1
             }).ConfigureAwait(false);
             
@@ -38,6 +40,8 @@ public class GetAllPromotionForCustomerHandler : IQueryHandler<GetAllPromotionFo
                 CustomerId = request.CustomerId,
                 Distance = request.Distance,
                 OrderValue = request.OrderValue,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
                 CurrentDate = "2024-06-01",
                 Mode = 2
             }).ConfigureAwait(false);
