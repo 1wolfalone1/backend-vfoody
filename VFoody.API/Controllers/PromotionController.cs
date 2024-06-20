@@ -5,6 +5,7 @@ using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
+using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
@@ -78,5 +79,11 @@ public class PromotionController : BaseApiController
     public async Task<IActionResult> CreatePlatformPromotion([FromBody] CreatePromotionRequest promotion)
     {
         return this.HandleResult(await this.Mediator.Send(new CreatePromotionCommand{CreatePromotion = promotion}));
+    }
+
+    [HttpGet("admin/promotion")]
+    public async Task<IActionResult> GetAllPromotionWithCondition([FromQuery] GetAllPromotionForAdminPageQuery query)
+    {
+        return this.HandleResult(await this.Mediator.Send(query));
     }
 }

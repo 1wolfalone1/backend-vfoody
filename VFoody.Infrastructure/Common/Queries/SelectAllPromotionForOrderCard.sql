@@ -20,6 +20,7 @@ WITH PersonalPromotion AS (
 	SELECT
 		id,
 		title,
+		description,
 		amount_rate,
 		minimum_order_value,
 		maximum_apply_value,
@@ -44,6 +45,7 @@ ShopPromotion AS (
 	SELECT
 		id,
 		title,
+		description,
 		amount_rate,
 		minimum_order_value,
 		maximum_apply_value,
@@ -68,6 +70,7 @@ PlatformPromotion AS (
 	SELECT
 		id,
 		title,
+		description,
 		amount_rate,
 		minimum_order_value,
 		maximum_apply_value,
@@ -91,6 +94,7 @@ AllPromotion AS (
 	SELECT
 		id,
 		title,
+		description,
 		amount_rate,
 		minimum_order_value,
 		maximum_apply_value,
@@ -116,10 +120,44 @@ AllPromotion AS (
 		*
 	FROM
 		ShopPromotion
+),
+AllPromotionWithPaging AS (
+	SELECT
+		id,
+		title,
+		description,
+		amount_rate,
+		minimum_order_value,
+		maximum_apply_value,
+		amount_value,
+		apply_type,
+		start_date,
+		end_date,
+		usage_limit,
+		number_of_used,
+		status,
+		name,
+		ROW_NUMBER() OVER (
+			ORDER BY
+				start_date DESC
+		) AS row_num,
+		COUNT(id) OVER () AS total_item
+	FROM
+		AllPromotion
+	WHERE
+		(
+			@Mode = 1
+			AND @OrderValue >= minimum_order_value
+		)
+		OR (
+			@Mode = 2
+			AND @OrderValue < minimum_order_value
+		)
 )
 SELECT
 	id AS Id,
 	title AS Title,
+	description AS Description,
 	amount_rate AS AmountRate,
 	minimum_order_value AS MinimumOrderValue,
 	maximum_apply_value AS MaximumApplyValue,
@@ -131,15 +169,9 @@ SELECT
 	number_of_used AS NumberOfUsed,
 	status AS Status,
 	name AS PromotionName,
-    10 AS TotalItems
+	total_item AS TotalItems
 FROM
-	AllPromotion
+	AllPromotionWithPaging
 WHERE
-	(
-		@Mode = 1
-		AND @OrderValue >= minimum_order_value
-	)
-	OR (
-		@Mode = 2
-		AND @OrderValue < minimum_order_value
-	);
+	row_num BETWEEN (@PageIndex - 1) * @PageSize + 1
+	AND @PageIndex * @PageSize;
