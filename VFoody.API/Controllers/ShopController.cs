@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Shop.Queries.ListShop;
 using VFoody.Application.UseCases.Shop.Queries.ManageShop;
+using VFoody.Application.UseCases.Shop.Queries.ShopFavourite;
 using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
@@ -59,6 +60,17 @@ public class ShopController : BaseApiController
         return HandleResult(await Mediator.Send(new GetListShopQuery
         {
             shopIds = ids
+        }));
+    }
+
+    [HttpGet("customer/shop/favourite")]
+    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    public async Task<IActionResult> GetShopFavourite(int pageIndex, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetShopFavouriteQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize
         }));
     }
 
