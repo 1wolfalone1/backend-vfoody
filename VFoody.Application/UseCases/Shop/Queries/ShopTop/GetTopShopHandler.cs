@@ -1,30 +1,31 @@
-﻿using ArtHubBO.Payload;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Models.Responses;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
-using VFoody.Application.UseCases.Product.Models;
 using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
-using VFoody.Domain.Entities;
 using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Shop.Queries.ShopTop;
 
 public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
 {
-    private readonly IDapperService dapperService;
+    private readonly IDapperService _dapperService;
+    private readonly IFavouriteShopRepository _favouriteShopRepository;
+    private readonly ICurrentPrincipalService _currentPrincipalService;
     private readonly ILogger<GetSearchingShopHandler> _logger;
 
-    public GetTopShopHandler(IDapperService dapperService, ILogger<GetSearchingShopHandler> logger)
+    public GetTopShopHandler(
+        IDapperService dapperService, ILogger<GetSearchingShopHandler> logger,
+        IFavouriteShopRepository favouriteShopRepository, ICurrentPrincipalService currentPrincipalService
+    )
     {
-        this.dapperService = dapperService;
+        this._dapperService = dapperService;
         _logger = logger;
+        _favouriteShopRepository = favouriteShopRepository;
+        _currentPrincipalService = currentPrincipalService;
     }
 
 
@@ -32,13 +33,16 @@ public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
     {
         try
         {
-            var list = await dapperService.SelectAsync<SelectSimpleShopDTO>(QueryName.SelectTopRatingShop, new
+            var accountId = _currentPrincipalService.CurrentPrincipalId!.Value;
+            var list = await _dapperService.SelectAsync<SelectSimpleShopDTO>(QueryName.SelectTopRatingShop, new
             {
                 request.PageIndex,
                 request.PageSize
             }).ConfigureAwait(false);
-
-            var result = new PaginationResponse<SelectSimpleShopDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
+            var response = list.ToList();
+            response.ForEach(s => s.IsFavouriteShop = _favouriteShopRepository.IsFavouriteShop(s.Id, accountId));
+            var result = new PaginationResponse<SelectSimpleShopDTO>(response, request.PageIndex, request.PageSize,
+                list.First().TotalItems);
 
             return Result.Success(result);
         }
