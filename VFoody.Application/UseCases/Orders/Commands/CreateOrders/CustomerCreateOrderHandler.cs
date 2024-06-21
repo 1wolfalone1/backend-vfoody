@@ -155,6 +155,11 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
 
                 await this._orderDetailOptionRepository.AddRangeAsync(orderDetailOptions).ConfigureAwait(false);
             }
+            
+            // Update Shop Total Order
+            var shop = this._shopRepository.GetById(request.ShopId);
+            shop.TotalOrder += 1;
+            this._shopRepository.Update(shop);
 
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             return Result.Success(new

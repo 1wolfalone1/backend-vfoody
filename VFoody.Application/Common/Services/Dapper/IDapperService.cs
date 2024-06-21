@@ -42,5 +42,6 @@ public enum QueryName
     SelectAllPromotionForOrderCard,
     SelectAllPromotionForAdminPageWithPaging,
     SelectAllOrder,
-    CountAllOrder
+    CountAllOrder,
+    SelectOrderHistoryForCustomer
 }

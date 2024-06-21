@@ -9,7 +9,7 @@ public class CustomerCreateOrderCommand : ICommand<Result>
     public List<ProductInOrderRequest> Products { get; set; }
     public int ShopId { get; set; }
     public OrderPriceInOrderRequest OrderPrice { get; set; }
-    public VoucherInOrderRequest Voucher { get; set; }
+    public VoucherInOrderRequest Voucher { get; set; } = new VoucherInOrderRequest();
     public OrderInfoRequest OrderInfo { get; set; }
     public ShipInOrderRequest Ship { get; set; }
 }
