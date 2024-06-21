@@ -98,6 +98,10 @@
     <EmbeddedResource Include="Common\Queries\SelectAllPromotionForAdminPageWithPaging.sql" />
     <None Remove="Common\Queries\SelectOrderHistoryForCustomer.sql" />
     <EmbeddedResource Include="Common\Queries\SelectOrderHistoryForCustomer.sql" />
+    <None Remove="Common\Queries\SelectOrderAndVoucherInfor.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectOrderAndVoucherInfor.sql" />
+    <None Remove="Common\Queries\SelectProductForOrderInfo.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectProductForOrderInfo.sql" />
   </ItemGroup>
 
 </Project>

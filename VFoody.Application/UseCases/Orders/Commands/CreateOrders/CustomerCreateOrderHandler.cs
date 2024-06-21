@@ -70,6 +70,8 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 PhoneNumber = request.OrderInfo.PhoneNumber,
                 IsRefund = 0,
                 RefundStatus = (int)RefundOrderStatus.NoRefund,
+                Distance = (float)request.Ship.Distance,
+                DurationShipping = DateTime.Now.AddMinutes(request.Ship.Duration),
             };
             
             if (request.Voucher.PromotionType == PromotionTypes.PersonPromotion)
@@ -80,7 +82,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             {
                 order.PlatformPromotionId = request.Voucher.Id;
             }
-            else
+            else if(request.Voucher.PromotionType == PromotionTypes.ShopPromotion)
             {
                 order.ShopPromotionId = request.Voucher.Id;
             }
@@ -113,6 +115,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             foreach (var pro in request.Products)
             {
                 var product = this._productRepository.GetById(pro.Id);
+                product.TotalOrder += 1;
                 OrderDetail or = new OrderDetail()
                 {
                     Quantity = pro.Quantity,
@@ -121,6 +124,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                     ProductId = pro.Id
                 };
 
+                this._productRepository.Update(product);
                 await this._orderDetailRepository.AddAsync(or).ConfigureAwait(false);
                 await this._unitOfWork.SaveChangesAsync().ConfigureAwait(false);
                 
