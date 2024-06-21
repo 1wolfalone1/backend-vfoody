@@ -61,7 +61,9 @@ public class MappingProfile : Profile
                         string.Empty
                 )
             ).ForMember(dest => dest.FullName,
-                opt => opt.MapFrom(src => src.LastName))
+                opt =>
+                    opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email)
+            )
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
                     src =>
@@ -72,6 +74,9 @@ public class MappingProfile : Profile
                 )
             );
         CreateMap<Shop, ManageShopResponse>()
+            .ForMember(src => src.ShopName,
+                opt => opt.MapFrom(src => src.Name)
+            )
             .ForMember(dest => dest.RatingPercent,
                 opt => opt.MapFrom(src =>
                     src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)))
@@ -87,7 +92,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(
                     src =>
                         src.Active == 1 ? "Đang hoạt động" :
-                        src.Status == 0 ? "Đang đóng cửa" :
+                        src.Active == 0 ? "Đang đóng cửa" :
                         string.Empty
                 )
             )
@@ -96,13 +101,13 @@ public class MappingProfile : Profile
         CreateMap<ManageOrderDto, ManageOrderResponse>().ForMember(dest => dest.Status,
             opt => opt.MapFrom(
                 src =>
-                    src.Status == (int)OrderStatus.Pending ? "Đơn hàng đã đặt thành công." :
-                    src.Status == (int)OrderStatus.Confirmed ? "Nhà hàng đã xác nhận đơn hàng." :
-                    src.Status == (int)OrderStatus.Delivering ? "Đơn hàng đang được gửi." :
-                    src.Status == (int)OrderStatus.Successful ? "Đơn hàng đã được giao." :
-                    src.Status == (int)OrderStatus.Cancelled ? "Đơn hàng đã bị khách hàng hoặc cửa hàng hủy." :
-                    src.Status == (int)OrderStatus.Fail ? "Đơn hàng đã bị cửa hàng hủy." :
-                    src.Status == (int)OrderStatus.Rejected ? "Đơn hàng bị từ chối." :
+                    src.Status == (int)OrderStatus.Pending ? "Đang thực hiện" :
+                    src.Status == (int)OrderStatus.Confirmed ? "Đang thực hiện" :
+                    src.Status == (int)OrderStatus.Delivering ? "Đang thực hiện" :
+                    src.Status == (int)OrderStatus.Successful ? "Đã hoàn thành" :
+                    src.Status == (int)OrderStatus.Cancelled ? "Đã hủy" :
+                    src.Status == (int)OrderStatus.Fail ? "Giao không thành công" :
+                    src.Status == (int)OrderStatus.Rejected ? "Đã hủy" :
                     string.Empty
             )
         );
