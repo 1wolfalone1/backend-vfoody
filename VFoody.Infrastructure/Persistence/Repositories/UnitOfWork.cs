@@ -56,7 +56,7 @@ public class UnitOfWork : IUnitOfWork
             throw new InvalidOperationException(ErrorNotOpenTransaction);
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangeAsync();
     }
 
     public void RollbackTransaction()
