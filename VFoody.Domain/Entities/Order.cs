@@ -39,6 +39,20 @@ public partial class Order : BaseEntity
 
     [Column("charge_fee")]
     public float ChargeFee { get; set; }
+    
+    [Column("full_name")]
+    [StringLength(256)]
+    public string FullName { get; set; }
+    
+    [Column("phone_number")]
+    [StringLength(100)]
+    public string PhoneNumber { get; set; }
+    
+    [Column("is_refund", TypeName = "bit(1)")]
+    public ulong IsRefund { get; set; }
+
+    [Column("refund_status")]
+    public int RefundStatus { get; set; }
 
     [Column("transaction_id")]
     public int TransactionId { get; set; }

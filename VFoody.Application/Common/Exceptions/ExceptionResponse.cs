@@ -41,6 +41,13 @@ public class ExceptionResponse
             else
                 Details.Add(error.PropertyName, new List<string> { error.ErrorMessage });
     }
+    
+    public ExceptionResponse(InvalidBusinessException exception)
+    {
+        ErrorCode = (int)HttpStatusCode.BadRequest;
+        Error = HttpStatusCode.BadRequest.ToString();
+        Message = exception.Message;
+    }
 
     public int ErrorCode { get; }
 

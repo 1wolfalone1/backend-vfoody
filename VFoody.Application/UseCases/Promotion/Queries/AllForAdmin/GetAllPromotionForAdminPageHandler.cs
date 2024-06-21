@@ -24,7 +24,7 @@ public class GetAllPromotionForAdminPageHandler : IQueryHandler<GetAllPromotionF
         {
             var parameter = new
             {
-                DateFrom = request.DateFrom.ToString("yyyy-MM-dd"),
+                DateFrom = request.DateFrom == default ? null : request.DateFrom.ToString("yyyy-MM-dd"),
                 DateTo = request.DateTo.ToString("yyyy-MM-dd"),
                 Status = (int)request.Status,
                 ApplyType = (int)request.ApplyType,

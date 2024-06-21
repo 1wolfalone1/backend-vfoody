@@ -56,7 +56,7 @@ WITH PersonalPromotion AS (
             @Title IS NULL
             OR pp.title LIKE CONCAT('%', CONCAT(@Title, '%'))
         )
-        OR (
+        AND (
             @Description IS NULL
             OR pp.description LIKE CONCAT('%', CONCAT(@Description, '%'))
         )
@@ -97,7 +97,7 @@ ShopPromotion AS (
             @Title IS NULL
             OR sp.title LIKE CONCAT('%', CONCAT(@Title, '%'))
         )
-        OR (
+        AND (
             @Description IS NULL
             OR sp.description LIKE CONCAT('%', CONCAT(@Description, '%'))
         )
@@ -138,7 +138,7 @@ PlatformPromotion AS (
             @Title IS NULL
             OR pp.title LIKE CONCAT('%', CONCAT(@Title, '%'))
         )
-        OR (
+        AND (
             @Description IS NULL
             OR pp.description LIKE CONCAT('%', CONCAT(@Description, '%'))
         )
