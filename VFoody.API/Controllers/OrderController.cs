@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
+using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
 using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 
 namespace VFoody.API.Controllers;
@@ -36,5 +37,11 @@ public class OrderController : BaseApiController
     {
         return this.HandleResult(await this.Mediator.Send(command));
 
+    }
+
+    [HttpGet("customer/order/history")]
+    public async Task<IActionResult> GetListCustomerOrderHistory([FromQuery] GetOrderByStatusOfCustomerQuery query)
+    {
+        return this.HandleResult(await this.Mediator.Send(query));
     }
 }
