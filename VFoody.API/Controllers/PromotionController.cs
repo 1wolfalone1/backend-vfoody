@@ -76,12 +76,14 @@ public class PromotionController : BaseApiController
     }
 
     [HttpPost("admin/promotion")]
+    [AllowAnonymous]
     public async Task<IActionResult> CreatePlatformPromotion([FromBody] CreatePromotionRequest promotion)
     {
         return this.HandleResult(await this.Mediator.Send(new CreatePromotionCommand{CreatePromotion = promotion}));
     }
 
     [HttpGet("admin/promotion")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllPromotionWithCondition([FromQuery] GetAllPromotionForAdminPageQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
