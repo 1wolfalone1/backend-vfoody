@@ -5,6 +5,7 @@ using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Application.UseCases.Orders.Models;
 using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
@@ -94,5 +95,18 @@ public class MappingProfile : Profile
             )
             ;
         CreateMap<Building, ManageShopResponse.BuildingResponse>();
+        CreateMap<ManageOrderDto, ManageOrderResponse>().ForMember(dest => dest.Status,
+            opt => opt.MapFrom(
+                src =>
+                    src.Status == (int)OrderStatus.Pending ? "Đơn hàng đã đặt thành công." :
+                    src.Status == (int)OrderStatus.Confirmed ? "Nhà hàng đã xác nhận đơn hàng." :
+                    src.Status == (int)OrderStatus.Delivering ? "Đơn hàng đang được gửi." :
+                    src.Status == (int)OrderStatus.Successful ? "Đơn hàng đã được giao." :
+                    src.Status == (int)OrderStatus.Cancelled ? "Đơn hàng đã bị khách hàng hoặc cửa hàng hủy." :
+                    src.Status == (int)OrderStatus.Fail ? "Đơn hàng đã bị cửa hàng hủy." :
+                    src.Status == (int)OrderStatus.Rejected ? "Đơn hàng bị từ chối." :
+                    string.Empty
+            )
+        );
     }
 }
