@@ -52,6 +52,7 @@ OrderCustomerWithShopName AS (
         ord.updated_date,
         s.id AS shop_id,
         s.name,
+        s.logo_url,
         (
             SELECT
                 SUM(quantity)
@@ -76,6 +77,7 @@ SELECT
     created_date AS OrderDate,
     shop_id AS ShopId,
     name AS ShopName,
+    logo_url AS LogoUrl,
     total_product_order AS ProductOrderQuantity,
     total_items AS TotalItems
 FROM
