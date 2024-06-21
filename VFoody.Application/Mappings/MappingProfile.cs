@@ -60,7 +60,9 @@ public class MappingProfile : Profile
                         string.Empty
                 )
             ).ForMember(dest => dest.FullName,
-                opt => opt.MapFrom(src => src.LastName))
+                opt =>
+                    opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email)
+                    )
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
                     src =>
@@ -86,7 +88,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(
                     src =>
                         src.Active == 1 ? "Đang hoạt động" :
-                        src.Status == 0 ? "Đang đóng cửa" :
+                        src.Active == 0 ? "Đang đóng cửa" :
                         string.Empty
                 )
             )
