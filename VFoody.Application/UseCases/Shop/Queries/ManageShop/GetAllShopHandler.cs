@@ -21,7 +21,7 @@ public class GetAllShopHandler : IQueryHandler<GetAllShopQuery, Result>
     public async Task<Result<Result>> Handle(GetAllShopQuery request, CancellationToken cancellationToken)
     {
         var totalShops = _shopRepository.CountAll();
-        var shops = _shopRepository.GetAllShopIncludeAddress(
+        var shops = _shopRepository.GetAllShopIncludeAddressAccount(
             request.PageIndex, request.PageSize
         );
         var result = new PaginationResponse<ManageShopResponse>(_mapper.Map<List<ManageShopResponse>>(shops),

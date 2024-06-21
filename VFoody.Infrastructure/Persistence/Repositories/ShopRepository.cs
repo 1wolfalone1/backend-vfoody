@@ -16,9 +16,10 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
         return DbSet.Count(s => s.Status != (int)ShopStatus.Delete);
     }
 
-    public List<Shop> GetAllShopIncludeAddress(int pageNum, int pageSize)
+    public List<Shop> GetAllShopIncludeAddressAccount(int pageNum, int pageSize)
     {
         return DbSet.Include(s => s.Building)
+            .Include(s => s.Account)
             .Where(s => s.Status != (int)ShopStatus.Delete)
             .OrderBy(s => s.Id)
             .Skip((pageNum - 1) * pageSize)
