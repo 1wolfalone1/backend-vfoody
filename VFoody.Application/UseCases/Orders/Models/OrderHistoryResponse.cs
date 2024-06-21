@@ -10,6 +10,7 @@ public class OrderHistoryResponse
     public DateTime OrderDate { get; set; }
     public int ShopId { get; set; }
     public string ShopName { get; set; }
+    public string LogoUrl { get; set; }
     public int ProductOrderQuantity { get; set; }
     [JsonIgnore]
     public int TotalItems { get; set; }
