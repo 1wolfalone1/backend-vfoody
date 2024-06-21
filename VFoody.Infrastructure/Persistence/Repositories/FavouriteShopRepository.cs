@@ -8,4 +8,14 @@ public class FavouriteShopRepository : BaseRepository<FavouriteShop>, IFavourite
     public FavouriteShopRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
     }
+
+    public bool IsFavouriteShop(int shopId, int accountId)
+    {
+        return DbSet.Any(f => f.ShopId == shopId && f.AccountId == accountId);
+    }
+
+    public FavouriteShop? GetByShopIdAndAccountId(int shopId, int accountId)
+    {
+        return DbSet.FirstOrDefault(f => f.ShopId == shopId && f.AccountId == accountId);
+    }
 }

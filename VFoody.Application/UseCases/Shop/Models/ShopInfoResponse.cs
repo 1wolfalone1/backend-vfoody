@@ -4,6 +4,7 @@ public class ShopInfoResponse
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public bool IsFavouriteShop { get; set; }
     public string? LogoUrl { get; set; }
     public string? BannerUrl { get; set; }
     public string? Description { get; set; }
