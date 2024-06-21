@@ -4,6 +4,7 @@ public class ManageShopResponse
 {
     public int Id { get; set; }
     public string ShopName { get; set; }
+    public string ShopOwnerName { get; set; }
     public string? LogoUrl { get; set; }
     public string? BannerUrl { get; set; }
     public string? Description { get; set; }

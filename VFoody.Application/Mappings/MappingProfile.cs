@@ -74,6 +74,11 @@ public class MappingProfile : Profile
                 )
             );
         CreateMap<Shop, ManageShopResponse>()
+            .ForMember(src => src.ShopOwnerName,
+                opt => opt.MapFrom(
+                    src => src.Account.LastName != string.Empty ? src.Account.LastName : src.Account.Email
+                    )
+            )
             .ForMember(src => src.ShopName,
                 opt => opt.MapFrom(src => src.Name)
             )
