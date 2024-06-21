@@ -53,6 +53,12 @@ public partial class Order : BaseEntity
 
     [Column("refund_status")]
     public int RefundStatus { get; set; }
+    
+    [Column("distance")]
+    public float Distance { get; set; }
+    
+    [Column("duration_shipping")]
+    public DateTime DurationShipping { get; set; }
 
     [Column("transaction_id")]
     public int TransactionId { get; set; }

@@ -4,11 +4,13 @@ using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
+using VFoody.Application.UseCases.Orders.Queries.GetOrderDetail;
 using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
+[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class OrderController : BaseApiController
 {
     [HttpPut("customer/order/{id}/cancel")]
@@ -43,5 +45,15 @@ public class OrderController : BaseApiController
     public async Task<IActionResult> GetListCustomerOrderHistory([FromQuery] GetOrderByStatusOfCustomerQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
+    }
+
+    [HttpGet("customer/order/{id}")]
+    public async Task<IActionResult> GetOrderDetail(int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new GetOrderDetailQuery
+        {
+            OrderId = id,
+            AccountId = 0,
+        }));
     }
 }

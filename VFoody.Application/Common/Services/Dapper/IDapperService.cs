@@ -44,5 +44,7 @@ public enum QueryName
     SelectAllOrder,
     CountAllOrder,
     SelectOrderHistoryForCustomer,
-    SelectFavouriteShop
+    SelectFavouriteShop,
+    SelectOrderAndVoucherInfor,
+    SelectProductForOrderInfo
 }
