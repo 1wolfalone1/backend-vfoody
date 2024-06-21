@@ -11,6 +11,11 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
     {
     }
 
+    public bool IsActiveShop(int shopId)
+    {
+        return DbSet.Any(s => s.Id == shopId && s.Status == (int)ShopStatus.Active);
+    }
+
     public int CountAll()
     {
         return DbSet.Count(s => s.Status != (int)ShopStatus.Delete);
