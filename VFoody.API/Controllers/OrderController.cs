@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
+using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
 using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 
@@ -18,7 +19,7 @@ public class OrderController : BaseApiController
             Id = id
         }));
     }
-
+    
     [HttpGet("admin/order/all")]
     // [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> GetAllOrder(int pageIndex, int pageSize)
@@ -28,5 +29,12 @@ public class OrderController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize
         }));
+    }
+    
+    [HttpPost("customer/order")]
+    public async Task<IActionResult> CreateOrderAsync([FromBody] CustomerCreateOrderCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+
     }
 }

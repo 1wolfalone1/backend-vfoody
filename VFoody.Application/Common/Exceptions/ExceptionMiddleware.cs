@@ -34,12 +34,17 @@ public class ExceptionMiddleware
         catch (ValidationException exception)
         {
             _logger.LogError(exception, exception.Message);
-            await HandleValidationExceptionASync(context, exception);
+            await HandleValidationExceptionAsync(context, exception);
         }
         catch (BadRequestException exception)
         {
             _logger.LogError(exception, exception.Message);
-            await HandleBadRequestExceptionASync(context, exception);
+            await HandleBadRequestExceptionAsync(context, exception);
+        }
+        catch (InvalidBusinessException exception)
+        {
+            _logger.LogError(exception, exception.Message);
+            await HandleInValidBusinessExceptionAsync(context, exception);
         }
         catch (Exception exception)
         {
@@ -53,12 +58,17 @@ public class ExceptionMiddleware
         await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, new ExceptionResponse(exception));
     }
 
-    private async Task HandleValidationExceptionASync(HttpContext context, ValidationException exception)
+    private async Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
     {
         await HandleExceptionAsync(context, HttpStatusCode.BadRequest, new ExceptionResponse(exception));
     }
     
-    private async Task HandleBadRequestExceptionASync(HttpContext context, BadRequestException exception)
+    private async Task HandleBadRequestExceptionAsync(HttpContext context, BadRequestException exception)
+    {
+        await HandleExceptionAsync(context, HttpStatusCode.BadRequest, new ExceptionResponse(exception));
+    }
+    
+    private async Task HandleInValidBusinessExceptionAsync(HttpContext context, InvalidBusinessException exception)
     {
         await HandleExceptionAsync(context, HttpStatusCode.BadRequest, new ExceptionResponse(exception));
     }
