@@ -13,4 +13,5 @@ public interface IAccountRepository : IBaseRepository<Account>
     Task<Account> GetAccountByPhoneNumber(string firebaseUserPhoneNumber);
     
     Account? GetAccountWithBuildingByEmail(string email);
+    Account? GetByIdIncludeBuilding(int id);
 }

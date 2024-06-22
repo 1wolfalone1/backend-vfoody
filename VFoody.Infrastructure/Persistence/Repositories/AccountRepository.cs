@@ -50,5 +50,12 @@ public class AccountRepository : BaseRepository<Account>, IAccountRepository
     {
         return this.DbSet.Include(acc => acc.Building).SingleOrDefault(a => a.Email == email);
     }
+
+    public Account? GetByIdIncludeBuilding(int id)
+    {
+        return DbSet.Include(acc => acc.Building).SingleOrDefault(
+            a => a.Id == id && a.RoleId != (int)Roles.Admin && a.Status != (int)AccountStatus.Delete
+            );
+    }
 }
 
