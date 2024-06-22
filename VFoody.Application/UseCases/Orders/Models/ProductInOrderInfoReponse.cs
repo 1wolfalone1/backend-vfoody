@@ -5,6 +5,7 @@ namespace VFoody.Application.UseCases.Orders.Models;
 
 public class ProductInOrderInfoResponse
 {
+    public int OrderDetailId { get; set; }
     public int OrderId { get; set; }
     public int ProductId { get; set; }
     public int ProductQuantity { get; set; }
