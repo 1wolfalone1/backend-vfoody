@@ -104,5 +104,24 @@ public class MappingProfile : Profile
                     string.Empty
             )
         );
+
+        CreateMap<ManageShopDetailDto, ManageShopDetailResponse>()
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
+                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
+                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                )
+            ).ForMember(dest => dest.Active,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Active == 1 ? "Đang hoạt động" :
+                        src.Active == 0 ? "Đang đóng cửa" :
+                        string.Empty
+                )
+            )
+            ;
     }
 }
