@@ -59,34 +59,30 @@ PaginatedShopsCTE AS (
         AND (@SearchValue IS NULL OR s.name LIKE CONCAT('%', @SearchValue, '%'))
         AND (@FilterByTime IS NULL OR @FilterByTime = 0 OR s.created_date >= NOW() - INTERVAL @FilterByTime DAY)
         AND ((@DateFrom IS NULL AND @DateTo IS NULL) OR (s.created_date BETWEEN @DateFrom AND @DateTo))
+    -- Assuming 1 is for ASC and 2 for DESC
     ORDER BY
-        CASE WHEN @Direction = 1 THEN -- Assuming 1 is for ASC and 2 for DESC
-            CASE @OrderBy
-                WHEN 1 THEN s.id
-                WHEN 2 THEN s.name
-                WHEN 3 THEN a.last_name
-                WHEN 4 THEN s.phone_number
-                WHEN 5 THEN s.active
-                WHEN 6 THEN s.status
-                WHEN 7 THEN s.total_order
-                WHEN 8 THEN s.total_product
-                WHEN 9 THEN s.created_date
-            END
-        END ASC,
-        CASE WHEN @Direction = 2 THEN
-            CASE @OrderBy
-                WHEN 1 THEN s.id
-                WHEN 2 THEN s.name
-                WHEN 3 THEN a.last_name
-                WHEN 4 THEN s.phone_number
-                WHEN 5 THEN s.active
-                WHEN 6 THEN s.status
-                WHEN 7 THEN s.total_order
-                WHEN 8 THEN s.total_product
-                WHEN 9 THEN s.created_date
-            END
-        END DESC
-        LIMIT @PageSize OFFSET @Offset
+        IF(@OrderBy = 1 AND @Direction = 1, s.id, NULL) ASC,
+        IF(@OrderBy = 2 AND @Direction = 1, s.name, NULL) ASC,
+        IF(@OrderBy = 3 AND @Direction = 1, a.last_name, NULL) ASC,
+        IF(@OrderBy = 4 AND @Direction = 1, s.phone_number, NULL) ASC,
+        IF(@OrderBy = 5 AND @Direction = 1, s.active, NULL) ASC,
+        IF(@OrderBy = 6 AND @Direction = 1, s.status, NULL) ASC,
+        IF(@OrderBy = 7 AND @Direction = 1, s.total_order, NULL) ASC,
+        IF(@OrderBy = 8 AND @Direction = 1, s.total_product, NULL) ASC,
+        IF(@OrderBy = 9 AND @Direction = 1, s.created_date, NULL) ASC,
+        IF(@OrderBy = 10 AND @Direction = 1, ShopRevenue, NULL) ASC,
+        IF(@OrderBy = 1 AND @Direction = 2, s.id, NULL) DESC,
+        IF(@OrderBy = 2 AND @Direction = 2, s.name, NULL) DESC,
+        IF(@OrderBy = 3 AND @Direction = 2, a.last_name, NULL) DESC,
+        IF(@OrderBy = 4 AND @Direction = 2, s.phone_number, NULL) DESC,
+        IF(@OrderBy = 5 AND @Direction = 2, s.active, NULL) DESC,
+        IF(@OrderBy = 6 AND @Direction = 2, s.status, NULL) DESC,
+        IF(@OrderBy = 7 AND @Direction = 2, s.total_order, NULL) DESC,
+        IF(@OrderBy = 8 AND @Direction = 2, s.total_product, NULL) DESC,
+        IF(@OrderBy = 9 AND @Direction = 2, s.created_date, NULL) DESC,
+        IF(@OrderBy = 10 AND @Direction = 2, ShopRevenue, NULL) DESC,
+        IF(@OrderBy IS NULL AND @Direction IS NULL, s.created_date, NULL) DESC
+    LIMIT @PageSize OFFSET @Offset
 )
 SELECT
     p.*,
