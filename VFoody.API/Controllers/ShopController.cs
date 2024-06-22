@@ -74,14 +74,10 @@ public class ShopController : BaseApiController
         }));
     }
 
-    [HttpGet("admin/shop/all")]
+    [HttpPost("admin/shop/all")]
     // [Authorize(Roles = IdentityConst.AdminClaimName)]
-    public async Task<IActionResult> GetAllShop(int pageIndex, int pageSize)
+    public async Task<IActionResult> GetAllShop([FromBody] GetAllShopQuery getAllShopQuery)
     {
-        return this.HandleResult(await Mediator.Send(new GetAllShopQuery
-        {
-            PageIndex = pageIndex,
-            PageSize = pageSize
-        }));
+        return this.HandleResult(await Mediator.Send(getAllShopQuery));
     }
 }
