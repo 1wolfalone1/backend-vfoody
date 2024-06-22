@@ -6,4 +6,5 @@ namespace VFoody.Application.UseCases.Product.Queries.ProductOfShopOwner;
 
 public class GetProductShopOwnerQuery : PaginationRequest, IQuery<Result>
 {
+    public int? ShopId { get; set; }
 }

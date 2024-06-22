@@ -90,7 +90,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .Count(p => p.ShopId == id && p.Status != (int)ProductStatus.Delete);
     }
 
-    public Product? GetProductDetailShopOwner(int productId)
+    public Product? GetProductDetailShopOwner(int productId, int shopId)
     {
         return DbSet
             .Include(p => p.Questions.Where(q =>
@@ -99,6 +99,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
                 q.Options.Where(o => o.Status == (int)OptionStatus.Active || o.Status == (int)OptionStatus.UnActive))
             .FirstOrDefault(
                 p => p.Id == productId
+                     && p.ShopId == shopId
                      && (p.Status == (int)ProductStatus.Active || p.Status == (int)ProductStatus.UnActive));
     }
 }

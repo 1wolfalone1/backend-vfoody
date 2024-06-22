@@ -13,5 +13,5 @@ public interface IProductRepository : IBaseRepository<Product>
     Task<List<Product>> GetListProductInCard(int[] requestProductIds);
     Task<List<Product>> GetListProductByShopId(int id, int pageNum, int pageSize);
     int CountTotalProductByShopId(int id);
-    Product? GetProductDetailShopOwner(int productId);
+    Product? GetProductDetailShopOwner(int productId, int shopId);
 }

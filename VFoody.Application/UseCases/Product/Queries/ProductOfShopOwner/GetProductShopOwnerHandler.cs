@@ -28,11 +28,21 @@ public class GetProductShopOwnerHandler : IQueryHandler<GetProductShopOwnerQuery
 
     public async Task<Result<Result>> Handle(GetProductShopOwnerQuery request, CancellationToken cancellationToken)
     {
-        var accountId = _currentPrincipalService.CurrentPrincipalId;
-        var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
-        var totalProduct = _productRepository.CountTotalProductByShopId(shop.Id);
+        int shopId;
+        if (request.ShopId != null)
+        {
+            shopId = request.ShopId.Value;
+        }
+        else
+        {
+            var accountId = _currentPrincipalService.CurrentPrincipalId;
+            var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
+            shopId = shop.Id;
+        }
+
+        var totalProduct = _productRepository.CountTotalProductByShopId(shopId);
         var productList =
-            await _productRepository.GetListProductByShopId(shop.Id, request.PageIndex, request.PageSize);
+            await _productRepository.GetListProductByShopId(shopId, request.PageIndex, request.PageSize);
         var result = new PaginationResponse<ProductShopOwnerResponse>(
             _mapper.Map<List<ProductShopOwnerResponse>>(productList),
             request.PageIndex, request.PageSize, totalProduct);

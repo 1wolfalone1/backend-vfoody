@@ -329,7 +329,7 @@ public class UpdateProductHandler : ICommandHandler<UpdateProductCommand, Result
             return Result.Failure(new Error("500", "Internal server error."));
         }
 
-        var updateProduct = _productRepository.GetProductDetailShopOwner(product.Id);
+        var updateProduct = _productRepository.GetProductDetailShopOwner(product.Id, shop.Id);
         return Result.Success(_mapper.Map<ProductDetailResponse>(updateProduct));
     }
 }

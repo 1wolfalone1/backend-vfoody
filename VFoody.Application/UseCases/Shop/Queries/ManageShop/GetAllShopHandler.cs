@@ -41,12 +41,12 @@ public class GetAllShopHandler : IQueryHandler<GetAllShopQuery, Result>
             };
 
 
-            var orders = await _dapperService.SelectAsync<ManageShopDto>(
+            var shops = await _dapperService.SelectAsync<ManageShopDto>(
                     QueryName.SelectAllShopByCondition, parameter)
                 .ConfigureAwait(false);
 
             var result = new PaginationResponse<ManageShopResponse>(_mapper.Map<List<ManageShopResponse>>(
-                orders.ToList()), request.PageIndex, request.PageSize, orders.First().TotalCount);
+                shops.ToList()), request.PageIndex, request.PageSize, shops.First().TotalCount);
             return Result.Success(result);
         }
         catch (Exception e)
