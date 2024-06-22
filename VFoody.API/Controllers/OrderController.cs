@@ -10,7 +10,6 @@ using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
 public class OrderController : BaseApiController
 {
     [HttpPut("customer/order/{id}/cancel")]
