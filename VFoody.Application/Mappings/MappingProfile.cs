@@ -123,5 +123,6 @@ public class MappingProfile : Profile
                 )
             )
             ;
+        CreateMap<Account, AccountInfoResponse>();
     }
 }
