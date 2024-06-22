@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Models.Responses;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services.Dapper;
@@ -61,33 +62,46 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
             result.ShopInfo = this._mapper.Map<ShopInfoResponse>(shop);
             
             // Map Product Infor
-            Dictionary<int, ProductInOrderInfoResponse> dicPro = new Dictionary<int, ProductInOrderInfoResponse>();
-            Dictionary<int, QuestionInOrderResponse> dic = new Dictionary<int, QuestionInOrderResponse>();
+            Dictionary<string, ProductInOrderInfoResponse> dicPro = new Dictionary<string, ProductInOrderInfoResponse>();
+            Dictionary<string, QuestionInOrderResponse> dic = new Dictionary<string, QuestionInOrderResponse>();
             Func<ProductInOrderInfoResponse, QuestionInOrderResponse, OptionInOrderResponse, ProductInOrderInfoResponse>
                 mapProduct =
                     (parent, child1, child2) =>
                     {
-                        if (!dic.TryGetValue(child1.QuestionId, out var question))
+                        var parentId = parent.ProductId + StringPatterConstants.SEPARATE_ORDERID + parent.OrderDetailId;
+                        var questionId = string.Empty;
+                        if (child1 != null)
+                        {
+                            questionId = parent.ProductId + StringPatterConstants.SEPARATE_ORDERID + child1.QuestionId 
+                                         + StringPatterConstants.SEPARATE_ORDERID + parent.OrderDetailId;
+                        }
+
+                        if (dicPro.TryGetValue(parentId, out var product))
+                        {
+                            parent = product;
+                        }
+                        
+                        if (child1 != null && !dic.TryGetValue(questionId, out var question))
                         {
                             child1.Options.Add(child2);
                             parent.Topping.Add(child1);
-                            dic.Add(child1.QuestionId, child1);
+                            dic.Add(questionId, child1);
                         }
-                        else
+                        else if(child1 != null && dic.TryGetValue(questionId, out var que))
                         {
-                            parent.Topping.Remove(question);
-                            question.Options.Add(child2);
-                            parent.Topping.Add(question);
+                            parent.Topping.Remove(que);
+                            que.Options.Add(child2);
+                            parent.Topping.Add(que);
                         }
 
-                        if (!dicPro.TryGetValue(parent.ProductId, out var pro))
+                        if (!dicPro.TryGetValue(parentId, out var pro))
                         {
-                            dicPro.Add(parent.ProductId, parent);
+                            dicPro.Add(parentId, parent);
                         }
                         else
                         {
-                            dicPro.Remove(parent.ProductId);
-                            dicPro.Add(parent.ProductId, parent);
+                            dicPro.Remove(parentId);
+                            dicPro.Add(parentId, parent);
                         }
 
                         return parent;

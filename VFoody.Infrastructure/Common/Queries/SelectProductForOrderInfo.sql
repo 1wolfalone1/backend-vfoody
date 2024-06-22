@@ -42,6 +42,7 @@ WITH ProductOrder AS (
         ,
      ProductWithOptionTopping AS (
          SELECT
+             p.order_detail_id,
              p.order_id,
              p.product_id,
              product_quantity AS product_quantity,
@@ -59,11 +60,12 @@ WITH ProductOrder AS (
              odo.price AS option_price
          FROM
              ProductOrder as p
-                 INNER JOIN order_detail_option odo ON p.order_detail_id = odo.order_detail_id
-                 INNER JOIN `option` op ON odo.option_id = op.id
-                 INNER JOIN question q ON op.question_id = q.id
+                 LEFT JOIN order_detail_option odo ON p.order_detail_id = odo.order_detail_id
+                 LEFT JOIN `option` op ON odo.option_id = op.id
+                 LEFT JOIN question q ON op.question_id = q.id
      )
 SELECT
+    order_detail_id AS OrderDetailId,
     order_id AS OrderId,
     product_id AS ProductId,
     product_quantity AS ProductQuantity,
