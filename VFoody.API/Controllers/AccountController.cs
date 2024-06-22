@@ -14,6 +14,7 @@ using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
+using VFoody.Application.UseCases.Accounts.Queries.AccountInfo;
 using VFoody.Application.UseCases.Accounts.Queries.ManageAccount;
 using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
 
@@ -149,5 +150,12 @@ public class AccountController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize
         }));
+    }
+
+    [HttpGet("admin/account/info")]
+    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> GetAllAccount(int accountId)
+    {
+        return HandleResult(await Mediator.Send(new GetAccountInfoQuery(accountId)));
     }
 }
