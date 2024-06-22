@@ -100,7 +100,7 @@ public class ProductController : BaseApiController
     [Authorize(Roles = IdentityConst.ShopClaimName)]
     public async Task<IActionResult> GetProductDetailShopOwner(int productId)
     {
-        return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId)));
+        return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId, null)));
     }
 
     [HttpPost("shop-owner/product/image/upload")]
@@ -124,7 +124,8 @@ public class ProductController : BaseApiController
         return HandleResult(await Mediator.Send(new GetProductShopOwnerQuery
         {
             PageIndex = pageIndex,
-            PageSize = pageSize
+            PageSize = pageSize,
+            ShopId = null
         }));
     }
 
@@ -143,5 +144,24 @@ public class ProductController : BaseApiController
         {
             Id = id
         }));
+    }
+
+    [HttpGet("admin/shop/product")]
+    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    public async Task<IActionResult> GetProductOfShop(int shopId, int pageIndex, int pageSize)
+    {
+        return HandleResult(await Mediator.Send(new GetProductShopOwnerQuery
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+            ShopId = shopId
+        }));
+    }
+
+    [HttpGet("admin/product/detail")]
+    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    public async Task<IActionResult> GetProductDetailShopOwner(int productId, int shopId)
+    {
+        return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId, shopId)));
     }
 }

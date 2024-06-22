@@ -47,5 +47,6 @@ public enum QueryName
     SelectFavouriteShop,
     SelectOrderAndVoucherInfor,
     SelectProductForOrderInfo,
-    SelectAllShopByCondition
+    SelectAllShopByCondition,
+    SelectShopDetail
 }
