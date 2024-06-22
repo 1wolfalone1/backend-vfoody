@@ -73,18 +73,7 @@ public class MappingProfile : Profile
                         string.Empty
                 )
             );
-        CreateMap<Shop, ManageShopResponse>()
-            .ForMember(src => src.ShopOwnerName,
-                opt => opt.MapFrom(
-                    src => src.Account.LastName != string.Empty ? src.Account.LastName : src.Account.Email
-                    )
-            )
-            .ForMember(src => src.ShopName,
-                opt => opt.MapFrom(src => src.Name)
-            )
-            .ForMember(dest => dest.RatingPercent,
-                opt => opt.MapFrom(src =>
-                    src.TotalRating == 0 ? 0 : Math.Round((double)src.TotalStar / src.TotalRating, 1)))
+        CreateMap<ManageShopDto, ManageShopResponse>()
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
                     src =>
@@ -102,7 +91,6 @@ public class MappingProfile : Profile
                 )
             )
             ;
-        CreateMap<Building, ManageShopResponse.BuildingResponse>();
         CreateMap<ManageOrderDto, ManageOrderResponse>().ForMember(dest => dest.Status,
             opt => opt.MapFrom(
                 src =>

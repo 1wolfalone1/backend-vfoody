@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace VFoody.Application.UseCases.Shop.Models;
 
-public class ManageShopResponse
+public class ManageShopDto
 {
     public int Id { get; set; }
     public string ShopName { get; set; } = null!;
@@ -11,8 +11,8 @@ public class ManageShopResponse
     public string? BannerUrl { get; set; }
     public float ShopRevenue { get; set; }
     public string? PhoneNumber { get; set; }
-    public string Active { get; set; } = null!;
-    public string Status { get; set; } = null!;
+    public int Active { get; set; }
+    public int Status { get; set; }
     public int TotalOrder { get; set; }
     public int TotalProduct { get; set; }
     public DateTime CreatedDate { get; set; }
