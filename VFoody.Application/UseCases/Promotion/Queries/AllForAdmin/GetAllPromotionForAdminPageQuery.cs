@@ -13,4 +13,5 @@ public class GetAllPromotionForAdminPageQuery : PaginationRequest, IQuery<Result
     public PromotionApplyTypes ApplyType { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
+    public int PromotionType { get; set; }
 }
