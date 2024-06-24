@@ -40,13 +40,17 @@ public class GetAllShopHandler : IQueryHandler<GetAllShopQuery, Result>
                 PageSize = request.PageSize
             };
 
+            var totalShop = await _dapperService.SingleOrDefaultAsync<int>(
+                    QueryName.CountAllShopByCondition, parameter)
+                .ConfigureAwait(false);
+
 
             var shops = await _dapperService.SelectAsync<ManageShopDto>(
                     QueryName.SelectAllShopByCondition, parameter)
                 .ConfigureAwait(false);
 
             var result = new PaginationResponse<ManageShopResponse>(_mapper.Map<List<ManageShopResponse>>(
-                shops.ToList()), request.PageIndex, request.PageSize, shops.First().TotalCount);
+                shops.ToList()), request.PageIndex, request.PageSize, totalShop);
             return Result.Success(result);
         }
         catch (Exception e)
