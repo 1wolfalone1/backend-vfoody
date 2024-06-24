@@ -10,6 +10,7 @@
  @Description
  @PageIndex
  @PageSize
+ @PromotionType int
  
  */
 -- SET @DateFrom:='2024-06-01';
@@ -24,6 +25,7 @@ WITH PersonalPromotion AS (
     SELECT
         id,
         title,
+        '' AS banner_url,
         description,
         amount_rate,
         minimum_order_value,
@@ -65,6 +67,7 @@ ShopPromotion AS (
     SELECT
         id,
         title,
+        '' AS banner_url,
         description,
         amount_rate,
         minimum_order_value,
@@ -106,6 +109,7 @@ PlatformPromotion AS (
     SELECT
         id,
         title,
+        banner_url,
         description,
         amount_rate,
         minimum_order_value,
@@ -147,6 +151,7 @@ AllPromotion AS (
     SELECT
         id,
         title,
+        banner_url,
         description,
         amount_rate,
         minimum_order_value,
@@ -178,6 +183,7 @@ AllPromotionWithPaging AS (
     SELECT
         id,
         title,
+        banner_url,
         description,
         amount_rate,
         minimum_order_value,
@@ -197,10 +203,15 @@ AllPromotionWithPaging AS (
         COUNT(id) OVER () AS total_item
     FROM
         AllPromotion
+    WHERE
+        @PromotionType = 0
+        OR
+        promotion_type = @PromotionType
 )
 SELECT
     id AS Id,
     title AS Title,
+    banner_url AS BannerUrl,
     description AS Description,
     amount_rate AS AmountRate,
     minimum_order_value AS MinimumOrderValue,
