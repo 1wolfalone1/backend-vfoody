@@ -31,7 +31,8 @@ public class GetAllPromotionForAdminPageHandler : IQueryHandler<GetAllPromotionF
                 Title = request.Title,
                 Description = request.Description,
                 PageIndex = request.PageIndex,
-                PageSize = request.PageSize
+                PageSize = request.PageSize,
+                PromotionType = request.PromotionType
             };
             
             var listPromotion = await this._dapperService.SelectAsync<AllPromotionResponse>(
