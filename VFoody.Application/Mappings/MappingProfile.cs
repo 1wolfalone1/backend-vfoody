@@ -11,6 +11,8 @@ using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Models;
+using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
+using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Application.UseCases.Shop.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
@@ -128,5 +130,9 @@ public class MappingProfile : Profile
             opt =>
                 opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
         CreateMap<Notification, NotificationResponse>();
+        CreateMap<UpdatePromotionInfoRequest, PlatformPromotion>().ReverseMap();
+        CreateMap<UpdatePromotionInfoRequest, PersonPromotion>();
+        CreateMap<UpdatePromotionInfoRequest, ShopPromotion>();
+        CreateMap<PlatformPromotion, AllPromotionResponse>();
     }
 }
