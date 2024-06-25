@@ -1,12 +1,16 @@
 ﻿using FluentValidation;
 using VFoody.Domain.Enums;
 
-namespace VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
+namespace VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
 
-public class CreatePromotionValidate : AbstractValidator<CreatePromotionRequest>
+public class UpdatePromotionInfoValidator : AbstractValidator<UpdatePromotionInfoRequest>
 {
-    public CreatePromotionValidate()
+    public UpdatePromotionInfoValidator()
     {
+        RuleFor(x => x.Id)
+            .NotNull()
+            .WithMessage("Id khuyến mãi không được null");
+
         RuleFor(x => x.ApplyType)
             .IsInEnum()
             .WithMessage("Loại khuyến mãi phải là 1 (phần trăm) hoặc 2 (tiền)");

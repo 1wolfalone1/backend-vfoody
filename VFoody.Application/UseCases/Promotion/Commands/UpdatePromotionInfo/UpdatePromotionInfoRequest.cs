@@ -1,11 +1,11 @@
 ﻿using VFoody.Domain.Enums;
 
-namespace VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
+namespace VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
 
-public class CreatePromotionRequest
+public class UpdatePromotionInfoRequest
 {
+    public int Id { get; set; }
     public string Title { get; set; }
-    public string BannerUrl { get; set; }
     public float AmountRate { get; set; }
     public float AmountValue { get; set; }
     public float MinimumOrderValue { get; set; }
@@ -16,6 +16,7 @@ public class CreatePromotionRequest
     public string Description { get; set; }
     public int? ShopId { get; set; }
     public int? AccountId { get; set; }
+    public PromotionStatus Status { get; set; }
     public PromotionApplyTypes ApplyType { get; set; }
     public PromotionTypes PromotionType { get; set; }
 }
