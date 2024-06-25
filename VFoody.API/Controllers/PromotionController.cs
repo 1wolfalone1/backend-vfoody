@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
+using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
+using VFoody.Application.UseCases.Promotion.Commands.UploadImageForPlatformPromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
@@ -87,5 +89,27 @@ public class PromotionController : BaseApiController
     public async Task<IActionResult> GetAllPromotionWithCondition([FromQuery] GetAllPromotionForAdminPageQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
+    }
+
+    [HttpPost("admin/promotion/{id}/upload")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UploadImageForPlatformPromotion(IFormFile image, int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new UploadBannerPlatformPromotionCommand()
+        {
+            BannerImage = image,
+            Id = id
+        }));
+    }
+
+    [HttpPut("admin/promotion/{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UpdateAllPromotionInfo([FromBody] UpdatePromotionInfoRequest promotion, int id)
+    {
+        promotion.Id = id;
+        return this.HandleResult(await this.Mediator.Send(new UpdatePromotionInfoCommand()
+        {
+            Promotion = promotion
+        }));
     }
 }
