@@ -13,6 +13,9 @@ public class Validator : AbstractValidator<CreatePromotionCommand>
 {
     public Validator()
     {
+        RuleFor(x => x.CreatePromotion)
+            .NotNull()
+            .WithMessage("Vui lòng chuyền request body đúng định dạng");
         RuleFor(x => x.CreatePromotion).SetValidator(new CreatePromotionValidate());
     }
 }
