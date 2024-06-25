@@ -16,6 +16,4 @@ public class ManageShopDto
     public int TotalOrder { get; set; }
     public int TotalProduct { get; set; }
     public DateTime CreatedDate { get; set; }
-    [JsonIgnore]
-    public int TotalCount { get; set; }
 }
