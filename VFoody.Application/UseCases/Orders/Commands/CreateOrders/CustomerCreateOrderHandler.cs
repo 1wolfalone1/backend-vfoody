@@ -1,5 +1,7 @@
-﻿using System.Xml.Linq;
+﻿using System.Linq.Expressions;
+using System.Xml.Linq;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Exceptions;
@@ -26,10 +28,14 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
     private readonly IOrderDetailRepository _orderDetailRepository;
     private readonly IOrderDetailOptionRepository _orderDetailOptionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IFirebaseNotificationService _firebaseNotificationService;
+    private readonly INotificationRepository _notificationRepository;
+    private readonly ICurrentAccountService _currentAccountService;
+    private readonly ILogger<CustomerCreateOrderHandler> _logger;
     
     private List<int> OptionIds { get; set; }
     private List<int> ProductIds { get; set; }
-    public CustomerCreateOrderHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductRepository productRepository, IOptionRepository optionRepository, IQuestionRepository questionRepository, IPlatformPromotionRepository platformPromotionRepository, IShopPromotionRepository shopPromotionRepository, IPersonPromotionRepository personPromotionRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipal, IOrderDetailRepository orderDetailRepository, IOrderDetailOptionRepository orderDetailOptionRepository)
+    public CustomerCreateOrderHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductRepository productRepository, IOptionRepository optionRepository, IQuestionRepository questionRepository, IPlatformPromotionRepository platformPromotionRepository, IShopPromotionRepository shopPromotionRepository, IPersonPromotionRepository personPromotionRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipal, IOrderDetailRepository orderDetailRepository, IOrderDetailOptionRepository orderDetailOptionRepository, IFirebaseNotificationService firebaseNotificationService, ILogger<CustomerCreateOrderHandler> logger, INotificationRepository notificationRepository, ICurrentAccountService currentAccountService)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
@@ -43,6 +49,10 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         _currentPrincipal = currentPrincipal;
         _orderDetailRepository = orderDetailRepository;
         _orderDetailOptionRepository = orderDetailOptionRepository;
+        _firebaseNotificationService = firebaseNotificationService;
+        _logger = logger;
+        _notificationRepository = notificationRepository;
+        _currentAccountService = currentAccountService;
     }
 
     public async Task<Result<Result>> Handle(CustomerCreateOrderCommand request, CancellationToken cancellationToken)
@@ -55,7 +65,8 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             this.CheckToppingAvailable(request.Products);
             this.CheckTotalProductPrice(request.Products, request.OrderPrice.TotalProduct);
             this.CheckVoucherAvailable(request.Voucher, request.OrderPrice.Voucher, request.OrderPrice.TotalProduct);
-            this.CheckShippingFee(request.ShopId, request.OrderPrice.ShippingFee, request.OrderPrice.TotalProduct, request.Ship.Distance);
+            this.CheckShippingFee(request.ShopId, request.OrderPrice.ShippingFee, request.OrderPrice.TotalProduct,
+                request.Ship.Distance);
 
             // Save
             var order = new Order()
@@ -73,7 +84,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 Distance = (float)request.Ship.Distance,
                 DurationShipping = DateTime.Now.AddMinutes(request.Ship.Duration),
             };
-            
+
             if (request.Voucher.PromotionType == PromotionTypes.PersonPromotion)
             {
                 order.PersonalPromotionId = request.Voucher.Id;
@@ -82,11 +93,11 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             {
                 order.PlatformPromotionId = request.Voucher.Id;
             }
-            else if(request.Voucher.PromotionType == PromotionTypes.ShopPromotion)
+            else if (request.Voucher.PromotionType == PromotionTypes.ShopPromotion)
             {
                 order.ShopPromotionId = request.Voucher.Id;
             }
-            
+
             // Building
             Building buil = new Building()
             {
@@ -95,7 +106,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 Longitude = (float)request.OrderInfo.Building.Longitude
             };
             order.Building = buil;
-            
+
             // Transaction
             Transaction transaction = new Transaction()
             {
@@ -105,12 +116,12 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 TransactionType = (int)TransactionTypes.Cash
             };
             order.Transaction = transaction;
-            
+
             // Note
             order.Note = this.CreateNoteForOrder(request.Products);
             await this._orderRepository.AddAsync(order).ConfigureAwait(false);
             await this._unitOfWork.SaveChangesAsync().ConfigureAwait(false);
-            
+
             // Order Detail
             foreach (var pro in request.Products)
             {
@@ -127,7 +138,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 this._productRepository.Update(product);
                 await this._orderDetailRepository.AddAsync(or).ConfigureAwait(false);
                 await this._unitOfWork.SaveChangesAsync().ConfigureAwait(false);
-                
+
                 // Save order option
                 List<OrderDetailOption> orderDetailOptions = new List<OrderDetailOption>();
                 foreach (var checkBox in pro.Topping.CheckBox)
@@ -159,13 +170,27 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
 
                 await this._orderDetailOptionRepository.AddRangeAsync(orderDetailOptions).ConfigureAwait(false);
             }
-            
+
             // Update Shop Total Order
-            var shop = this._shopRepository.GetById(request.ShopId);
+            var shop = this._shopRepository.Get(sh => sh.Id == request.ShopId
+                ,includes: new List<Expression<Func<Domain.Entities.Shop, object>>>()
+                {
+                    shp => shp.Account,
+                }).SingleOrDefault();
             shop.TotalOrder += 1;
             this._shopRepository.Update(shop);
 
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+            await this.SendNotificationAsync(_currentPrincipal.CurrentPrincipalId.Value,
+                this._currentAccountService.GetCurrentAccount().DeviceToken,
+                NotificationMessageConstants.Order_Title,
+                NotificationMessageConstants.Order_Pending_Content, (int)Domain.Enums.Roles.Customer);
+            
+            await this.SendNotificationAsync(shop.Account.Id,
+                shop.Account.DeviceToken,
+                NotificationMessageConstants.Order_Title,
+                NotificationMessageConstants.Order_Shop_Pending, (int)Domain.Enums.Roles.Shop);
+
             return Result.Success(new
             {
                 OrderID = order.Id
@@ -177,8 +202,41 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         }
         catch (Exception exception)
         {
+            var shop = this._shopRepository.Get(sh => sh.Id == request.ShopId
+            ,includes: new List<Expression<Func<Domain.Entities.Shop, object>>>()
+            {
+                shp => shp.Account,
+            }).SingleOrDefault();
+            await this.SendNotificationAsync(shop.AccountId,
+                shop.Account.DeviceToken,
+                NotificationMessageConstants.Order_Title,
+                NotificationMessageConstants.Order_Fail, (int)Domain.Enums.Roles.Shop);
             this._unitOfWork.RollbackTransaction();
             throw exception;
+        }
+    }
+
+    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            this._firebaseNotificationService.SendNotification(deviceToken, title, content);
+            Notification noti = new Notification()
+            {
+                AccountId = accountId,
+                Readed = 0,
+                Title = title,
+                Content = content,
+                ImageUrl = string.Empty,
+                RoleId = role,
+            };
+            await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
         }
     }
 

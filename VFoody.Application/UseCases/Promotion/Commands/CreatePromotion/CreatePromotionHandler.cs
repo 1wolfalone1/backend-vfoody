@@ -26,31 +26,17 @@ public class CreatePromotionHandler : ICommandHandler<CreatePromotionCommand, Re
 
     public async Task<Result<Result>> Handle(CreatePromotionCommand request, CancellationToken cancellationToken)
     {
-        var result = new BaseEntity();
         switch (request.CreatePromotion.PromotionType)
         {
             case PromotionTypes.PlatformPromotion:
-                result = await this.CreatePlatformPromotionAsync(request.CreatePromotion).ConfigureAwait(false);
-                result = result as PlatformPromotion;
-                break;
+                return Result.Create(await this.CreatePlatformPromotionAsync(request.CreatePromotion).ConfigureAwait(false));
+
             case PromotionTypes.PersonPromotion:
-                result= await this.CreatePersonPromotionAsync(request.CreatePromotion).ConfigureAwait(false);
-                result = result as PersonPromotion;
-                break;
+                return Result.Create(await this.CreatePersonPromotionAsync(request.CreatePromotion).ConfigureAwait(false));
+
             case PromotionTypes.ShopPromotion:
-                result = await this.CreateShopPromotionAsync(request.CreatePromotion).ConfigureAwait(false);
-                result = result as ShopPromotion;
-                break;
-            default:
-                result = null;
-                break;
+                return Result.Create(await this.CreateShopPromotionAsync(request.CreatePromotion).ConfigureAwait(false));
         }
-
-        if (result != null)
-        {
-            return Result.Create(result );
-        }
-
         return Result.Failure(new Error("500", "Không thể tạo promotion"));
     }
 
