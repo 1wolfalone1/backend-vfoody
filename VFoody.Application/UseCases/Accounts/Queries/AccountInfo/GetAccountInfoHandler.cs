@@ -27,11 +27,21 @@ public class GetAccountInfoHandler : IQueryHandler<GetAccountInfoQuery, Result>
         var account = _accountRepository.GetByIdIncludeBuilding(request.accountId);
         if (account == null)
         {
-            Result.Failure(new Error("400", "Not found this account."));
+            return Result.Failure(new Error("400", "Not found this account."));
         }
 
         var response = _mapper.Map<AccountInfoResponse>(account);
-        response.RoleName = EnumHelper.GetEnumDescription<Domain.Enums.Roles>(account!.RoleId);
+        var roleName = "";
+        switch (account!.RoleId)
+        {
+            case (int)Domain.Enums.Roles.Customer:
+                roleName = "Khách hàng";
+                break;
+            case (int)Domain.Enums.Roles.Shop:
+                roleName = "Chủ cửa hàng";
+                break;
+        }
+        response.RoleName = roleName;
         return Result.Success(response);
     }
 }
