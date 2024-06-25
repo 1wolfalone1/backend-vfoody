@@ -9,6 +9,7 @@ using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
+using VFoody.Application.UseCases.Accounts.Commands.UpdateAccountDeviceToken;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UpdateProfile;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
@@ -17,6 +18,7 @@ using VFoody.Application.UseCases.Accounts.Queries;
 using VFoody.Application.UseCases.Accounts.Queries.AccountInfo;
 using VFoody.Application.UseCases.Accounts.Queries.ManageAccount;
 using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
+using VFoody.Domain.Entities;
 
 namespace VFoody.API.Controllers;
 
@@ -157,5 +159,15 @@ public class AccountController : BaseApiController
     public async Task<IActionResult> GetAllAccount(int accountId)
     {
         return HandleResult(await Mediator.Send(new GetAccountInfoQuery(accountId)));
+    }
+
+    [HttpPut("customer/account/device-token")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName}")]
+    public async Task<IActionResult> UpdateAccount([FromBody] string deviceToken)
+    {
+        return this.HandleResult(await Mediator.Send(new UpdateAccountDeviceTokenCommand
+        {
+            DeviceToken = deviceToken
+        }));
     }
 }

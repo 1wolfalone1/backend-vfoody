@@ -60,6 +60,10 @@ public partial class Account : BaseEntity
     
     [Column("account_type")]
     public int AccountType { get; set; }
+    
+    [Column("device_token")]
+    [StringLength(512)]
+    public string? DeviceToken { get; set; }
 
     [ForeignKey("BuildingId")]
     [InverseProperty("Accounts")]
