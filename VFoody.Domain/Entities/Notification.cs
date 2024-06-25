@@ -26,6 +26,10 @@ public partial class Notification : BaseEntity
     [MySqlCharSet("utf8mb3")]
     [MySqlCollation("utf8mb3_general_ci")]
     public string Content { get; set; } = null!;
+    
+    [Column("image_url")]
+    [StringLength(512)]
+    public string ImageUrl { get; set; } = null!;
 
     [Column("readed", TypeName = "bit(1)")]
     public ulong Readed { get; set; }

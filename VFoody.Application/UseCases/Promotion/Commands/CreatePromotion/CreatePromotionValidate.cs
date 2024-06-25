@@ -32,15 +32,13 @@ public class CreatePromotionValidate : AbstractValidator<CreatePromotionRequest>
             .NotEmpty()
             .WithMessage("Số phần trăm giảm không thể đề trống")
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Số phần trăm giảm không thể âm")
-            .When(x => x.ApplyType == PromotionApplyTypes.Percent);
-        
+            .WithMessage("Số phần trăm giảm không thể âm");
+
         RuleFor(x => x.AmountValue)
             .NotEmpty()
             .WithMessage("Số tiền giảm không thể đề trống")
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Số tiền giảm không thể âm")
-            .When(x => x.ApplyType == PromotionApplyTypes.Absolute);
+            .WithMessage("Số tiền giảm không thể âm");
 
         RuleFor(x => x.MinimumOrderValue)
             .NotEmpty()

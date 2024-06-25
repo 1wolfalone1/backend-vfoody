@@ -5,6 +5,7 @@ using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderDetail;
+using VFoody.Application.UseCases.Orders.Queries.GetShopOrderByStatus;
 using VFoody.Application.UseCases.Orders.Queries.ManageOrder;
 
 namespace VFoody.API.Controllers;
@@ -54,5 +55,12 @@ public class OrderController : BaseApiController
             OrderId = id,
             AccountId = 0,
         }));
+    }
+
+    [HttpGet("shop/order")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetListShopOrderHistory([FromQuery] GetShopOrderByStatusQuery query)
+    {
+        return this.HandleResult(await this.Mediator.Send(query));
     }
 }

@@ -5,6 +5,7 @@ using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Application.UseCases.Notifications.Models;
 using VFoody.Application.UseCases.Orders.Models;
 using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
@@ -126,5 +127,6 @@ public class MappingProfile : Profile
         CreateMap<Account, AccountInfoResponse>().ForMember(dest => dest.FullName,
             opt =>
                 opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
+        CreateMap<Notification, NotificationResponse>();
     }
 }

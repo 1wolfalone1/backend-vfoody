@@ -29,6 +29,7 @@
     <Folder Include="UseCases\Feedbacks\Commands\" />
     <Folder Include="UseCases\Firebases\Models\" />
     <Folder Include="UseCases\Firebases\Queries\" />
+    <Folder Include="UseCases\Notifications\Commands\" />
     <Folder Include="UseCases\Roles\Queries\" />
   </ItemGroup>
 

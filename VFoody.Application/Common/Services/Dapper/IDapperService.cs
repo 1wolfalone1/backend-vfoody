@@ -49,5 +49,6 @@ public enum QueryName
     SelectProductForOrderInfo,
     SelectAllShopByCondition,
     CountAllShopByCondition,
-    SelectShopDetail
+    SelectShopDetail,
+    SelectOrderForShop,
 }
