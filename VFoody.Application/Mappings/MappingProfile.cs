@@ -124,7 +124,9 @@ public class MappingProfile : Profile
                 )
             )
             ;
-        CreateMap<Account, AccountInfoResponse>();
+        CreateMap<Account, AccountInfoResponse>().ForMember(dest => dest.FullName,
+            opt =>
+                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
         CreateMap<Notification, NotificationResponse>();
     }
 }
