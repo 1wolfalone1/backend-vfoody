@@ -24,8 +24,9 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
     private readonly IMapper _mapper;
     private readonly ILogger<CustomerLoginGoogleHandler> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IFirebaseAuthenticateUserService _firebaseAuthenticate;
 
-    public CustomerLoginGoogleHandler(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService, IMapper mapper, ILogger<CustomerLoginGoogleHandler> logger, IConfiguration configuration)
+    public CustomerLoginGoogleHandler(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService, IMapper mapper, ILogger<CustomerLoginGoogleHandler> logger, IConfiguration configuration, IFirebaseAuthenticateUserService firebaseAuthenticate)
     {
         _accountRepository = accountRepository;
         _unitOfWork = unitOfWork;
@@ -33,6 +34,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         _mapper = mapper;
         _logger = logger;
         _configuration = configuration;
+        _firebaseAuthenticate = firebaseAuthenticate;
     }
 
     public async Task<Result<Result>> Handle(CustomerLoginGoogleCommand request, CancellationToken cancellationToken)
@@ -74,17 +76,33 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
+            // Create an user in firebase and save firebase UId to account
+            string firebaseUid = string.Empty;
+            try
+            {
+                firebaseUid = await this._firebaseAuthenticate.CreateUser(userInfor.Email,
+                    null,
+                    string.Empty,
+                    userInfor.Name,
+                    userInfor.Picture).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                firebaseUid = string.Empty;
+                this._logger.LogError(e, e.Message);
+            }
 
             var newAccount = new Account
             {
                 Email = userInfor.Email,
-                FirstName = userInfor.GivenName,
+                FirstName = string.Empty,
                 LastName = userInfor.Name,
                 Password = String.Empty,
                 AvatarUrl = userInfor.Picture,
                 RoleId = (int)Domain.Enums.Roles.Customer,
                 AccountType = (int)AccountTypes.Google,
-                Status = (int)AccountStatus.Verify
+                Status = (int)AccountStatus.Verify,
+                FUserId = firebaseUid,
             };
 
             await this._accountRepository.AddAsync(newAccount);
