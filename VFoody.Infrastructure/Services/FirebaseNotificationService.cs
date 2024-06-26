@@ -27,7 +27,7 @@ public class FirebaseNotificationService : BaseService, IFirebaseNotificationSer
         }
     }
 
-    public async Task<bool> SendNotification(string deviceToken, string title, string body)
+    public async Task<bool> SendNotification(string deviceToken, string title, string body, string imageUrl = null)
     {
         this.CreateFirebaseAuth();
         var message = new Message()
@@ -36,6 +36,8 @@ public class FirebaseNotificationService : BaseService, IFirebaseNotificationSer
             {
                 Title = title,
                 Body = body,
+                ImageUrl = imageUrl == null ? "https://v-foody.s3.ap-southeast-1.amazonaws.com/image/1719333573556-47123349-841f-4bf3-811b-933b98bbe53f" 
+                    : imageUrl
             },
             Token = deviceToken,
         };
