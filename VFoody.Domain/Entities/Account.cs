@@ -40,6 +40,9 @@ public partial class Account : BaseEntity
     [MySqlCharSet("utf8mb3")]
     [MySqlCollation("utf8mb3_general_ci")]
     public string LastName { get; set; } = null!;
+    
+    [Column("f_user_id")]
+    public string? FUserId { get; set; }
 
     [Column("email")]
     [StringLength(200)]

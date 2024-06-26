@@ -19,13 +19,14 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IFirebaseAuthenticateUserService _firebaseAuthenticate;
 
     public AccountVerifyHandler(
         ILogger<AccountVerifyHandler> logger,
         IVerificationCodeRepository verificationCodeRepository,
         IUnitOfWork unitOfWork, IAccountRepository accountRepository,
-        IJwtTokenService jwtTokenService, IMapper mapper
-    )
+        IJwtTokenService jwtTokenService, IMapper mapper,
+        IFirebaseAuthenticateUserService firebaseAuthenticate)
     {
         _logger = logger;
         _verificationCodeRepository = verificationCodeRepository;
@@ -33,6 +34,7 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         _accountRepository = accountRepository;
         _jwtTokenService = jwtTokenService;
         _mapper = mapper;
+        _firebaseAuthenticate = firebaseAuthenticate;
     }
 
     public async Task<Result<Result>> Handle(AccountVerifyCommand request, CancellationToken cancellationToken)
@@ -67,8 +69,20 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         {
             return Result.Failure(new Error("500", "Internal server error."));
         }
+        
+        // 1.2.3.4 Update firebase Uid
+        try
+        {
+            var firebaseUid = await this._firebaseAuthenticate.CreateUser(request.Email, account.PhoneNumber,
+                account.Password, account.LastName, account.AvatarUrl);
+            this.UpdateAccountFirebaseUid(account, firebaseUid);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
+        }
 
-        //1.2.4 Response
+        //1.2.5 Response
         var accountResponse = new AccountResponse();
         var token = _jwtTokenService.GenerateJwtToken(account);
         _mapper.Map(account, accountResponse);
@@ -84,6 +98,24 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         });
     }
 
+    private async Task<bool> UpdateAccountFirebaseUid(Account account, string uid)
+    {
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            account.FUserId = uid;
+            _accountRepository.Update(account);
+            await _unitOfWork.CommitTransactionAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _unitOfWork.RollbackTransaction();
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+    
     private async Task<bool> UpdateAccountStatus(Account account)
     {
         try

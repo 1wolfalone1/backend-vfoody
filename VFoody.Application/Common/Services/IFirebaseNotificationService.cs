@@ -2,5 +2,5 @@
 
 public interface IFirebaseNotificationService
 {
-    Task<bool> SendNotification(string deviceToken, string title, string body);
+    Task<bool> SendNotification(string deviceToken, string title, string body, string imageUrl = null);
 }
