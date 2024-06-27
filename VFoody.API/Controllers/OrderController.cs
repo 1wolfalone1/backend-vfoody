@@ -63,4 +63,11 @@ public class OrderController : BaseApiController
     {
         return this.HandleResult(await this.Mediator.Send(query));
     }
+
+    [HttpPut("shop/order/{id}/confirmed")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopConfirmOrder()
+    {
+        return Ok();
+    }
 }
