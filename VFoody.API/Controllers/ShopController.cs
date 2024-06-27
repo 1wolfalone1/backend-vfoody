@@ -35,16 +35,9 @@ public class ShopController : BaseApiController
 
     [HttpGet("customer/shop/search")]
     [Authorize(Roles = IdentityConst.CustomerClaimName)]
-    public async Task<IActionResult> GetSearchingProductQuery(int pageIndex, int pageSize, string searchText = "", int orderType = 0, int currentBuildingId = 0)
+    public async Task<IActionResult> GetSearchingProductQuery([FromQuery] GetSearchingShopQuery query)
     {
-        return this.HandleResult(await this.Mediator.Send(new GetSearchingShopQuery
-        {
-            PageIndex = pageIndex,
-            PageSize = pageSize,
-            SearchText = searchText,
-            OrderType = orderType,
-            CurrentBuildingId = currentBuildingId,
-        }));
+        return this.HandleResult(await this.Mediator.Send(query));
     }
 
     [HttpGet("shop/info")]

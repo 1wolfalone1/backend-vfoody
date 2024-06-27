@@ -51,4 +51,5 @@ public enum QueryName
     CountAllShopByCondition,
     SelectShopDetail,
     SelectOrderForShop,
+    SelectSearchShopAndProductInCustomerHome,
 }

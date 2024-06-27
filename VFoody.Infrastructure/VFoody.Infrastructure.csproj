@@ -113,6 +113,8 @@
     <EmbeddedResource Include="Common\Queries\SelectProductForOrderInfo.sql" />
     <None Remove="Common\Queries\SelectOrderForShop.sql" />
     <EmbeddedResource Include="Common\Queries\SelectOrderForShop.sql" />
+    <None Remove="Common\Queries\SelectSearchShopAndProductInCustomerHome.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectSearchShopAndProductInCustomerHome.sql" />
   </ItemGroup>
 
 </Project>
