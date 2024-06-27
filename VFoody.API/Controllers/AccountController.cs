@@ -12,10 +12,12 @@ using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateAccountDeviceToken;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UpdateProfile;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
+using VFoody.Application.UseCases.Accounts.Commands.UpdateToShopOwner;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Queries;
 using VFoody.Application.UseCases.Accounts.Queries.AccountInfo;
+using VFoody.Application.UseCases.Accounts.Queries.LoginToShop;
 using VFoody.Application.UseCases.Accounts.Queries.ManageAccount;
 using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
 using VFoody.Domain.Entities;
@@ -169,5 +171,19 @@ public class AccountController : BaseApiController
         {
             DeviceToken = deviceToken
         }));
+    }
+
+    [HttpPut("customer/account/update-to-shop")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName}")]
+    public async  Task<IActionResult> UpdateCustomerToShop([FromForm] UpdateAccountToShopOwnerCommand updateAccountToShopOwner)
+    {
+        return HandleResult(await Mediator.Send(updateAccountToShopOwner));
+    }
+
+    [HttpGet("shop/login")]
+    [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
+    public async  Task<IActionResult> LoginToShop()
+    {
+        return HandleResult(await Mediator.Send(new LoginToShopQuery()));
     }
 }
