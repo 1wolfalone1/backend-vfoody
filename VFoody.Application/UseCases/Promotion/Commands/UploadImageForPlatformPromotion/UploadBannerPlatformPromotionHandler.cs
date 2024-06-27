@@ -27,29 +27,10 @@ public class UploadBannerPlatformPromotionHandler : ICommandHandler<UploadBanner
 
     public async Task<Result<Result>> Handle(UploadBannerPlatformPromotionCommand request, CancellationToken cancellationToken)
     {
-        var platformPromotion = this._platformPromotionRepository.GetById(request.Id);
-        // Delete old image
-        var fileNameImage = platformPromotion.BannerUrl.Split("/");
-        if (fileNameImage.Length > 0)
-        {
-            var isDelete = this._storageService.DeleteFileAsync(fileNameImage[fileNameImage.Length-1]);
-        }
-
         var imagePath = await this._storageService.UploadFileAsync(request.BannerImage);
-        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
-        try
+        return Result.Success(new
         {
-            platformPromotion.BannerUrl = imagePath;
-            this._platformPromotionRepository.Update(platformPromotion);
-            var response = this._mapper.Map<AllPromotionResponse>(platformPromotion);
-            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
-            return Result.Success(response);
-        }
-        catch (Exception e)
-        {
-            this._logger.LogError(e, e.Message);
-            this._unitOfWork.RollbackTransaction();
-            throw new Exception(e.Message);
-        }
+            ImageUrl = imagePath
+        });
     }
 }

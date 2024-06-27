@@ -8,6 +8,7 @@ public class UpdatePromotionInfoRequest
     public string Title { get; set; }
     public float AmountRate { get; set; }
     public float AmountValue { get; set; }
+    public string BannerUrl { get; set; }
     public float MinimumOrderValue { get; set; }
     public float MaximumApplyValue { get; set; }
     public DateTime StartDate { get; set; }

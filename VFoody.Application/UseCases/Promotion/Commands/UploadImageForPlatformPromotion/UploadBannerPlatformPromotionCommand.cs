@@ -7,5 +7,4 @@ namespace VFoody.Application.UseCases.Promotion.Commands.UploadImageForPlatformP
 public class UploadBannerPlatformPromotionCommand : ICommand<Result>
 {
     public IFormFile BannerImage { get; set; }
-    public int Id { get; set; }
 }
