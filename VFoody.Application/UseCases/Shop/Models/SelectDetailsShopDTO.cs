@@ -32,7 +32,7 @@ namespace VFoody.Application.UseCases.Shop.Models
         public float ShippingFee { get; set; }
         public int AccountId { get; set; }
 
-        public List<SelectSimpleProductOfShopDTO> Products { get; set; }
+        public List<SelectSimpleProductOfShopDTO> Products { get; set; } = new List<SelectSimpleProductOfShopDTO>();
 
         [JsonIgnore]
         public int TotalItems { get; set; }
