@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Ocsp;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
+using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
@@ -36,18 +38,23 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
             switch (request.Promotion.PromotionType)
             {
                 case PromotionTypes.PersonPromotion:
-                    this.UpdatePersonPromotion(request.Promotion);
-                    break;
+                    var response1 = this._mapper.Map<AllPromotionResponse>(this.UpdatePersonPromotion(request.Promotion));
+                    response1.PromotionType = PromotionTypes.PersonPromotion;
+                    await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+                    return Result.Success(response1);
                 case PromotionTypes.PlatformPromotion:
-                    this.UpdatePlatformPromotion(request.Promotion);
-                    break;
+                    var response2 = this._mapper.Map<AllPromotionResponse>(this.UpdatePlatformPromotion(request.Promotion));
+                    response2.PromotionType = PromotionTypes.PlatformPromotion;
+                    await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+                    return Result.Success(response2);
                 case PromotionTypes.ShopPromotion:
-                    this.UpdateShopPromotion(request.Promotion);       
-                    break;
+                    var response3 = this._mapper.Map<AllPromotionResponse>(this.UpdateShopPromotion(request.Promotion));
+                    response3.PromotionType = PromotionTypes.ShopPromotion;
+                    await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+                    return Result.Success(response3);
             }
 
-            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
-            return Result.Success($"Cập nhật khuyến mãi với id: {request.Promotion.Id} thành công");
+            throw new InvalidBusinessException($"Cập nhật với id:{request.Promotion.Id} thất bại");
         }
         catch (Exception e)
         {
@@ -56,11 +63,12 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         }
     }
 
-    private async Task UpdatePlatformPromotion(UpdatePromotionInfoRequest promotion)
+    private PlatformPromotion UpdatePlatformPromotion(UpdatePromotionInfoRequest promotion)
     {
         var platformPromotion = this._platformPromotionRepository.GetById(promotion.Id);
         platformPromotion.Title = promotion.Title;
         platformPromotion.Description = promotion.Description;
+        platformPromotion.BannerUrl = promotion.BannerUrl;
         platformPromotion.StartDate = promotion.StartDate;
         platformPromotion.ApplyType = (int)promotion.ApplyType;
         platformPromotion.AmountRate = promotion.AmountRate;
@@ -70,9 +78,10 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         platformPromotion.UsageLimit = promotion.UsageLimit;
         platformPromotion.Status = (int)promotion.Status;
         this._platformPromotionRepository.Update(platformPromotion);
+        return platformPromotion;
     }
     
-    private async Task UpdatePersonPromotion(UpdatePromotionInfoRequest promotion)
+    private PersonPromotion UpdatePersonPromotion(UpdatePromotionInfoRequest promotion)
     {
         var personPromotion = this._personPromotionRepository.GetById(promotion.Id);
         personPromotion.Title = promotion.Title;
@@ -86,9 +95,10 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         personPromotion.UsageLimit = promotion.UsageLimit;
         personPromotion.Status = (int)promotion.Status;
         this._personPromotionRepository.Update(personPromotion);
+        return personPromotion;
     }
     
-    private async Task UpdateShopPromotion(UpdatePromotionInfoRequest promotion)
+    private ShopPromotion UpdateShopPromotion(UpdatePromotionInfoRequest promotion)
     {
         var shopPromotion = this._shopPromotionRepository.GetById(promotion.Id);
         shopPromotion.Title = promotion.Title;
@@ -102,5 +112,6 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         shopPromotion.UsageLimit = promotion.UsageLimit;
         shopPromotion.Status = (int)promotion.Status;
         this._shopPromotionRepository.Update(shopPromotion);
+        return shopPromotion;
     }
 }
