@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopConfirmOrder;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopDeliveringOrder;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderDetail;
 using VFoody.Application.UseCases.Orders.Queries.GetShopOrderByStatus;
@@ -66,8 +68,21 @@ public class OrderController : BaseApiController
 
     [HttpPut("shop/order/{id}/confirmed")]
     [Authorize(Roles = IdentityConst.ShopClaimName)]
-    public async Task<IActionResult> ShopConfirmOrder()
+    public async Task<IActionResult> ShopConfirmOrder(int id)
     {
-        return Ok();
+        return this.HandleResult(await this.Mediator.Send(new ShopConfirmOrderCommand()
+        {
+            OrderId = id
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/delivering")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopDeliveringOrder(int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ShopDeliveringOrderCommand()
+        {
+            OrderId = id
+        }));
     }
 }
