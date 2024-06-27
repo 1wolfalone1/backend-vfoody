@@ -130,9 +130,8 @@ public class MappingProfile : Profile
             opt =>
                 opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
         CreateMap<Notification, NotificationResponse>();
-        CreateMap<UpdatePromotionInfoRequest, PlatformPromotion>().ReverseMap();
-        CreateMap<UpdatePromotionInfoRequest, PersonPromotion>();
-        CreateMap<UpdatePromotionInfoRequest, ShopPromotion>();
         CreateMap<PlatformPromotion, AllPromotionResponse>();
+        CreateMap<PersonPromotion, AllPromotionResponse>();
+        CreateMap<ShopPromotion, AllPromotionResponse>();
     }
 }

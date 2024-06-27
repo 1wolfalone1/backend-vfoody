@@ -37,7 +37,9 @@ WITH PersonalPromotion AS (
         usage_limit,
         number_of_used,
         status,
-        2 AS promotion_type
+        2 AS promotion_type,
+        updated_date,
+        created_date
     FROM
         person_promotion pp
     WHERE
@@ -79,7 +81,9 @@ ShopPromotion AS (
         usage_limit,
         number_of_used,
         status,
-        3 AS promotion_type
+        3 AS promotion_type,
+        updated_date,
+        created_date
     FROM
         shop_promotion sp
     WHERE
@@ -121,7 +125,9 @@ PlatformPromotion AS (
         usage_limit,
         number_of_used,
         status,
-        1 AS promotion_type
+        1 AS promotion_type,
+        updated_date,
+        created_date
     FROM
         platform_promotion pp
     WHERE
@@ -163,7 +169,9 @@ AllPromotion AS (
         usage_limit,
         number_of_used,
         status,
-        promotion_type
+        promotion_type,
+        updated_date,
+        created_date
     FROM
         PersonalPromotion
     UNION
@@ -196,9 +204,11 @@ AllPromotionWithPaging AS (
         number_of_used,
         status,
         promotion_type,
+        updated_date,
+        created_date,
         ROW_NUMBER() OVER (
             ORDER BY
-                start_date DESC
+                updated_date, created_date, start_date DESC
         ) AS row_num,
         COUNT(id) OVER () AS total_item
     FROM
@@ -224,7 +234,9 @@ SELECT
     number_of_used AS NumberOfUsed,
     status AS Status,
     promotion_type AS PromotionType,
-    total_item AS TotalItems
+    total_item AS TotalItems,
+    updated_date AS UpdatedDate,
+    created_date AS CreatedDate
 FROM
     AllPromotionWithPaging
 WHERE

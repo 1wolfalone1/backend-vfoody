@@ -82,7 +82,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
             {
                 firebaseUid = await this._firebaseAuthenticate.CreateUser(userInfor.Email,
                     null,
-                    string.Empty,
+                    null,
                     userInfor.Name,
                     userInfor.Picture).ConfigureAwait(false);
             }

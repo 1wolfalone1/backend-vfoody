@@ -91,14 +91,13 @@ public class PromotionController : BaseApiController
         return this.HandleResult(await this.Mediator.Send(query));
     }
 
-    [HttpPost("admin/promotion/{id}/upload")]
+    [HttpPost("admin/promotion/upload")]
     [AllowAnonymous]
-    public async Task<IActionResult> UploadImageForPlatformPromotion(IFormFile image, int id)
+    public async Task<IActionResult> UploadImageForPlatformPromotion(IFormFile image)
     {
         return this.HandleResult(await this.Mediator.Send(new UploadBannerPlatformPromotionCommand()
         {
-            BannerImage = image,
-            Id = id
+            BannerImage = image
         }));
     }
 
