@@ -45,7 +45,7 @@ public class ShopFailOrderHandler : ICommandHandler<ShopFailOrderCommand, Result
         if (order == default)
             throw new InvalidBusinessException($"Đơn hàng VFD{request.OrderId} không thuộc quyền quản lí của cửa hàng");
 
-        if (order.Status != (int)OrderStatus.Confirmed)
+        if (order.Status != (int)OrderStatus.Delivering)
             throw new InvalidBusinessException($"Đơn hàng VFD{request.OrderId} đang trong trạng thái không thể hủy");
         
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
