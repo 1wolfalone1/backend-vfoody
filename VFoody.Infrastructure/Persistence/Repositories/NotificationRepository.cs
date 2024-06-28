@@ -24,4 +24,19 @@ public class NotificationRepository : BaseRepository<Notification>, INotificatio
 
         return (notifications, totalItems);
     }
+
+    public (List<Notification> notifications, int totalItems) GetShopNotifications(
+        int requestPageIndex, int requestPageSize, int currentPrincipalId
+    )
+    {
+        var query = this.DbSet.AsQueryable();
+        query = query.Where(n => n.AccountId == currentPrincipalId &&
+                                 n.RoleId == (int) Roles.Shop);
+        int totalItems = query.Count();
+        var notifications = query
+            .Skip((requestPageIndex - 1) * requestPageSize)
+            .Take(requestPageSize).ToList();
+
+        return (notifications, totalItems);
+    }
 }
