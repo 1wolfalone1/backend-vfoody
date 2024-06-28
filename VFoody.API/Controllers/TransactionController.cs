@@ -10,7 +10,6 @@ namespace VFoody.API.Controllers;
 public class TransactionController : BaseApiController
 {
     [HttpGet("transaction/{orderId}/success")]
-    [Authorize(Roles = IdentityConst.ShopClaimName)]
     public async Task<IActionResult> PaymentThirdPartGetPaymentOrderSuccess(int orderId, [FromQuery] PaymentSucessCommand command)
     {
         command.OrderId = orderId;
@@ -18,7 +17,6 @@ public class TransactionController : BaseApiController
     }
     
     [HttpGet("transaction/{orderId}/cancel")]
-    [Authorize(Roles = IdentityConst.ShopClaimName)]
     public async Task<IActionResult> PaymentThirdPartGetPaymentOrderCancel(int orderId, [FromQuery] PaymenCancelCommand command)
     {
         command.OrderId = orderId;

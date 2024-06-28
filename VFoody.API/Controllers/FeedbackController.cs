@@ -6,7 +6,7 @@ using VFoody.Application.UseCases.Feedbacks.Queries.ShopFeedbacks;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
+[Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
 public class FeedbackController : BaseApiController
 {
     [HttpGet("customer/shop/{id}/feedback")]

@@ -9,7 +9,7 @@ namespace VFoody.API.Controllers;
 public class FavouriteShopController : BaseApiController
 {
     [HttpPut("customer/favourite/shop")]
-    [Authorize(Roles = $"{IdentityConst.CustomerClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> FavouriteShop([FromBody] FavouriteShopCommand favouriteShopCommand)
     {
         return HandleResult(await Mediator.Send(favouriteShopCommand));

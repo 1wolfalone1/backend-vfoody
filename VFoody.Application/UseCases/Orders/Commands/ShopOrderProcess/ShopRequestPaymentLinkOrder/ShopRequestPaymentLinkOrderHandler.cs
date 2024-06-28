@@ -41,7 +41,7 @@ public class ShopRequestPaymentLinkOrderHandler : ICommandHandler<ShopRequestPay
     public async Task<Result<Result>> Handle(ShopRequestPaymentLinkOrderCommand request, CancellationToken cancellationToken)
     {
         var shop = await this._shopRepository.GetShopByAccountId(this._currentPrincipalService.CurrentPrincipalId!.Value);
-        var order = await this._orderRepository.GetOrderOfShopById(request.OrderId, shop.Id).ConfigureAwait(false);
+        var order = await this._orderRepository.GetOrderOfShopByIdAsync(request.OrderId, shop.Id).ConfigureAwait(false);
         if (order == default)
             throw new InvalidBusinessException($"Shop không có quyền cập nhật order id: {request.OrderId}");
 

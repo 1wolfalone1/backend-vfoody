@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Repositories;
@@ -19,8 +20,10 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IFirebaseNotificationService _firebaseNotification;
     private readonly IAccountRepository _accountRepository;
+    private readonly ILogger<PaymentCancelHandler> _logger;
+    private readonly INotificationRepository _notificationRepository;
 
-    public PaymentCancelHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository)
+    public PaymentCancelHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, ILogger<PaymentCancelHandler> logger, INotificationRepository notificationRepository)
     {
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
@@ -29,6 +32,8 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
         _orderHistoryRepository = orderHistoryRepository;
         _firebaseNotification = firebaseNotification;
         _accountRepository = accountRepository;
+        _logger = logger;
+        _notificationRepository = notificationRepository;
     }
 
     public async Task<Result<Result>> Handle(PaymenCancelCommand request, CancellationToken cancellationToken)
@@ -43,15 +48,17 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
 
             var account = this._accountRepository.GetById(order.AccountId);
-            this._firebaseNotification.SendNotification(account.DeviceToken,
+            await this.SendNotificationAsync(order.AccountId,
+                account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Success);
+                NotificationMessageConstants.Payment_Order_Fail,
+                (int)Domain.Enums.Roles.Customer);
             return Result.Success("Hủy thanh toán đơn hàng thành công! Vui lòng quay lại app");
         }
         catch (Exception e)
         {
             var account = this._accountRepository.GetById(order.AccountId);
-            this._firebaseNotification.SendNotification(account.DeviceToken,
+            await this._firebaseNotification.SendNotification(account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 NotificationMessageConstants.Payment_Order_Fail);
             this._unitOfWork.RollbackTransaction();
@@ -105,5 +112,29 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
         };
 
         await this._orderHistoryRepository.AddAsync(historyOrder).ConfigureAwait(false);
+    }
+    
+    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            Notification noti = new Notification()
+            {
+                AccountId = accountId,
+                Readed = 0,
+                Title = title,
+                Content = content,
+                ImageUrl = string.Empty,
+                RoleId = role,
+            };
+            await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
+        }
     }
 }
