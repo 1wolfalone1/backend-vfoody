@@ -30,6 +30,7 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
 
     public async Task<Result<Result>> Handle(GetOrderDetailQuery request, CancellationToken cancellationToken)
     {
+        // TODO: check xem có quen truy cap khong them truong reason
         try
         {
             var result = new OrderDetailResponse();

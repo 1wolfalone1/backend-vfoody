@@ -48,12 +48,14 @@ public class OrderController : BaseApiController
     }
 
     [HttpGet("customer/order/history")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetListCustomerOrderHistory([FromQuery] GetOrderByStatusOfCustomerQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
     }
 
     [HttpGet("customer/order/{id}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName},{IdentityConst.AdminClaimName}")]
     public async Task<IActionResult> GetOrderDetail(int id)
     {
         return this.HandleResult(await this.Mediator.Send(new GetOrderDetailQuery
