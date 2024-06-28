@@ -23,8 +23,9 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
     private readonly IShopRepository _shopRepository;
     private readonly ILogger<PaymentSuccessHandler> _logger;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IFirebaseFirestoreService _firebaseFirestoreService;
 
-    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository, ILogger<PaymentSuccessHandler> logger, INotificationRepository notificationRepository)
+    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository, ILogger<PaymentSuccessHandler> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService)
     {
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
@@ -36,6 +37,7 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         _shopRepository = shopRepository;
         _logger = logger;
         _notificationRepository = notificationRepository;
+        _firebaseFirestoreService = firebaseFirestoreService;
     }
 
     public async Task<Result<Result>> Handle(PaymentSucessCommand request, CancellationToken cancellationToken)
@@ -56,16 +58,24 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
             await this.SendNotificationAsync(order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Success,
+                string.Format(NotificationMessageConstants.Payment_Order_Success, order.Id),
                 (int)Domain.Enums.Roles.Customer);
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(account.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                string.Format(NotificationMessageConstants.Payment_Order_Success, order.Id)).ConfigureAwait(false);
             
             // Send noti for shop
             var shopAccount = this._shopRepository.GetAccountByShopId(order.ShopId);
             await this.SendNotificationAsync(shopAccount.Id,
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Successfull_Content,
+                string.Format(NotificationMessageConstants.Order_Successfull_Content, order.Id),
                 (int)Domain.Enums.Roles.Shop);
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToShop(shopAccount.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                string.Format(NotificationMessageConstants.Order_Successfull_Content, order.Id)).ConfigureAwait(false);
             
             // Send noti receive money
             await this.SendNotificationAsync(shopAccount.Id,
@@ -78,12 +88,17 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         }
         catch (Exception e)
         {
+            // Send noti payment fail to user
             var account = this._accountRepository.GetById(order.AccountId);
             await this.SendNotificationAsync(order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Fail,
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id),
                 (int)Domain.Enums.Roles.Customer);
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(account.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id)).ConfigureAwait(false);
             this._unitOfWork.RollbackTransaction();
             throw;
         }

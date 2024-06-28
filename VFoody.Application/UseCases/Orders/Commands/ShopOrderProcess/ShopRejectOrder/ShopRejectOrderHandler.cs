@@ -21,8 +21,9 @@ public class ShopRejectOrderHandler : ICommandHandler<ShopRejectOrderCommand, Re
     private readonly IOrderHistoryRepository _orderHistoryRepository;
     private readonly ILogger<ShopRejectOrderHandler> _logger;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IFirebaseFirestoreService _firebaseFirestoreService;
 
-    public ShopRejectOrderHandler(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipalService, IAccountRepository accountRepository, IFirebaseNotificationService firebaseNotification, IOrderHistoryRepository orderHistoryRepository, ILogger<ShopRejectOrderHandler> logger, INotificationRepository notificationRepository)
+    public ShopRejectOrderHandler(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipalService, IAccountRepository accountRepository, IFirebaseNotificationService firebaseNotification, IOrderHistoryRepository orderHistoryRepository, ILogger<ShopRejectOrderHandler> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService)
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
@@ -33,6 +34,7 @@ public class ShopRejectOrderHandler : ICommandHandler<ShopRejectOrderCommand, Re
         _orderHistoryRepository = orderHistoryRepository;
         _logger = logger;
         _notificationRepository = notificationRepository;
+        _firebaseFirestoreService = firebaseFirestoreService;
     }
 
     public async Task<Result<Result>> Handle(ShopRejectOrderCommand request, CancellationToken cancellationToken)
@@ -53,11 +55,17 @@ public class ShopRejectOrderHandler : ICommandHandler<ShopRejectOrderCommand, Re
             await this.UpdateOrderAsync(order, request.Reason).ConfigureAwait(false);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
+            var messageNoti = string.Format(NotificationMessageConstants.Order_Reject_Content, order.Id);
             await this.SendNotificationAsync(order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Reject_Content,
+                messageNoti,
                 (int)Domain.Enums.Roles.Customer);
+
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(customerAccount.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                messageNoti).ConfigureAwait(false);
             return Result.Success($"Chuyển sang trạng thái hủy đơn hàng VFD{request.OrderId} thành công");
         }
         catch (Exception e)
