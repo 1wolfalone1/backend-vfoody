@@ -6,4 +6,5 @@ namespace VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
 public class CustomerCancelCommand : ICommand<Result>
 {
     public int Id { get; set; }
+    public string Reason { get; set; }
 }

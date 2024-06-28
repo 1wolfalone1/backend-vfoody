@@ -22,8 +22,9 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
     private readonly IAccountRepository _accountRepository;
     private readonly ILogger<PaymentCancelHandler> _logger;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IFirebaseFirestoreService _firebaseFirestoreService;
 
-    public PaymentCancelHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, ILogger<PaymentCancelHandler> logger, INotificationRepository notificationRepository)
+    public PaymentCancelHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, ILogger<PaymentCancelHandler> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService)
     {
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
@@ -34,6 +35,7 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
         _accountRepository = accountRepository;
         _logger = logger;
         _notificationRepository = notificationRepository;
+        _firebaseFirestoreService = firebaseFirestoreService;
     }
 
     public async Task<Result<Result>> Handle(PaymenCancelCommand request, CancellationToken cancellationToken)
@@ -51,8 +53,12 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
             await this.SendNotificationAsync(order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Fail,
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id),
                 (int)Domain.Enums.Roles.Customer);
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(account.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id)).ConfigureAwait(false);
             return Result.Success("Hủy thanh toán đơn hàng thành công! Vui lòng quay lại app");
         }
         catch (Exception e)
@@ -60,7 +66,11 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
             var account = this._accountRepository.GetById(order.AccountId);
             await this._firebaseNotification.SendNotification(account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Fail);
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id));
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(account.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id)).ConfigureAwait(false);
             this._unitOfWork.RollbackTransaction();
             throw;
         }

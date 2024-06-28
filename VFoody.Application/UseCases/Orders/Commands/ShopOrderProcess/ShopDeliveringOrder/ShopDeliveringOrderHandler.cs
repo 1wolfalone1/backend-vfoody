@@ -21,8 +21,9 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ShopConfirmOrderCommand> _logger;
     private readonly INotificationRepository _notificationRepository;
+    private readonly IFirebaseFirestoreService _firebaseFirestoreService;
 
-    public ShopDeliveringOrderHandler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger, INotificationRepository notificationRepository)
+    public ShopDeliveringOrderHandler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService)
     {
         _firebaseNotification = firebaseNotification;
         _currentPrincipalService = currentPrincipalService;
@@ -32,6 +33,7 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
         _accountRepository = accountRepository;
         _logger = logger;
         _notificationRepository = notificationRepository;
+        _firebaseFirestoreService = firebaseFirestoreService;
     }
 
     public async Task<Result<Result>> Handle(ShopDeliveringOrderCommand request, CancellationToken cancellationToken)
@@ -52,11 +54,18 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
             this._orderRepository.Update(order);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
+            var messageContent = string.Format(NotificationMessageConstants.Order_Delivering_Content, order.Id);
             await this.SendNotificationAsync(order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Delivering_Content,
+                messageContent,
                 (int)Domain.Enums.Roles.Customer);
+
+            await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(customerAccount.Email,
+                FirebaseStoreConstants.Order_Type,
+                order.Status,
+                messageContent
+            ).ConfigureAwait(false);
             return Result.Success($"Chuyển sang trạng thái vận chuyển đơn hàng VFD{request.OrderId} thành công");
         }
         catch (Exception e)
