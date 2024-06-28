@@ -33,7 +33,8 @@ public class ExceptionMiddleware
         }
         catch (ValidationException exception)
         {
-            _logger.LogError(exception, exception.Message);
+            // _logger.LogError(exception, exception.Message);
+            Console.WriteLine(exception.Message);
             await HandleValidationExceptionAsync(context, exception);
         }
         catch (BadRequestException exception)

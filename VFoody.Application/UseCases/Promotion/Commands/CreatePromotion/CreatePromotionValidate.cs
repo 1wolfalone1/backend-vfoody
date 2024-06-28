@@ -24,20 +24,14 @@ public class CreatePromotionValidate : AbstractValidator<CreatePromotionRequest>
             .WithMessage("Loại khuyến mãi không tể để trống");
 
         RuleFor(x => x.AmountRate)
-            .NotEmpty()
-            .WithMessage("Số phần trăm giảm không thể đề trống")
             .GreaterThanOrEqualTo(0)
             .WithMessage("Số phần trăm giảm không thể âm");
 
         RuleFor(x => x.AmountValue)
-            .NotEmpty()
-            .WithMessage("Số tiền giảm không thể đề trống")
             .GreaterThanOrEqualTo(0)
             .WithMessage("Số tiền giảm không thể âm");
 
         RuleFor(x => x.MinimumOrderValue)
-            .NotEmpty()
-            .WithMessage("Giá trị tối thiểu đơn hàng không thể để trống")
             .GreaterThanOrEqualTo(0)
             .WithMessage("Giá trị đơn hàng tối thiểu không thể âm");
 
@@ -47,7 +41,7 @@ public class CreatePromotionValidate : AbstractValidator<CreatePromotionRequest>
 
         RuleFor(x => x.EndDate)
             .NotNull()
-            .WithMessage("Ngày kết thúc không thể âm")
+            .WithMessage("Ngày kết thúc không thể trống")
             .GreaterThanOrEqualTo(x => x.StartDate)
             .WithMessage("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu");
 

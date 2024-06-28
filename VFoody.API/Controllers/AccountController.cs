@@ -164,7 +164,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpPut("customer/account/device-token")]
-    [Authorize(Roles = $"{IdentityConst.CustomerClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> UpdateAccount([FromBody] string deviceToken)
     {
         return this.HandleResult(await Mediator.Send(new UpdateAccountDeviceTokenCommand

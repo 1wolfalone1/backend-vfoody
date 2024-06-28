@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopCancelOrder;
 using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopConfirmOrder;
 using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopDeliveringOrder;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopFailOrder;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopRejectOrder;
 using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopRequestPaidOrder;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderDetail;
@@ -94,6 +97,42 @@ public class OrderController : BaseApiController
         return this.HandleResult(await this.Mediator.Send(new ShopRequestPaymentLinkOrderCommand()
         {
             OrderId = id
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/reject")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopRejectOrder(int id, [FromBody] ShopRejectOrderRequest reason)
+    {
+        
+        return this.HandleResult(await this.Mediator.Send(new ShopRejectOrderCommand()
+        {
+            OrderId = id,
+            Reason = reason.Reason
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/cancel")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopCancelOrder(int id, [FromBody] ShopCancelOrderRequest reason)
+    {
+        
+        return this.HandleResult(await this.Mediator.Send(new ShopCancelOrderCommand()
+        {
+            OrderId = id,
+            Reason = reason.Reason
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/fail")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopFailOrder(int id, [FromBody] ShopFailOrderRequest reason)
+    {
+        
+        return this.HandleResult(await this.Mediator.Send(new ShopFailOrderCommand()
+        {
+            OrderId = id,
+            Reason = reason.Reason
         }));
     }
 }
