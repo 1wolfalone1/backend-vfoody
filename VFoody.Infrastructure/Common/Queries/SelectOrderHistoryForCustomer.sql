@@ -2,7 +2,7 @@
  CreatedBy: ThongNV
  Date: 21/06/2024
  
- @Status int
+ @Status int[]
  @AccountId int
  @PageIndex int
  @PageSize int
@@ -34,10 +34,8 @@ WITH OrderCustomer AS (
         `order` o
     WHERE
         o.account_id = @AccountId
-        AND (
-            @Status = 0
-            OR @Status = o.status
-        )
+        AND 
+        o.status IN @Status
     ORDER BY
         o.updated_date DESC
 ),
