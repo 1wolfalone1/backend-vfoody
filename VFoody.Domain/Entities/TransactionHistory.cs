@@ -6,12 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VFoody.Domain.Entities;
 
-[Table("transaction")]
-public partial class Transaction : BaseEntity
+[Table("transaction_history")]
+public partial class TransactionHistory : BaseEntity
 {
     [Key]
     [Column("id")]
     public int Id { get; set; }
+
+    [Column("order_id")]
+    public int OrderId { get; set; }
+
+    [Column("transaction_id")]
+    public int TransactionId { get; set; }
 
     [Column("amount")]
     public float Amount { get; set; }
@@ -28,7 +34,4 @@ public partial class Transaction : BaseEntity
 
     [Column("payment_thirdparty_content", TypeName = "text")]
     public string? PaymentThirdpartyContent { get; set; }
-
-    [InverseProperty("Transaction")]
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }
