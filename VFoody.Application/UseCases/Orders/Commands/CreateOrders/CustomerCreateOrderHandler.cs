@@ -32,10 +32,11 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
     private readonly INotificationRepository _notificationRepository;
     private readonly ICurrentAccountService _currentAccountService;
     private readonly ILogger<CustomerCreateOrderHandler> _logger;
+    private readonly IFirebaseFirestoreService _firebaseFirestoreService;
     
     private List<int> OptionIds { get; set; }
     private List<int> ProductIds { get; set; }
-    public CustomerCreateOrderHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductRepository productRepository, IOptionRepository optionRepository, IQuestionRepository questionRepository, IPlatformPromotionRepository platformPromotionRepository, IShopPromotionRepository shopPromotionRepository, IPersonPromotionRepository personPromotionRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipal, IOrderDetailRepository orderDetailRepository, IOrderDetailOptionRepository orderDetailOptionRepository, IFirebaseNotificationService firebaseNotificationService, ILogger<CustomerCreateOrderHandler> logger, INotificationRepository notificationRepository, ICurrentAccountService currentAccountService)
+    public CustomerCreateOrderHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IProductRepository productRepository, IOptionRepository optionRepository, IQuestionRepository questionRepository, IPlatformPromotionRepository platformPromotionRepository, IShopPromotionRepository shopPromotionRepository, IPersonPromotionRepository personPromotionRepository, IShopRepository shopRepository, ICurrentPrincipalService currentPrincipal, IOrderDetailRepository orderDetailRepository, IOrderDetailOptionRepository orderDetailOptionRepository, IFirebaseNotificationService firebaseNotificationService, ILogger<CustomerCreateOrderHandler> logger, INotificationRepository notificationRepository, ICurrentAccountService currentAccountService, IFirebaseFirestoreService firebaseFirestoreService)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
@@ -53,6 +54,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         _logger = logger;
         _notificationRepository = notificationRepository;
         _currentAccountService = currentAccountService;
+        _firebaseFirestoreService = firebaseFirestoreService;
     }
 
     public async Task<Result<Result>> Handle(CustomerCreateOrderCommand request, CancellationToken cancellationToken)
@@ -181,12 +183,13 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             this._shopRepository.Update(shop);
 
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
-            await this.SendNotificationAsync(_currentPrincipal.CurrentPrincipalId.Value,
-                this._currentAccountService.GetCurrentAccount().DeviceToken,
+            var customerAccount = this._currentAccountService.GetCurrentAccount();
+            await this.SendNotificationAsync(customerAccount.Email, _currentPrincipal.CurrentPrincipalId.Value,
+                customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 NotificationMessageConstants.Order_Pending_Content, (int)Domain.Enums.Roles.Customer);
             
-            await this.SendNotificationAsync(shop.Account.Id,
+            await this.SendNotificationAsync(shop.Account.Email, shop.Account.Id,
                 shop.Account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 NotificationMessageConstants.Order_Shop_Pending, (int)Domain.Enums.Roles.Shop);
@@ -207,7 +210,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             {
                 shp => shp.Account,
             }).SingleOrDefault();
-            await this.SendNotificationAsync(shop.AccountId,
+            await this.SendNotificationAsync(shop.Account.Email, shop.AccountId,
                 shop.Account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 NotificationMessageConstants.Order_Fail, (int)Domain.Enums.Roles.Shop);
@@ -216,7 +219,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         }
     }
 
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string accountEmail, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
@@ -233,6 +236,19 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+            if (role == (int)Domain.Enums.Roles.Customer)
+            {
+                this._firebaseFirestoreService.AddNewNotifyCollectionToUser(accountEmail,
+                    FirebaseStoreConstants.Order_Type,
+                    (int)OrderStatus.Pending,
+                    content);
+            }else if (role == (int)Domain.Enums.Roles.Shop)
+            {
+                this._firebaseFirestoreService.AddNewNotifyCollectionToShop(accountEmail,
+                    FirebaseStoreConstants.Order_Type,
+                    (int)OrderStatus.Pending,
+                    content);
+            }
         }
         catch (Exception e)
         {
