@@ -13,6 +13,7 @@ public class OrderInfoResponse
     public string PhoneNumber { get; set; }
     public double Distance { get; set; }
     public DateTime DurationShipping { get; set; }
+    public DateTime OrderDate { get; set; }
     public int ShopId { get; set; }
     public string Note { get; set; }
     public BuildingResponse Building { get; set; } = new BuildingResponse();

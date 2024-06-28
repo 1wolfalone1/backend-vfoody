@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Net.payOS;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
@@ -30,6 +31,12 @@ public static class InfrastructureServiceExtension
         {
             initializer.SeedAsync().Wait();
         }
+        // add PayOs
+        PayOS payos = new PayOS(configuration["PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
+            configuration["PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
+            configuration["PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
+        services.AddSingleton(payos);
+        
         return services;
     }
     

@@ -9,4 +9,6 @@ public interface IShopRepository : IBaseRepository<Shop>
     List<Shop> GetAllShopIncludeAddressAccount(int pageNum, int pageSize);
     Shop? GetInfoByShopIdAndStatusIn(int shopId, int[] statusList);
     Task<Shop> GetShopByAccountId(int id);
+
+    Account GetAccountByShopId(int shopId);
 }
