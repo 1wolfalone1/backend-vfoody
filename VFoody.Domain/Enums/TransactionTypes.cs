@@ -6,4 +6,5 @@ public enum TransactionTypes
     Momo = 2,
     Vnpay = 3,
     Cash = 4,
+    PayOS = 5,
 }

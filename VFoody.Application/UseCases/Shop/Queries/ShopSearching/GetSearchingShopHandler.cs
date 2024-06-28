@@ -33,34 +33,44 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
         try
         {
             var accountId = _currentPrincipalService.CurrentPrincipalId!.Value;
-            var list = await _dapperService.SelectAsync<SelectDetailsShopDTO>(QueryName.SelectSearchingShop, new
+            Dictionary<int, SelectDetailsShopDTO> dicUniq = new Dictionary<int, SelectDetailsShopDTO>();
+            Func<SelectDetailsShopDTO, SelectSimpleProductOfShopDTO, SelectDetailsShopDTO> map = (parent, child1) =>
             {
-                request.PageIndex,
-                request.PageSize,
-                request.SearchText,
-                request.OrderType,
-                request.CurrentBuildingId,
-            }).ConfigureAwait(false);
+                if (!dicUniq.TryGetValue(parent.Id, out var shopInfo))
+                {
+                    parent.Products.Add(child1);
+                    dicUniq.Add(parent.Id, parent);
+                    
+                }
+                else
+                {
+                    shopInfo.Products.Add(child1);
+                    dicUniq.Remove(shopInfo.Id);
+                    dicUniq.Add(shopInfo.Id, shopInfo);
+                }
+                
+                return parent;
+            };
 
-            var MAX_GET_PRODUCT_LIST_SIZE = 32;
-            foreach (var shop in list)
-            {
-                shop.IsFavouriteShop = _favouriteShopRepository.IsFavouriteShop(shop.Id, accountId);
-                var products = await _dapperService.SelectAsync<SelectSimpleProductOfShopDTO>(
-                    QueryName.SelectAvailableProductListOfShop, new
+            await this._dapperService
+                .SelectAsync<SelectDetailsShopDTO, SelectSimpleProductOfShopDTO, SelectDetailsShopDTO>(
+                    QueryName.SelectSearchShopAndProductInCustomerHome,
+                    map,
+                    new
                     {
-                        request.PageIndex,
-                        PageSize = MAX_GET_PRODUCT_LIST_SIZE,
-                        ShopId = shop.Id,
-                        request.SearchText,
-                    }).ConfigureAwait(false);
+                        SearchText = request.SearchText,
+                        CategoryId = request.CategoryId,
+                        OrderType = request.OrderType,
+                        PageIndex = request.PageIndex,
+                        PageSize = request.PageSize,
+                        AccountId = accountId,
+                        OrderMode = request.OrderMode
+                    },
+                    "ProductId").ConfigureAwait(false);
+            var listResult = dicUniq.Values.ToList();
 
-                shop.Products = products.ToList();
-            }
-
-            var result = new PaginationResponse<SelectDetailsShopDTO>(list.ToList(), request.PageIndex,
-                request.PageSize, list.First().TotalItems);
-
+            var result = new PaginationResponse<SelectDetailsShopDTO>(listResult.ToList(), request.PageIndex,
+                request.PageSize, listResult.Count() > 0 ? listResult.First().TotalItems : 0);
             return Result.Success(result);
         }
         catch (Exception e)

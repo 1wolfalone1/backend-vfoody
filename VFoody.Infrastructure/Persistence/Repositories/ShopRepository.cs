@@ -32,6 +32,11 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
             .ToList();
     }
 
+    public Account GetAccountByShopId(int shopId)
+    {
+        return this.DbSet.Include(x => x.Account).SingleOrDefault(x => x.Id == shopId).Account;
+    }
+
     public Shop? GetInfoByShopIdAndStatusIn(int shopId, int[] statusList)
     {
         return DbSet.Include(s => s.Building).SingleOrDefault(s => s.Id == shopId && statusList.Contains(s.Status));

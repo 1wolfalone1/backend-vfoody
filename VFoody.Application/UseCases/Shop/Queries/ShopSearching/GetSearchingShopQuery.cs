@@ -12,5 +12,7 @@ public class GetSearchingShopQuery : PaginationRequest, IQuery<Result>
 {
     public string SearchText { get; set; }
     public int OrderType { get; set; }
-    public int CurrentBuildingId { get; set; }
+    public int CategoryId { get; set; }
+    
+    public int OrderMode { get; set; }
 }

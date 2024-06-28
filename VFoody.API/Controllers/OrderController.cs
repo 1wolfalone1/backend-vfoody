@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Application.UseCases.Orders.Commands.CustomerCancels;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopConfirmOrder;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopDeliveringOrder;
+using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopRequestPaidOrder;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderByStatusOfCustomer;
 using VFoody.Application.UseCases.Orders.Queries.GetOrderDetail;
 using VFoody.Application.UseCases.Orders.Queries.GetShopOrderByStatus;
@@ -62,5 +65,35 @@ public class OrderController : BaseApiController
     public async Task<IActionResult> GetListShopOrderHistory([FromQuery] GetShopOrderByStatusQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
+    }
+
+    [HttpPut("shop/order/{id}/confirmed")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopConfirmOrder(int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ShopConfirmOrderCommand()
+        {
+            OrderId = id
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/delivering")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopDeliveringOrder(int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ShopDeliveringOrderCommand()
+        {
+            OrderId = id
+        }));
+    }
+    
+    [HttpPut("shop/order/{id}/request-payment-link")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> ShopRequestPayment(int id)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ShopRequestPaymentLinkOrderCommand()
+        {
+            OrderId = id
+        }));
     }
 }
