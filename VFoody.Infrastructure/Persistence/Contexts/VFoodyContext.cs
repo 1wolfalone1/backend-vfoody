@@ -63,6 +63,8 @@ public partial class VFoodyContext : DbContext
     public virtual DbSet<Option> Options { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
+    
+    public virtual DbSet<OrderHistory> OrderHistories { get; set; }
 
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
@@ -85,6 +87,8 @@ public partial class VFoodyContext : DbContext
     public virtual DbSet<ShopPromotion> ShopPromotions { get; set; }
 
     public virtual DbSet<Transaction> Transactions { get; set; }
+    
+    public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
     
     public virtual DbSet<VerificationCode> VerificationCodes { get; set; }
 
@@ -268,6 +272,13 @@ public partial class VFoodyContext : DbContext
                 .HasConstraintName("order_detail_option_order_detail_fk");
         });
 
+        modelBuilder.Entity<OrderHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.IsRefund).HasDefaultValueSql("b'0'");
+        });
+
         modelBuilder.Entity<PersonPromotion>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -345,6 +356,11 @@ public partial class VFoodyContext : DbContext
         });
 
         modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+        });
+        
+        modelBuilder.Entity<TransactionHistory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
         });

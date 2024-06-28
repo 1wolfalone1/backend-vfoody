@@ -20,4 +20,10 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository
             .Where(o => o.OrderDetails.Any(od => od.ProductId == id) && !orderStatusDone.Contains(o.Status))
             .AnyAsync();
     }
+
+    public async Task<Order> GetOrderOfShopById(int orderId, int shopId)
+    {
+        return await this.DbSet.Include(x => x.Building)
+            .SingleOrDefaultAsync(x =>  x.Id == orderId && x.ShopId == shopId).ConfigureAwait(false);
+    }
 }

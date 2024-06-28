@@ -25,7 +25,8 @@ WITH OrderInfo AS (
         o.note,
         b.name,
         b.longitude,
-        b.latitude
+        b.latitude,
+        o.created_date
     FROM
         `order` o
             INNER JOIN `transaction` t ON o.transaction_id = t.id
@@ -59,6 +60,7 @@ SELECT
     orf.phone_number AS PhoneNumber,
     orf.distance AS Distance,
     orf.duration_shipping AS DurationShipping,
+    orf.created_date AS OrderDate,
     orf.shop_id AS ShopId,
     orf.note AS Note,
     orf.building_id AS BuildingId,

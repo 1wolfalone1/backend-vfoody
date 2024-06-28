@@ -52,4 +52,5 @@ public enum QueryName
     SelectShopDetail,
     SelectOrderForShop,
     SelectSearchShopAndProductInCustomerHome,
+    SelectItemPaymentInOrder,
 }
