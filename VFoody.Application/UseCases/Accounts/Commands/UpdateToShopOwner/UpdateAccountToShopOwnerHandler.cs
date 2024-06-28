@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
@@ -55,6 +56,9 @@ public class UpdateAccountToShopOwnerHandler : ICommandHandler<UpdateAccountToSh
         try
         {
             await _unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+            account!.RoleId = (int)Domain.Enums.Roles.Shop;
+            _accountRepository.Update(account);
+
             Building building = new Building
             {
                 Name = request.BuildingName,
@@ -81,48 +85,48 @@ public class UpdateAccountToShopOwnerHandler : ICommandHandler<UpdateAccountToSh
                 TotalProduct = 0,
                 TotalRating = 0,
                 TotalStar = 0,
-                Status = (int)ShopStatus.UnActive,
+                //Todo
+                Status = (int)ShopStatus.Active,
                 MinimumValueOrderFreeship = request.MinimumValueOrderFreeship,
                 ShippingFee = request.ShippingFee,
                 AccountId = accountId!.Value,
                 BuildingId = building.Id
             };
             await _shopRepository.AddAsync(shop);
-            await _unitOfWork.SaveChangesAsync();
-            account.RoleId = (int)Domain.Enums.Roles.Shop;
-            _accountRepository.Update(account);
             await _unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
-            UpdateAccountToShopOwnerResponse shopOwnerResponse = new UpdateAccountToShopOwnerResponse
-            {
-                Id = shop.Id,
-                ShopName = shop.Name,
-                BannerUrl = shop.BannerUrl!,
-                LogoUrl = shop.LogoUrl!,
-                Description = shop.Description!,
-                PhoneNumber = shop.PhoneNumber,
-                ActiveFrom = shop.ActiveFrom,
-                ActiveTo = shop.ActiveTo,
-                MinimumValueOrderFreeship = shop.MinimumValueOrderFreeship,
-                ShippingFee = shop.ShippingFee,
-                AccessTokenResponse = new AccessTokenResponse
-                {
-                    AccessToken = _jwtTokenService.GenerateJwtToken(account!),
-                    RefreshToken = _jwtTokenService.GenerateJwtRefreshToken(account!)
-                },
-                Building = new BuildingResponse
-                {
-                    Id = building.Id,
-                    Address = building.Name,
-                    Latitude = building.Latitude!.Value,
-                    Longitude = building.Longitude!.Value
-                }
-            };
-            return Result.Success(shopOwnerResponse);
         }
         catch (Exception e)
         {
             _unitOfWork.RollbackTransaction();
             throw new Exception(e.Message);
         }
+
+        var shopResponse = _shopRepository.Get().Include(s => s.Building).First(s => s.AccountId == accountId.Value);
+        UpdateAccountToShopOwnerResponse shopOwnerResponse = new UpdateAccountToShopOwnerResponse
+        {
+            Id = shopResponse.Id,
+            ShopName = shopResponse.Name,
+            BannerUrl = shopResponse.BannerUrl!,
+            LogoUrl = shopResponse.LogoUrl!,
+            Description = shopResponse.Description!,
+            PhoneNumber = shopResponse.PhoneNumber,
+            ActiveFrom = shopResponse.ActiveFrom,
+            ActiveTo = shopResponse.ActiveTo,
+            MinimumValueOrderFreeship = shopResponse.MinimumValueOrderFreeship,
+            ShippingFee = shopResponse.ShippingFee,
+            AccessTokenResponse = new AccessTokenResponse
+            {
+                AccessToken = _jwtTokenService.GenerateJwtToken(account!),
+                RefreshToken = _jwtTokenService.GenerateJwtRefreshToken(account!)
+            },
+            Building = new BuildingResponse
+            {
+                Id = shopResponse.Building.Id,
+                Address = shopResponse.Building.Name,
+                Latitude = shopResponse.Building.Latitude!.Value,
+                Longitude = shopResponse.Building.Longitude!.Value
+            }
+        };
+        return Result.Success(shopOwnerResponse);
     }
 }
