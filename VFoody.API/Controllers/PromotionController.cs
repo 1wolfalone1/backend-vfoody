@@ -16,7 +16,7 @@ using VFoody.Domain.Enums;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = IdentityConst.CustomerClaimName)]
+[Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
 public class PromotionController : BaseApiController
 {
     private readonly IMapper _mapper;

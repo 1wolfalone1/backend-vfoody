@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Esf;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Constants;
@@ -20,8 +21,10 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
     private readonly IFirebaseNotificationService _firebaseNotification;
     private readonly IAccountRepository _accountRepository;
     private readonly IShopRepository _shopRepository;
+    private readonly ILogger<PaymentSuccessHandler> _logger;
+    private readonly INotificationRepository _notificationRepository;
 
-    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository)
+    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository, ILogger<PaymentSuccessHandler> logger, INotificationRepository notificationRepository)
     {
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
@@ -31,38 +34,56 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         _firebaseNotification = firebaseNotification;
         _accountRepository = accountRepository;
         _shopRepository = shopRepository;
+        _logger = logger;
+        _notificationRepository = notificationRepository;
     }
 
     public async Task<Result<Result>> Handle(PaymentSucessCommand request, CancellationToken cancellationToken)
     {
         var order = this._orderRepository.GetById(request.OrderId);
         var transaction = this._transactionRepository.GetById(order.TransactionId);
+        var shop = this._shopRepository.GetById(order.ShopId);
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
             await this.UpdateOrderAsync(order).ConfigureAwait(false);
             await this.UpdateTransactionAsync(transaction, order.Id, request).ConfigureAwait(false);
+            await this.UpdateShopBalance(shop, transaction.Amount);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
 
             var account = this._accountRepository.GetById(order.AccountId);
             // Send noti for customer 
-            this._firebaseNotification.SendNotification(account.DeviceToken,
+            await this.SendNotificationAsync(order.AccountId,
+                account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Success);
+                NotificationMessageConstants.Payment_Order_Success,
+                (int)Domain.Enums.Roles.Customer);
             
             // Send noti for shop
             var shopAccount = this._shopRepository.GetAccountByShopId(order.ShopId);
-            this._firebaseNotification.SendNotification(shopAccount.DeviceToken,
+            await this.SendNotificationAsync(shopAccount.Id,
+                shopAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Successfull_Content);
+                NotificationMessageConstants.Order_Successfull_Content,
+                (int)Domain.Enums.Roles.Shop);
+            
+            // Send noti receive money
+            await this.SendNotificationAsync(shopAccount.Id,
+                shopAccount.DeviceToken,
+                NotificationMessageConstants.Shop_Balance_Title,
+                string.Format(NotificationMessageConstants.Shop_Balance_Plus_From_Order,
+                    transaction.Amount, order.Id),
+                (int)Domain.Enums.Roles.Shop);
             return Result.Success("Thanh toán đơn hàng thành công vui lòng quay lại app");
         }
         catch (Exception e)
         {
             var account = this._accountRepository.GetById(order.AccountId);
-            this._firebaseNotification.SendNotification(account.DeviceToken,
+            await this.SendNotificationAsync(order.AccountId,
+                account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Payment_Order_Fail);
+                NotificationMessageConstants.Payment_Order_Fail,
+                (int)Domain.Enums.Roles.Customer);
             this._unitOfWork.RollbackTransaction();
             throw;
         }
@@ -116,5 +137,35 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         await this._orderHistoryRepository.AddAsync(historyOrder).ConfigureAwait(false);
         order.Status = (int)OrderStatus.Successful;
         this._orderRepository.Update(order);
+    }
+
+    private async Task UpdateShopBalance(Domain.Entities.Shop shop, float amount)
+    {
+        shop.Balance += amount;
+        this._shopRepository.Update(shop);
+    }
+    
+    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            Notification noti = new Notification()
+            {
+                AccountId = accountId,
+                Readed = 0,
+                Title = title,
+                Content = content,
+                ImageUrl = string.Empty,
+                RoleId = role,
+            };
+            await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
+        }
     }
 }

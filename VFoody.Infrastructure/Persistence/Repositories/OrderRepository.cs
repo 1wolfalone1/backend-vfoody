@@ -21,7 +21,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository
             .AnyAsync();
     }
 
-    public async Task<Order> GetOrderOfShopById(int orderId, int shopId)
+    public async Task<Order> GetOrderOfShopByIdAsync(int orderId, int shopId)
     {
         return await this.DbSet.Include(x => x.Building)
             .SingleOrDefaultAsync(x =>  x.Id == orderId && x.ShopId == shopId).ConfigureAwait(false);

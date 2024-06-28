@@ -23,7 +23,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/top")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async  Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
@@ -34,21 +34,21 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/search")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetSearchingProductQuery([FromQuery] GetSearchingShopQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
     }
 
     [HttpGet("shop/info")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopInfo(int shopId)
     {
         return HandleResult(await Mediator.Send(new GetShopInfoQuery(shopId)));
     }
     
     [HttpGet("customer/shop")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopInfo([FromQuery] int[] ids)
     {
         return HandleResult(await Mediator.Send(new GetListShopQuery
@@ -58,7 +58,7 @@ public class ShopController : BaseApiController
     }
 
     [HttpGet("customer/shop/favourite")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopFavourite(int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetShopFavouriteQuery

@@ -19,8 +19,9 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
     private readonly IAccountRepository _accountRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ShopConfirmOrderCommand> _logger;
+    private readonly INotificationRepository _notificationRepository;
 
-    public ShopConfirmOrderHadler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger)
+    public ShopConfirmOrderHadler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger, INotificationRepository notificationRepository)
     {
         _firebaseNotification = firebaseNotification;
         _currentPrincipalService = currentPrincipalService;
@@ -29,6 +30,7 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
         _shopRepository = shopRepository;
         _accountRepository = accountRepository;
         _logger = logger;
+        _notificationRepository = notificationRepository;
     }
 
     public async Task<Result<Result>> Handle(ShopConfirmOrderCommand request, CancellationToken cancellationToken)
@@ -49,9 +51,11 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
             this._orderRepository.Update(order);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
-            this._firebaseNotification.SendNotification(customerAccount.DeviceToken,
+            await this.SendNotificationAsync(order.AccountId,
+                customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Confirmed_Content);
+                NotificationMessageConstants.Order_Confirmed_Content,
+                (int)Domain.Enums.Roles.Customer);
             return Result.Success($"Nhận đơn hàng VFD{request.OrderId} thành công");
         }
         catch (Exception e)
@@ -60,6 +64,29 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
             this._logger.LogError(e, e.Message);
             throw;
         }
+    }
 
+    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            Notification noti = new Notification()
+            {
+                AccountId = accountId,
+                Readed = 0,
+                Title = title,
+                Content = content,
+                ImageUrl = string.Empty,
+                RoleId = role,
+            };
+            await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
+        }
     }
 }

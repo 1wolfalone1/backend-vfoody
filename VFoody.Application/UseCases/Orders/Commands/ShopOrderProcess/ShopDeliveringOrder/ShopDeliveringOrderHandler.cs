@@ -5,6 +5,7 @@ using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Orders.Commands.ShopOrderProcess.ShopConfirmOrder;
+using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
@@ -19,8 +20,9 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
     private readonly IAccountRepository _accountRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ShopConfirmOrderCommand> _logger;
+    private readonly INotificationRepository _notificationRepository;
 
-    public ShopDeliveringOrderHandler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger)
+    public ShopDeliveringOrderHandler(IFirebaseNotificationService firebaseNotification, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, IUnitOfWork unitOfWork, IShopRepository shopRepository, IAccountRepository accountRepository, ILogger<ShopConfirmOrderCommand> logger, INotificationRepository notificationRepository)
     {
         _firebaseNotification = firebaseNotification;
         _currentPrincipalService = currentPrincipalService;
@@ -29,6 +31,7 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
         _shopRepository = shopRepository;
         _accountRepository = accountRepository;
         _logger = logger;
+        _notificationRepository = notificationRepository;
     }
 
     public async Task<Result<Result>> Handle(ShopDeliveringOrderCommand request, CancellationToken cancellationToken)
@@ -49,9 +52,11 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
             this._orderRepository.Update(order);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
-            this._firebaseNotification.SendNotification(customerAccount.DeviceToken,
+            await this.SendNotificationAsync(order.AccountId,
+                customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Delivering_Content);
+                NotificationMessageConstants.Order_Delivering_Content,
+                (int)Domain.Enums.Roles.Customer);
             return Result.Success($"Chuyển sang trạng thái vận chuyển đơn hàng VFD{request.OrderId} thành công");
         }
         catch (Exception e)
@@ -59,6 +64,30 @@ public class ShopDeliveringOrderHandler : ICommandHandler<ShopDeliveringOrderCom
             this._unitOfWork.RollbackTransaction();
             this._logger.LogError(e, e.Message);
             throw;
+        }
+    }
+    
+    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    {
+        await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
+        try
+        {
+            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            Notification noti = new Notification()
+            {
+                AccountId = accountId,
+                Readed = 0,
+                Title = title,
+                Content = content,
+                ImageUrl = string.Empty,
+                RoleId = role,
+            };
+            await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
+            await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            this._logger.LogError(e, e.Message);
         }
     }
 }

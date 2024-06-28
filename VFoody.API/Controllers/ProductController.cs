@@ -31,7 +31,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/top")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetTopProduct(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopProductQuery
@@ -42,7 +42,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("customer/product/recent")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetRecentOrderedProductQuery(int pageIndex, int pageSize)
     {
         string email = _currentPrincipalService.CurrentPrincipal;
@@ -55,7 +55,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/{shopId}/product/top")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetTopProductByShop(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetTopProductShopQuery
@@ -67,7 +67,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("shop/product")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopProduct(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetShopProductQuery
@@ -80,14 +80,14 @@ public class ProductController : BaseApiController
 
 
     [HttpGet("shop/product/detail")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetProductDetailToOrder(int productId)
     {
         return HandleResult(await Mediator.Send(new GetProductDetailToOrderQuery(productId)));
     }
 
     [HttpGet("customer/product")]
-    [Authorize(Roles = IdentityConst.CustomerClaimName)]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetProductCard([FromQuery] int[] ids)
     {
         return this.HandleResult(await this.Mediator.Send(new GetListProductInCardQuery
