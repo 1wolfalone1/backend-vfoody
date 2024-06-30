@@ -21,6 +21,7 @@
 -- SET @Description:='';
 -- SET @PageIndex:=1;
 -- SET @PageSize:=5;
+-- SET @PromotionType:=0;
 WITH PersonalPromotion AS (
     SELECT
         id,
@@ -208,15 +209,20 @@ AllPromotionWithPaging AS (
         created_date,
         ROW_NUMBER() OVER (
             ORDER BY
-                updated_date, created_date, start_date DESC
+                updated_date,
+                created_date,
+                start_date DESC
         ) AS row_num,
         COUNT(id) OVER () AS total_item
     FROM
         AllPromotion
     WHERE
         @PromotionType = 0
-        OR
-        promotion_type = @PromotionType
+        OR promotion_type = @PromotionType
+    ORDER BY
+        updated_date,
+        created_date,
+        start_date DESC
 )
 SELECT
     id AS Id,
