@@ -56,8 +56,9 @@ public class ShopCancelOrderHandler : ICommandHandler<ShopCancelOrderCommand, Re
             await this.UpdateOrderAsync(order, request.Reason).ConfigureAwait(false);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
-            var notificationMessage = string.Format(NotificationMessageConstants.Order_Cancel_Content, order.Id);
-            await this.SendNotificationAsync(order.AccountId,
+            var notificationMessage = string.Format(NotificationMessageConstants.Order_Shop_Cancel_Content, order.Id);
+            await this.SendNotificationAsync(shop.LogoUrl
+                ,order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 notificationMessage,
@@ -104,19 +105,19 @@ public class ShopCancelOrderHandler : ICommandHandler<ShopCancelOrderCommand, Re
         this._orderRepository.Update(order);
     }
     
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);

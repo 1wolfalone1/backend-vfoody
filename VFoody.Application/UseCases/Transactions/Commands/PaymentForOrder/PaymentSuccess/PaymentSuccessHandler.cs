@@ -55,7 +55,9 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
 
             var account = this._accountRepository.GetById(order.AccountId);
             // Send noti for customer 
-            await this.SendNotificationAsync(order.AccountId,
+            await this.SendNotificationAsync(
+                account.AvatarUrl,
+                order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 string.Format(NotificationMessageConstants.Payment_Order_Success, order.Id),
@@ -67,7 +69,9 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
             
             // Send noti for shop
             var shopAccount = this._shopRepository.GetAccountByShopId(order.ShopId);
-            await this.SendNotificationAsync(shopAccount.Id,
+            await this.SendNotificationAsync(
+                account.AvatarUrl
+                ,shopAccount.Id,
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 string.Format(NotificationMessageConstants.Order_Successfull_Content, order.Id),
@@ -78,7 +82,7 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
                 string.Format(NotificationMessageConstants.Order_Successfull_Content, order.Id)).ConfigureAwait(false);
             
             // Send noti receive money
-            await this.SendNotificationAsync(shopAccount.Id,
+            await this.SendNotificationAsync(string.Empty, shopAccount.Id,
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Shop_Balance_Title,
                 string.Format(NotificationMessageConstants.Shop_Balance_Plus_From_Order,
@@ -90,7 +94,9 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         {
             // Send noti payment fail to user
             var account = this._accountRepository.GetById(order.AccountId);
-            await this.SendNotificationAsync(order.AccountId,
+            await this.SendNotificationAsync(
+                account.AvatarUrl
+                ,order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id),
@@ -160,19 +166,19 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         this._shopRepository.Update(shop);
     }
     
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);

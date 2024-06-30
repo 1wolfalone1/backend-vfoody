@@ -2,6 +2,7 @@
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Configuration;
+using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Services;
 
 namespace VFoody.Infrastructure.Services;
@@ -36,7 +37,7 @@ public class FirebaseNotificationService : BaseService, IFirebaseNotificationSer
             {
                 Title = title,
                 Body = body,
-                ImageUrl = imageUrl == null ? "https://v-foody.s3.ap-southeast-1.amazonaws.com/image/1719333573556-47123349-841f-4bf3-811b-933b98bbe53f" 
+                ImageUrl = imageUrl == string.Empty ? NotificationMessageConstants.Noti_Logo_Default_Url 
                     : imageUrl
             },
             Token = deviceToken,

@@ -1,6 +1,7 @@
 ﻿/*
  CreatedBy: ThongNV
  Date: 27/06/2024
+ UpdatedDate: 01/07/2024
  
  @SearchText
  @CategoryId
@@ -8,14 +9,17 @@
  @PageIndex 
  @PageSize
  @AccountId
- @OrderMode 1 ASC 2 DESC
+ @OrderMode 0 ASC 1 DESC
+ @ProductSizeInShop int
  */
 -- SET @PageIndex = 1;
 -- SET @PageSize = 25;
 -- SET @SearchText = NULL;
--- SET @OrderType = 0; -- 0: Random, 1: Rating, 2: TotalOrder, 3: Distance
+-- SET @OrderType = 2; -- 0: Random, -- 1 Price,  2 rating
 -- SET @CategoryId = 0;
--- SET @AccountId = 1;
+-- SET @AccountId = 2;
+-- SET @OrderMode = 0; -- 0 ASC 1 DESC
+-- SET @ProductSizeInShop = 10;
 WITH ShopAndProduct AS (
     SELECT
         s.id AS shop_id,
@@ -62,7 +66,7 @@ WITH ShopAndProduct AS (
         s.id,
         p.id
 ),
-DistictProductAndShop AS (
+DistictProductAndShopWithRowNumber AS (
     SELECT
         s.id AS shop_id,
         s.name AS shop_name,
@@ -91,19 +95,83 @@ DistictProductAndShop AS (
         p.total_order AS product_total_order,
         p.status AS product_status,
         (total_star / total_rating) AS avg_rating,
-        ROW_NUMBER() OVER (
-            ORDER BY
-                CASE
-                    WHEN @OrderType = 0 THEN p.total_order
-                    WHEN @OrderType = 1 THEN p.price
-                    WHEN @OrderType = 2 THEN (s.total_star / s.total_rating)
-                END DESC
-        ) AS row_num,
-        COUNT(s.id) OVER () AS total_items
+        ROW_NUMBER() OVER (PARTITION BY s.id) AS row_num
     FROM
         ShopAndProduct sp
         INNER JOIN shop s ON sp.shop_id = s.id
         INNER JOIN product p ON sp.product_id = p.id
+    ORDER BY
+        CASE
+            WHEN @OrderMode = 0
+            AND @OrderType = 0 THEN p.total_order
+            WHEN @OrderMode = 0
+            AND @OrderType = 1 THEN p.price
+            WHEN @OrderMode = 0
+            AND @OrderType = 2 THEN (s.total_star / s.total_rating)
+        END ASC,
+        CASE
+            WHEN @OrderMode = 1
+            AND @OrderType = 0 THEN p.total_order
+            WHEN @OrderMode = 1
+            AND @OrderType = 1 THEN p.price
+            WHEN @OrderMode = 1
+            AND @OrderType = 2 THEN s.total_star
+        END DESC
+),
+ShopAndProductFitInSize AS (
+    SELECT
+        shop_id,
+        shop_name,
+        logo_url,
+        banner_url,
+        description,
+        balance,
+        phone_number,
+        active_from,
+        active_to,
+        active,
+        total_order,
+        total_rating,
+        total_star,
+        total_product,
+        status,
+        minimum_value_order_freeship,
+        shipping_fee,
+        building_id,
+        account_id,
+        product_id,
+        product_name,
+        product_description,
+        product_price,
+        product_image_url,
+        product_total_order,
+        product_status,
+        avg_rating,
+        shop_id AS idd,
+        DENSE_RANK() OVER (
+            ORDER BY
+                CASE
+                    WHEN @OrderMode = 0
+                    AND @OrderType = 0 THEN total_order
+                    WHEN @OrderMode = 0
+                    AND @OrderType = 1 THEN product_price
+                    WHEN @OrderMode = 0
+                    AND @OrderType = 2 THEN avg_rating
+                END ASC,
+                CASE
+                    WHEN @OrderMode = 1
+                    AND @OrderType = 0 THEN total_order
+                    WHEN @OrderMode = 1
+                    AND @OrderType = 1 THEN product_price
+                    WHEN @OrderMode = 1
+                    AND @OrderType = 2 THEN avg_rating
+                END DESC
+        ) AS rank_num
+    FROM
+        DistictProductAndShopWithRowNumber
+    WHERE
+        row_num BETWEEN 0
+        AND @ProductSizeInShop
 )
 SELECT
     shop_id AS Id,
@@ -144,12 +212,15 @@ SELECT
     product_total_order AS TotalOrder,
     product_status AS Status,
     shop_id AS ShopId,
-    total_items AS TotalItems
+    (
+        SELECT
+            MAX(rank_num)
+        FROM
+            ShopAndProductFitInSize
+    ) AS TotalItems
 FROM
-    DistictProductAndShop sp
+    ShopAndProductFitInSize sp
     INNER JOIN building b ON sp.building_id = b.id
 WHERE
-    row_num BETWEEN (@PageIndex - 1) * @PageSize + 1
-    AND @PageIndex * @PageSize
-ORDER BY
-    row_num ASC;
+    rank_num BETWEEN (@PageIndex - 1) * @PageSize + 1
+    AND @PageIndex * @PageSize;

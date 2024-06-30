@@ -187,12 +187,16 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             await this.SendNotificationAsync(customerAccount.Email, _currentPrincipal.CurrentPrincipalId.Value,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Pending_Content, (int)Domain.Enums.Roles.Customer);
+                string.Format(NotificationMessageConstants.Order_Pending_Content, shop.Name),
+                (int)Domain.Enums.Roles.Customer,
+                shop.LogoUrl);
             
             await this.SendNotificationAsync(shop.Account.Email, shop.Account.Id,
                 shop.Account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Shop_Pending, (int)Domain.Enums.Roles.Shop);
+                string.Format(NotificationMessageConstants.Order_Shop_Pending, customerAccount.LastName),
+                (int)Domain.Enums.Roles.Shop,
+                customerAccount.AvatarUrl);
 
             return Result.Success(new
             {
@@ -210,28 +214,33 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
             {
                 shp => shp.Account,
             }).SingleOrDefault();
+            var customerAccount = this._currentAccountService.GetCurrentAccount();
             await this.SendNotificationAsync(shop.Account.Email, shop.AccountId,
                 shop.Account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                NotificationMessageConstants.Order_Fail, (int)Domain.Enums.Roles.Shop);
+                string.Format(NotificationMessageConstants.Order_Fail, customerAccount.LastName),
+                (int)Domain.Enums.Roles.Shop,
+                customerAccount.AvatarUrl
+                );
             this._unitOfWork.RollbackTransaction();
             throw exception;
         }
     }
 
-    private async Task SendNotificationAsync(string accountEmail, int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string accountEmail, int accountId, string deviceToken, string title,
+        string content, int role, string imageUrl)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotificationService.SendNotification(deviceToken, title, content);
+            this._firebaseNotificationService.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);

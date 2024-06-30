@@ -50,8 +50,9 @@ public class CustomerCancelHandler : ICommandHandler<CustomerCancelCommand,Resul
             
             // Send noti for user
             var customerAccount = this._accountRepository.GetById(order.AccountId);
-            var notificationMessage = string.Format(NotificationMessageConstants.Order_Cancel_Content, order.Id);
-            await this.SendNotificationAsync(order.AccountId,
+            var notificationMessage = string.Format(NotificationMessageConstants.Order_Shop_Cancel_Content, order.Id);
+            await this.SendNotificationAsync(customerAccount.AvatarUrl,
+                order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 notificationMessage,
@@ -61,15 +62,19 @@ public class CustomerCancelHandler : ICommandHandler<CustomerCancelCommand,Resul
                 order.Status, notificationMessage);
             
             // Send noti for shop
+            var notificationMessageForShop = string.Format(NotificationMessageConstants.Order_Customer_Cancel,
+                customerAccount.LastName,
+                order.Id);
             var shopAccount = this._shopRepository.GetAccountByShopId(order.ShopId);
-            await this.SendNotificationAsync(shopAccount.Id,
+            await this.SendNotificationAsync(customerAccount.AvatarUrl, 
+                shopAccount.Id,
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                notificationMessage,
+                notificationMessageForShop,
                 (int)Domain.Enums.Roles.Shop);
             await this._firebaseFirestoreService.AddNewNotifyCollectionToShop(shopAccount.Email,
                 FirebaseStoreConstants.Order_Type,
-                order.Status, notificationMessage);
+                order.Status, notificationMessageForShop);
 
             return Result.Success($"Hủy đơn hàng VFD{order.Id} thành công");
         }
@@ -111,19 +116,19 @@ public class CustomerCancelHandler : ICommandHandler<CustomerCancelCommand,Resul
         this._orderRepository.Update(order);
     }
     
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);

@@ -64,7 +64,8 @@ public class GetSearchingShopHandler : IQueryHandler<GetSearchingShopQuery, Resu
                         PageIndex = request.PageIndex,
                         PageSize = request.PageSize,
                         AccountId = accountId,
-                        OrderMode = request.OrderMode
+                        OrderMode = request.OrderMode,
+                        ProductSizeInShop = request.ProductSizeInShop,
                     },
                     "ProductId").ConfigureAwait(false);
             var listResult = dicUniq.Values.ToList();
