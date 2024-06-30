@@ -57,7 +57,9 @@ public class ShopFailOrderHandler : ICommandHandler<ShopFailOrderCommand, Result
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
             var messageContent = string.Format(NotificationMessageConstants.Order_Fail_Content, order.Id);
-            await this.SendNotificationAsync(order.AccountId,
+            await this.SendNotificationAsync(
+                shop.LogoUrl,
+                order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 messageContent,
@@ -106,19 +108,19 @@ public class ShopFailOrderHandler : ICommandHandler<ShopFailOrderCommand, Result
         this._orderRepository.Update(order);
     }
     
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
