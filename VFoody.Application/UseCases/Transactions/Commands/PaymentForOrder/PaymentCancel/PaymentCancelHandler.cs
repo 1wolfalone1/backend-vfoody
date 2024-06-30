@@ -50,7 +50,9 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
 
             var account = this._accountRepository.GetById(order.AccountId);
-            await this.SendNotificationAsync(order.AccountId,
+            await this.SendNotificationAsync(
+                account.AvatarUrl,
+                order.AccountId,
                 account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
                 string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id),
@@ -64,9 +66,13 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
         catch (Exception e)
         {
             var account = this._accountRepository.GetById(order.AccountId);
-            await this._firebaseNotification.SendNotification(account.DeviceToken,
+            await this.SendNotificationAsync(
+                account.AvatarUrl,
+                order.AccountId,
+                account.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id));
+                string.Format(NotificationMessageConstants.Payment_Order_Fail, order.Id),
+                (int)Domain.Enums.Roles.Customer);
             await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(account.Email,
                 FirebaseStoreConstants.Order_Type,
                 order.Status,
@@ -124,19 +130,19 @@ public class PaymentCancelHandler : ICommandHandler<PaymenCancelCommand, Result>
         await this._orderHistoryRepository.AddAsync(historyOrder).ConfigureAwait(false);
     }
     
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);

@@ -15,4 +15,5 @@ public class GetSearchingShopQuery : PaginationRequest, IQuery<Result>
     public int CategoryId { get; set; }
     
     public int OrderMode { get; set; }
+    public int ProductSizeInShop { get; set; } = 10;
 }

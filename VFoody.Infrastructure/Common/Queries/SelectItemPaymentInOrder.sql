@@ -5,9 +5,9 @@
  
  */
 SELECT
-    p.name,
-    od.quantity,
-    ((SUM(odo.price) + od.price) * od.quantity) AS price_12
+    p.name AS Name,
+    od.quantity AS Quantity,
+    ((SUM(odo.price) + od.price) * od.quantity) AS Price
 FROM
     `order` o
     INNER JOIN order_detail od ON o.id = od.order_id

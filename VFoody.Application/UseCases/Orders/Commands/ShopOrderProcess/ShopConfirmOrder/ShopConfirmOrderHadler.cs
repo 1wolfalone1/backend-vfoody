@@ -53,16 +53,18 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
             this._orderRepository.Update(order);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
             var customerAccount = this._accountRepository.GetById(order.AccountId);
-            var messageNoti = string.Format(NotificationMessageConstants.Order_Confirmed_Content, order.Id);
-            await this.SendNotificationAsync(order.AccountId,
+            var messageNotification = string.Format(NotificationMessageConstants.Order_Confirmed_Content, order.Id);
+            await this.SendNotificationAsync(
+                shop.LogoUrl,
+                order.AccountId,
                 customerAccount.DeviceToken,
                 NotificationMessageConstants.Order_Title,
-                messageNoti,
+                messageNotification,
                 (int)Domain.Enums.Roles.Customer);
             await this._firebaseFirestoreService.AddNewNotifyCollectionToUser(customerAccount.Email,
                 FirebaseStoreConstants.Order_Type,
                 order.Status,
-                messageNoti).ConfigureAwait(false);
+                messageNotification).ConfigureAwait(false);
             return Result.Success($"Nhận đơn hàng VFD{request.OrderId} thành công");
         }
         catch (Exception e)
@@ -73,19 +75,19 @@ public class ShopConfirmOrderHadler : ICommandHandler<ShopConfirmOrderCommand, R
         }
     }
 
-    private async Task SendNotificationAsync(int accountId, string deviceToken, string title, string content, int role)
+    private async Task SendNotificationAsync(string imageUrl, int accountId, string deviceToken, string title, string content, int role)
     {
         await this._unitOfWork.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
-            this._firebaseNotification.SendNotification(deviceToken, title, content);
+            this._firebaseNotification.SendNotification(deviceToken, title, content, imageUrl);
             Notification noti = new Notification()
             {
                 AccountId = accountId,
                 Readed = 0,
                 Title = title,
                 Content = content,
-                ImageUrl = string.Empty,
+                ImageUrl = imageUrl,
                 RoleId = role,
             };
             await this._notificationRepository.AddAsync(noti).ConfigureAwait(false);
