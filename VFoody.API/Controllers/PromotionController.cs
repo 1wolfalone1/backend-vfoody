@@ -4,11 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
+using VFoody.Application.UseCases.Promotion.Commands.CreateShopPromotion;
 using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
+using VFoody.Application.UseCases.Promotion.Commands.UpdateShopPromotion;
+using VFoody.Application.UseCases.Promotion.Commands.UpdateShopPromotionStatus;
 using VFoody.Application.UseCases.Promotion.Commands.UploadImageForPlatformPromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
+using VFoody.Application.UseCases.Promotion.Queries.AllPromotionOfShopOwner;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
+using VFoody.Application.UseCases.Promotion.Queries.DetailPromotionOfShopOwner;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
 using VFoody.Domain.Enums;
@@ -110,5 +115,40 @@ public class PromotionController : BaseApiController
         {
             Promotion = promotion
         }));
+    }
+
+    [HttpPost("shop-owner/promotion/create")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> CreateShopPromotion([FromBody] CreateShopPromotionCommand command)
+    {
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPut("shop-owner/promotion/update")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> UpdateShopPromotion([FromBody] UpdateShopPromotionCommand command)
+    {
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPut("shop-owner/promotion/status/update")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> UpdateShopPromotionStatus([FromBody] UpdateShopPromotionStatusCommand command)
+    {
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("shop-owner/promotion/all")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetAllPromotion([FromBody] GetAllPromotionShopQuery query)
+    {
+        return HandleResult(await Mediator.Send(query));
+    }
+
+    [HttpGet("shop-owner/promotion/detail")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetAllPromotion(int id)
+    {
+        return HandleResult(await Mediator.Send(new GetPromotionShopDetailQuery{Id = id}));
     }
 }

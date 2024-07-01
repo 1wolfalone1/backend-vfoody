@@ -11,6 +11,7 @@ using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Models;
+using VFoody.Application.UseCases.Promotion.Commands.CreateShopPromotion;
 using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
 using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Application.UseCases.Shop.Models;
@@ -133,5 +134,7 @@ public class MappingProfile : Profile
         CreateMap<PlatformPromotion, AllPromotionResponse>();
         CreateMap<PersonPromotion, AllPromotionResponse>();
         CreateMap<ShopPromotion, AllPromotionResponse>();
+        CreateMap<CreateShopPromotionCommand, ShopPromotion>();
+        CreateMap<ShopPromotion, ShopPromotionResponse>();
     }
 }
