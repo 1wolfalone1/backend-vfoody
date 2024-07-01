@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Promotion.Commands.CreatePromotion;
+using VFoody.Application.UseCases.Promotion.Commands.CreateShopPromotion;
 using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
+using VFoody.Application.UseCases.Promotion.Commands.UpdateShopPromotion;
 using VFoody.Application.UseCases.Promotion.Commands.UploadImageForPlatformPromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
@@ -110,5 +112,19 @@ public class PromotionController : BaseApiController
         {
             Promotion = promotion
         }));
+    }
+
+    [HttpPost("shop-owner/promotion/create")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> CreateShopPromotion([FromBody] CreateShopPromotionCommand command)
+    {
+        return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPut("shop-owner/promotion/update")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> UpdateShopPromotion([FromBody] UpdateShopPromotionCommand command)
+    {
+        return HandleResult(await Mediator.Send(command));
     }
 }
