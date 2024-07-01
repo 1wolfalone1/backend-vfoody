@@ -11,6 +11,7 @@ using VFoody.Application.UseCases.Promotion.Commands.UpdateShopPromotionStatus;
 using VFoody.Application.UseCases.Promotion.Commands.UploadImageForPlatformPromotion;
 using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
+using VFoody.Application.UseCases.Promotion.Queries.AllPromotionOfShopOwner;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
@@ -134,5 +135,12 @@ public class PromotionController : BaseApiController
     public async Task<IActionResult> UpdateShopPromotionStatus([FromBody] UpdateShopPromotionStatusCommand command)
     {
         return HandleResult(await Mediator.Send(command));
+    }
+
+    [HttpPost("shop-owner/promotion/all")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetAllPromotion([FromBody] GetAllPromotionShopQuery query)
+    {
+        return HandleResult(await Mediator.Send(query));
     }
 }

@@ -30,6 +30,7 @@
     <Folder Include="UseCases\Feedbacks\Commands\" />
     <Folder Include="UseCases\Firebases\Models\" />
     <Folder Include="UseCases\Notifications\Commands\" />
+    <Folder Include="UseCases\Promotion\Queries\DetailPromotionOfShopOwner\" />
     <Folder Include="UseCases\Roles\Queries\" />
     <Folder Include="UseCases\Transactions\Models\" />
     <Folder Include="UseCases\Transactions\Queries\" />
