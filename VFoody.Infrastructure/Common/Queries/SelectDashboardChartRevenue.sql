@@ -14,6 +14,7 @@ WITH Revenue AS (
         INNER JOIN `order` o ON t.id = o.transaction_id
     WHERE
         o.status = 4 -- Successful
+        AND o.is_refund = 0
         AND YEAR(o.created_date) = YEAR(@DateOfYear)
 ),
 PreviousRevenue AS (
@@ -25,6 +26,7 @@ PreviousRevenue AS (
         INNER JOIN `order` o ON t.id = o.transaction_id
     WHERE
         o.status = 4 -- Successful
+        AND o.is_refund = 0
         AND YEAR(o.created_date) = YEAR(DATE_SUB(@DateOfYear, INTERVAL 1 YEAR))
 ),
 TwelveMonthRevenue AS (
