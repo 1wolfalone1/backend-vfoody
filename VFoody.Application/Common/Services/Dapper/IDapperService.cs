@@ -55,4 +55,5 @@ public enum QueryName
     SelectItemPaymentInOrder,
     CountAllPromotionOfShopByCondition,
     SelectAllPromotionOfShopByCondition,
+    SelectDashboardOverviewForShop,
 }

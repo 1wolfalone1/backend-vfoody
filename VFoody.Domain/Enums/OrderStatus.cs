@@ -11,5 +11,4 @@ public enum OrderStatus
     [Description("our order has been cancelled by customer or shop.")] Cancelled = 5,
     [Description("Your order has been cancelled by shop.")] Fail = 6,
     [Description("Your order has been Reject.")] Rejected = 7,
-
 }

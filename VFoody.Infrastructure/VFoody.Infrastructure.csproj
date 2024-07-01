@@ -41,6 +41,8 @@
 
   <ItemGroup>
     <Folder Include="Common\Exceptions\" />
+    <None Remove="Common\Queries\SelectDashboardOverviewForShop.sql" />
+    <EmbeddedResource Include="Common\Queries\SelectDashboardOverviewForShop.sql" />
   </ItemGroup>
 
   <ItemGroup>
