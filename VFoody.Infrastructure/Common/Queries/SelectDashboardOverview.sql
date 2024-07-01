@@ -34,6 +34,7 @@ TotalTrading AS (
     WHERE
         t.status = 1 -- PAID SUCCESS
         AND o.status = 4 -- Successful
+        AND o.is_refund = 0 -- No refund
         AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
         AND @DateTo
 ),
