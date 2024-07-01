@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Models.Responses;
+using VFoody.Application.Common.Repositories;
+using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Domain.Enums;
@@ -13,25 +15,30 @@ public class GetAllPromotionShopHandler : IQueryHandler<GetAllPromotionShopQuery
 {
     private readonly IDapperService _dapperService;
     private readonly ILogger<GetAllPromotionShopHandler> _logger;
-    private readonly IMapper _mapper;
+    private readonly ICurrentPrincipalService _currentPrincipalService;
+    private readonly IShopRepository _shopRepository;
 
     public GetAllPromotionShopHandler(
-        IDapperService dapperService, ILogger<GetAllPromotionShopHandler> logger, IMapper mapper
+        IDapperService dapperService, ILogger<GetAllPromotionShopHandler> logger,
+        ICurrentPrincipalService currentPrincipalService, IShopRepository shopRepository
     )
     {
         _dapperService = dapperService;
         _logger = logger;
-        _mapper = mapper;
+        _currentPrincipalService = currentPrincipalService;
+        _shopRepository = shopRepository;
     }
 
     public async Task<Result<Result>> Handle(GetAllPromotionShopQuery request, CancellationToken cancellationToken)
     {
+        var accountId = _currentPrincipalService.CurrentPrincipalId;
+        var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
         try
         {
             var parameter = new
             {
                 DeleteStatus = (int)PromotionStatus.Delete,
-                ShopId = 1,
+                ShopId = shop.Id,
                 SearchValue = request.SearchValue,
                 FilterByTime = request.FilterByTime,
                 DateFrom = request.DateFrom?.ToString("yyyy-MM-dd"),

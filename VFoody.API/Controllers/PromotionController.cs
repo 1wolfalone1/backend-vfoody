@@ -13,6 +13,7 @@ using VFoody.Application.UseCases.Promotion.Queries.All;
 using VFoody.Application.UseCases.Promotion.Queries.AllForAdmin;
 using VFoody.Application.UseCases.Promotion.Queries.AllPromotionOfShopOwner;
 using VFoody.Application.UseCases.Promotion.Queries.Customer;
+using VFoody.Application.UseCases.Promotion.Queries.DetailPromotionOfShopOwner;
 using VFoody.Application.UseCases.Promotion.Queries.Platform;
 using VFoody.Application.UseCases.Promotion.Queries.Shop;
 using VFoody.Domain.Enums;
@@ -142,5 +143,12 @@ public class PromotionController : BaseApiController
     public async Task<IActionResult> GetAllPromotion([FromBody] GetAllPromotionShopQuery query)
     {
         return HandleResult(await Mediator.Send(query));
+    }
+
+    [HttpGet("shop-owner/promotion/detail")]
+    [Authorize(Roles = IdentityConst.ShopClaimName)]
+    public async Task<IActionResult> GetAllPromotion(int id)
+    {
+        return HandleResult(await Mediator.Send(new GetPromotionShopDetailQuery{Id = id}));
     }
 }
