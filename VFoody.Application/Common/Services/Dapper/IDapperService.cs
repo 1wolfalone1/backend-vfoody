@@ -53,4 +53,6 @@ public enum QueryName
     SelectOrderForShop,
     SelectSearchShopAndProductInCustomerHome,
     SelectItemPaymentInOrder,
+    CountAllPromotionOfShopByCondition,
+    SelectAllPromotionOfShopByCondition,
 }
