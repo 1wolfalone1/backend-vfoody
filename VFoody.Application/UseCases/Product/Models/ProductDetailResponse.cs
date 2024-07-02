@@ -8,6 +8,7 @@ public class ProductDetailResponse
     public decimal Price { get; set; }
     public string ImageUrl { get; set; }
     public List<QuestionResponse> Questions { get; set; }
+    public List<int> Categories { get; set; }
 
     public class QuestionResponse
     {
