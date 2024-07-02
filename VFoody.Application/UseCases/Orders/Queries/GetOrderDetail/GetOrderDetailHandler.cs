@@ -1,13 +1,17 @@
 ﻿using System.Reflection.Metadata;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Constants;
+using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Models.Responses;
 using VFoody.Application.Common.Repositories;
+using VFoody.Application.Common.Services;
 using VFoody.Application.Common.Services.Dapper;
 using VFoody.Application.UseCases.Orders.Models;
 using VFoody.Application.UseCases.Shop.Models;
+using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
@@ -19,18 +23,25 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
     private readonly ILogger<GetOrderDetailHandler> _logger;
     private readonly IShopRepository _shopRepository;
     private readonly IMapper _mapper;
-
-    public GetOrderDetailHandler(IDapperService dapperService, ILogger<GetOrderDetailHandler> logger, IShopRepository shopRepository, IMapper mapper)
+    private readonly ICurrentPrincipalService _currentPrincipalService;
+    private readonly IOrderRepository _orderRepository;
+    private readonly ICurrentAccountService _currentAccountService;
+    
+    public GetOrderDetailHandler(IDapperService dapperService, ILogger<GetOrderDetailHandler> logger, IShopRepository shopRepository, IMapper mapper, ICurrentPrincipalService currentPrincipalService, IOrderRepository orderRepository, ICurrentAccountService currentAccountService)
     {
         _dapperService = dapperService;
         _logger = logger;
         _shopRepository = shopRepository;
         _mapper = mapper;
+        _currentPrincipalService = currentPrincipalService;
+        _orderRepository = orderRepository;
+        _currentAccountService = currentAccountService;
     }
 
     public async Task<Result<Result>> Handle(GetOrderDetailQuery request, CancellationToken cancellationToken)
     {
-        // TODO: check xem có quen truy cap khong them truong reason
+        // Validate
+        await this.ValidateGetOrderDetail(request.OrderId);
         try
         {
             var result = new OrderDetailResponse();
@@ -122,6 +133,27 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
         {
             this._logger.LogError(e, e.Message);
             throw;
+        }
+    }
+
+    private async Task ValidateGetOrderDetail(int orderId)
+    {
+
+        var account = this._currentAccountService.GetCurrentAccount();
+        if (account.RoleId == (int)Domain.Enums.Roles.Customer)
+        {
+            var order = await this._orderRepository.Get(or => or.Id == orderId
+                                                              && or.AccountId == account.Id).SingleOrDefaultAsync();
+            if(order == default)
+                throw new InvalidBusinessException($"Bạn không có quyền xem chi tiết đơn hàng này");
+        }
+
+        if (account.RoleId == (int)Domain.Enums.Roles.Shop)
+        {
+            var shop = await this._shopRepository.GetShopByAccountId(this._currentPrincipalService.CurrentPrincipalId.Value);
+            var order = await this._orderRepository.GetOrderOfShopByIdAsync(orderId, shop.Id);
+            if (order == default)
+                throw new InvalidBusinessException($"Cửa hàng bạn không có quyền xem chi tiết đơn hàng này");
         }
     }
 }
