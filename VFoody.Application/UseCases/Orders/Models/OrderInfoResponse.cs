@@ -16,6 +16,7 @@ public class OrderInfoResponse
     public DateTime OrderDate { get; set; }
     public int ShopId { get; set; }
     public string Note { get; set; }
+    public string Reason { get; set; }
     public BuildingResponse Building { get; set; } = new BuildingResponse();
     public PromotionInOrderInfoResponse Voucher { get; set; } = new PromotionInOrderInfoResponse();
 }
