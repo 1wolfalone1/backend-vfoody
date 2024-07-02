@@ -147,7 +147,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("admin/shop/product")]
-    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> GetProductOfShop(int shopId, int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetProductShopOwnerQuery
@@ -159,7 +159,7 @@ public class ProductController : BaseApiController
     }
 
     [HttpGet("admin/product/detail")]
-    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> GetProductDetailShopOwner(int productId, int shopId)
     {
         return HandleResult(await Mediator.Send(new GetProductDetailQuery(productId, shopId)));

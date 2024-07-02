@@ -140,5 +140,10 @@ public class MappingProfile : Profile
         CreateMap<ShopPromotion, AllPromotionResponse>();
         CreateMap<CreateShopPromotionCommand, ShopPromotion>();
         CreateMap<ShopPromotion, ShopPromotionResponse>();
+        CreateMap<Building, Common.Models.Responses.BuildingResponse>();
+        CreateMap<Shop, ShopProfileResponse>()
+            .ForMember(opt => opt.Building,
+                opt =>
+                    opt.MapFrom(src => src.Building));
     }
 }

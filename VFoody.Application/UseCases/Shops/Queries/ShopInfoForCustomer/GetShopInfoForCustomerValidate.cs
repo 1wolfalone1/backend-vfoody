@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 
-public class GetShopInfoValidate :AbstractValidator<GetShopInfoQuery>
+public class GetShopInfoForCustomerValidate :AbstractValidator<GetShopInfoForCustomerQuery>
 {
-    public GetShopInfoValidate()
+    public GetShopInfoForCustomerValidate()
     {
         RuleFor(p => p.shopId)
             .NotNull()

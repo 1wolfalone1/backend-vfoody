@@ -31,7 +31,7 @@ public class OrderController : BaseApiController
     }
     
     [HttpGet("admin/order/all")]
-    // [Authorize(Roles = IdentityConst.AdminClaimName)]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> GetAllOrder(int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetAllOrderQuery

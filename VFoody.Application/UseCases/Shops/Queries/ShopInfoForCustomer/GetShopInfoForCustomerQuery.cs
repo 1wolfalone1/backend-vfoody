@@ -3,4 +3,4 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 
-public sealed record GetShopInfoQuery(int shopId) : IQuery<Result>;
+public sealed record GetShopInfoForCustomerQuery(int shopId) : IQuery<Result>;
