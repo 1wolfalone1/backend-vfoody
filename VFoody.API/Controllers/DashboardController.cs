@@ -10,6 +10,7 @@ namespace VFoody.API.Controllers;
 
 [ApiController]
 [Route("/api/v1/admin/dashboard")]
+[Authorize(Roles = IdentityConst.AdminClaimName)]
 public class DashboardController : BaseApiController
 {
     [HttpGet("overview")]

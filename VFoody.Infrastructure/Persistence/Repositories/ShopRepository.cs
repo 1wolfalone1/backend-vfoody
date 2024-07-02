@@ -46,4 +46,10 @@ public class ShopRepository : BaseRepository<Shop>, IShopRepository
     {
         return await DbSet.Where(shop => shop.AccountId == id).SingleAsync();
     }
+
+    public async Task<Shop> GetShopProfileByAccountIdAsync(int id)
+    {
+        return await this.DbSet.Include(sh => sh.Building)
+            .SingleOrDefaultAsync(shop => shop.AccountId == id).ConfigureAwait(false);
+    }
 }

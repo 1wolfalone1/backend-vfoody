@@ -63,6 +63,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         try
         {
             // Validate 
+            this.CheckShopIsAvailable(request.ShopId);
             this.CheckProductIsAllAvailable(request.Products);
             this.CheckToppingAvailable(request.Products);
             this.CheckTotalProductPrice(request.Products, request.OrderPrice.TotalProduct);
@@ -278,6 +279,17 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         return string.Join(StringPatterConstants.SEPARATE_ORDER_PRODUCT, notes);
     }
 
+    private void CheckShopIsAvailable(int shopId)
+    {
+        var shop = this._shopRepository.GetById(shopId);
+        if (shop.Active == 0)
+            throw new InvalidBusinessException($"Cửa hàng {shop.Name} đang đóng cửa");
+
+        string hourInFormatStr = DateTime.Now.Hour.ToString().PadRight(4,'0');
+        int hourInt = int.Parse(hourInFormatStr);
+        if (hourInt < shop.ActiveFrom && hourInt > shop.ActiveTo)
+            throw new InvalidBusinessException($"Cửa hàng {shop.Name} chưa đến giờ mở cửa");
+    }
     private void CheckProductIsAllAvailable(List<ProductInOrderRequest> products)
     {
         var listProducts = this._productRepository.Get(predicate: pro => products.Select(x => x.Id).Contains(pro.Id)).ToList();

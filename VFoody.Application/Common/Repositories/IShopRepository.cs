@@ -11,4 +11,5 @@ public interface IShopRepository : IBaseRepository<Shop>
     Task<Shop> GetShopByAccountId(int id);
 
     Account GetAccountByShopId(int shopId);
+    Task<Shop> GetShopProfileByAccountIdAsync(int id);
 }
