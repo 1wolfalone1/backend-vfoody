@@ -8,14 +8,14 @@ using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 
-public class GetShopInfoHandler : IQueryHandler<GetShopInfoQuery, Result>
+public class GetShopInfoForCustomerHandler : IQueryHandler<GetShopInfoForCustomerQuery, Result>
 {
     private readonly IShopRepository _shopRepository;
     private readonly IFavouriteShopRepository _favouriteShopRepository;
     private readonly ICurrentPrincipalService _currentPrincipalService;
     private readonly IMapper _mapper;
 
-    public GetShopInfoHandler(IShopRepository shopRepository, IMapper mapper,
+    public GetShopInfoForCustomerHandler(IShopRepository shopRepository, IMapper mapper,
         IFavouriteShopRepository favouriteShopRepository, ICurrentPrincipalService currentPrincipalService
     )
     {
@@ -25,7 +25,7 @@ public class GetShopInfoHandler : IQueryHandler<GetShopInfoQuery, Result>
         _currentPrincipalService = currentPrincipalService;
     }
 
-    public Task<Result<Result>> Handle(GetShopInfoQuery request, CancellationToken cancellationToken)
+    public Task<Result<Result>> Handle(GetShopInfoForCustomerQuery request, CancellationToken cancellationToken)
     {
         var shop = _shopRepository.GetInfoByShopIdAndStatusIn(request.shopId, new int[] { (int)ShopStatus.Active });
         var accountId = _currentPrincipalService.CurrentPrincipalId!.Value;

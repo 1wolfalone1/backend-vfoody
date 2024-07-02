@@ -146,7 +146,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpGet("admin/account/all")]
-    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
     public async Task<IActionResult> GetAllAccount(int pageIndex, int pageSize)
     {
         return HandleResult(await Mediator.Send(new GetAllAccountQuery
@@ -157,7 +157,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpGet("admin/account/info")]
-    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
     public async Task<IActionResult> GetAllAccount(int accountId)
     {
         return HandleResult(await Mediator.Send(new GetAccountInfoQuery(accountId)));

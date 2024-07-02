@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VFoody.API.Identity;
 using VFoody.Application.UseCases.Commission.Commands.CreateCommission;
 using VFoody.Application.UseCases.Commission.Queries.GetCommission;
 
@@ -8,13 +10,13 @@ namespace VFoody.API.Controllers;
 public class CommissionConfigController : BaseApiController
 {
     [HttpGet("admin/commission")]
-    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
     public async  Task<IActionResult> GetCommissionRate()
     {
         return HandleResult(await Mediator.Send(new GetCommissionRateQuery()));
     }
     [HttpPut("admin/commission/update")]
-    // [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
     public async  Task<IActionResult> UpdateCommission(CreateCommissionCommand createCommissionCommand)
     {
         return HandleResult(await Mediator.Send(createCommissionCommand));

@@ -83,21 +83,21 @@ public class PromotionController : BaseApiController
     }
 
     [HttpPost("admin/promotion")]
-    [AllowAnonymous]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> CreatePlatformPromotion([FromBody] CreatePromotionRequest promotion)
     {
         return this.HandleResult(await this.Mediator.Send(new CreatePromotionCommand{CreatePromotion = promotion}));
     }
 
     [HttpGet("admin/promotion")]
-    [AllowAnonymous]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> GetAllPromotionWithCondition([FromQuery] GetAllPromotionForAdminPageQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
     }
 
     [HttpPost("admin/promotion/upload")]
-    [AllowAnonymous]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> UploadImageForPlatformPromotion(IFormFile image)
     {
         return this.HandleResult(await this.Mediator.Send(new UploadBannerPlatformPromotionCommand()
@@ -107,7 +107,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpPut("admin/promotion/{id}")]
-    [AllowAnonymous]
+    [Authorize(Roles = IdentityConst.AdminClaimName)]
     public async Task<IActionResult> UpdateAllPromotionInfo([FromBody] UpdatePromotionInfoRequest promotion, int id)
     {
         promotion.Id = id;
