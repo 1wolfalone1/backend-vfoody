@@ -36,6 +36,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     public Product? GetProductDetailCustomer(int productId)
     {
         return DbSet
+            .Include(p => p.ProductCategories)
             .Include(p => p.Questions.Where(q =>
                 q.Status == (int)QuestionStatus.Active))
             .ThenInclude(q =>
@@ -93,6 +94,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     public Product? GetProductDetailShopOwner(int productId, int shopId)
     {
         return DbSet
+            .Include(p => p.ProductCategories)
             .Include(p => p.Questions.Where(q =>
                 q.Status == (int)QuestionStatus.Active || q.Status == (int)QuestionStatus.UnActive))
             .ThenInclude(q =>
