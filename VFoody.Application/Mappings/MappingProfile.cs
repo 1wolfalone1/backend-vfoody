@@ -37,7 +37,11 @@ public class MappingProfile : Profile
         CreateMap<VerifyCodeForgotPasswordRequest, VerifyCodeForgotPasswordCommand>();
         CreateMap<AccountVerifyRequest, AccountVerifyCommand>();
         CreateMap<AccountSendCodeRequest, AccountSendCodeCommand>();
-        CreateMap<Product, ProductDetailResponse>();
+        CreateMap<Product, ProductDetailResponse>()
+            .ForMember(dest => dest.Categories,
+                opt => opt.MapFrom(src => src.ProductCategories != null && src.ProductCategories.Any()
+                    ? src.ProductCategories.Select(pc => pc.CategoryId).ToList()
+                    : new List<int>()));
         CreateMap<Question, ProductDetailResponse.QuestionResponse>();
         CreateMap<Option, ProductDetailResponse.OptionResponse>();
         CreateMap<Product, ProductResponse>();
