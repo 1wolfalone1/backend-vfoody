@@ -5,7 +5,7 @@
  @OrderId int
  
  */
--- SET 
+-- SET @OrderId = 24;
 WITH OrderInfo AS (
     SELECT
         o.id AS order_id,
@@ -29,27 +29,52 @@ WITH OrderInfo AS (
         o.created_date
     FROM
         `order` o
-            INNER JOIN `transaction` t ON o.transaction_id = t.id
-            INNER JOIN building b ON o.building_id = b.id
-    WHERE o.id = @OrderId
+        INNER JOIN `transaction` t ON o.transaction_id = t.id
+        INNER JOIN building b ON o.building_id = b.id
+    WHERE
+        o.id = @OrderId
 ),
-     Promotion AS (
-         SELECT
-             COALESCE(sp.id, pp1.id, pp2.id) AS id,
-             COALESCE(sp.title, pp1.title, pp2.title) AS title,
-             COALESCE(sp.amount_rate, pp1.amount_rate, pp2.amount_rate) AS amount_rate,
-             COALESCE(sp.minimum_order_value, pp1.minimum_order_value, pp2.minimum_order_value) AS minimum_order_value,
-             COALESCE(sp.maximum_apply_value, pp1.maximum_apply_value, pp2.maximum_apply_value) AS maximum_apply_value,
-             COALESCE(sp.amount_value, pp1.amount_value, pp2.amount_value) AS amount_value,
-             COALESCE(sp.apply_type, pp1.apply_type, pp2.apply_type) AS apply_type,
-             COALESCE(sp.start_date, pp1.start_date, pp2.start_date) AS start_date,
-             COALESCE(sp.end_date, pp1.end_date, pp2.end_date) AS end_date
-         FROM
-             OrderInfo o
-                 LEFT JOIN shop_promotion sp ON o.shop_promotion_id = sp.id
-                 LEFT JOIN platform_promotion pp1 ON o.platform_promotion_id = pp1.id
-                 LEFT JOIN person_promotion pp2 ON o.personal_promotion_id = pp2.id
-     )
+Promotion AS (
+    SELECT
+        COALESCE(sp.id, pp1.id, pp2.id) AS id,
+        COALESCE(sp.title, pp1.title, pp2.title) AS title,
+        COALESCE(sp.amount_rate, pp1.amount_rate, pp2.amount_rate) AS amount_rate,
+        COALESCE(
+            sp.minimum_order_value,
+            pp1.minimum_order_value,
+            pp2.minimum_order_value
+        ) AS minimum_order_value,
+        COALESCE(
+            sp.maximum_apply_value,
+            pp1.maximum_apply_value,
+            pp2.maximum_apply_value
+        ) AS maximum_apply_value,
+        COALESCE(
+            sp.amount_value,
+            pp1.amount_value,
+            pp2.amount_value
+        ) AS amount_value,
+        COALESCE(sp.apply_type, pp1.apply_type, pp2.apply_type) AS apply_type,
+        COALESCE(sp.start_date, pp1.start_date, pp2.start_date) AS start_date,
+        COALESCE(sp.end_date, pp1.end_date, pp2.end_date) AS end_date
+    FROM
+        OrderInfo o
+        LEFT JOIN shop_promotion sp ON o.shop_promotion_id = sp.id
+        LEFT JOIN platform_promotion pp1 ON o.platform_promotion_id = pp1.id
+        LEFT JOIN person_promotion pp2 ON o.personal_promotion_id = pp2.id
+),
+OrderReason AS (
+    SELECT
+        reason
+    FROM
+        order_history oh
+    WHERE
+        oh.order_id = @OrderId
+    ORDER BY
+        updated_date DESC
+    LIMIT
+        1
+)
 SELECT
     orf.order_id AS OrderId,
     orf.order_status AS OrderStatus,
@@ -63,6 +88,12 @@ SELECT
     orf.created_date AS OrderDate,
     orf.shop_id AS ShopId,
     orf.note AS Note,
+    (
+        SELECT
+            reason
+        FROM
+            OrderReason
+    ) AS Reason,
     orf.building_id AS BuildingId,
     orf.name AS Address,
     orf.longitude AS Longitude,
@@ -78,5 +109,4 @@ SELECT
     pro.end_date AS EndDate
 FROM
     OrderInfo AS orf
-        LEFT JOIN
-    Promotion AS pro ON TRUE;
+    LEFT JOIN Promotion AS pro ON TRUE;
