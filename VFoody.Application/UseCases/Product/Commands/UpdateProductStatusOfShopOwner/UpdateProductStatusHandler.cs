@@ -43,7 +43,7 @@ public class UpdateProductStatusHandler : ICommandHandler<UpdateProductStatusCom
 
         // 2. Check if the product is currently being ordered
         var isProductInOrder = await _orderRepository.CheckInOrderByProductId(request.Id);
-        if (isProductInOrder)
+        if (isProductInOrder && request.Status == ProductStatus.Delete)
         {
             // If the product is in the process of being ordered, prevent deletion and return an error
             return Result.Failure(new Error("400", "Sản phẩm đang trong đơn hàng, không thể xóa."));
