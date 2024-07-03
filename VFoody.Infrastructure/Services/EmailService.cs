@@ -64,7 +64,7 @@ public class EmailService : IEmailService, IBaseService
         return true;
     }
 
-    private bool SendEmail(string toEmail, string subject, string body)
+    public bool SendEmail(string toEmail, string subject, string body)
     {
         try
         {
