@@ -11,6 +11,9 @@ using VFoody.Application.UseCases.Shop.Queries.ShopInfo;
 using VFoody.Application.UseCases.Shop.Queries.ShopInfoForShop;
 using VFoody.Application.UseCases.Shop.Queries.ShopSearching;
 using VFoody.Application.UseCases.Shop.Queries.ShopTop;
+using VFoody.Application.UseCases.Shops.Commands.GetApprove;
+using VFoody.Application.UseCases.Shops.Commands.GetBan;
+using VFoody.Application.UseCases.Shops.Commands.GetUnBan;
 using VFoody.Application.UseCases.Shops.Commands.UpdateProfile.UploadShopBannerImage;
 using VFoody.Application.UseCases.Shops.Commands.UpdateProfile.UploadShopLogoImage;
 
@@ -28,7 +31,7 @@ public class ShopController : BaseApiController
 
     [HttpGet("customer/shop/top")]
     [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
-    public async  Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
+    public async Task<IActionResult> GetTopShop(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetTopShopQuery
         {
@@ -50,7 +53,7 @@ public class ShopController : BaseApiController
     {
         return HandleResult(await Mediator.Send(new GetShopInfoForCustomerQuery(shopId)));
     }
-    
+
     [HttpGet("customer/shop")]
     [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopInfo([FromQuery] int[] ids)
@@ -92,7 +95,7 @@ public class ShopController : BaseApiController
     {
         return this.HandleResult(await this.Mediator.Send(new GetShopProfileQuery()));
     }
-    
+
     [HttpPut("shop/profile/banner")]
     [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> ShopUploadBannerImage(IFormFile bannerImage)
@@ -102,7 +105,7 @@ public class ShopController : BaseApiController
             BannerImage = bannerImage
         }));
     }
-    
+
     [HttpPut("shop/profile/logo")]
     [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> ShopUploadLogoImage(IFormFile logoImage)
@@ -112,10 +115,31 @@ public class ShopController : BaseApiController
             LogoImage = logoImage
         }));
     }
-    
+
     [HttpPut("shop/profile")]
     [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> ShopUpdateShopProfile([FromBody] UpdateInfoShopCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPut("admin/shop/approve")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> ShopGetApprove([FromBody] ShopGetApproveCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPut("admin/shop/ban")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> ShopGetBan([FromBody] ShopGetBanCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPut("admin/shop/unban")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> ShopGetUnBan([FromBody] ShopGetUnBanCommand command)
     {
         return this.HandleResult(await this.Mediator.Send(command));
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
+using VFoody.Application.UseCases.Accounts.Commands.BanAction;
 using VFoody.Application.UseCases.Accounts.Commands.CheckAccount;
 using VFoody.Application.UseCases.Accounts.Commands.CheckAuth.VerifyToken;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
@@ -10,6 +11,7 @@ using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
+using VFoody.Application.UseCases.Accounts.Commands.UnBanAction;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateAccountDeviceToken;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UpdateProfile;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UploadAvatar;
@@ -201,5 +203,19 @@ public class AccountController : BaseApiController
     public async Task<IActionResult> CheckTokenWithRoleAdmin()
     {
         return Ok();
+    }
+
+    [HttpPut("admin/account/ban")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> BanAccountCustomer(BanActionCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPut("admin/account/unban")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> UnBanAccountCustomer(UnBanActionCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
     }
 }
