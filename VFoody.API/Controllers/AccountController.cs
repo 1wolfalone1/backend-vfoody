@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Accounts.Commands;
 using VFoody.Application.UseCases.Accounts.Commands.CheckAccount;
+using VFoody.Application.UseCases.Accounts.Commands.CheckAuth.VerifyToken;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
@@ -21,6 +22,7 @@ using VFoody.Application.UseCases.Accounts.Queries.LoginToShop;
 using VFoody.Application.UseCases.Accounts.Queries.ManageAccount;
 using VFoody.Application.UseCases.Firebases.Commands.VerifyIdTokens;
 using VFoody.Domain.Entities;
+using VFoody.Domain.Shared;
 
 namespace VFoody.API.Controllers;
 
@@ -185,5 +187,19 @@ public class AccountController : BaseApiController
     public async  Task<IActionResult> LoginToShop()
     {
         return HandleResult(await Mediator.Send(new LoginToShopQuery()));
+    }
+
+    [HttpGet("auth")]
+    [Authorize]
+    public async Task<IActionResult> CheckToken()
+    {
+        return this.HandleResult(await this.Mediator.Send(new VerifyTokenCommand()));
+    }
+
+    [HttpGet("auth/admin")]
+    [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
+    public async Task<IActionResult> CheckTokenWithRoleAdmin()
+    {
+        return Ok();
     }
 }

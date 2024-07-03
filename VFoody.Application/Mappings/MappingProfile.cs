@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using VFoody.Application.Common.Utils;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
@@ -145,5 +146,12 @@ public class MappingProfile : Profile
             .ForMember(opt => opt.Building,
                 opt =>
                     opt.MapFrom(src => src.Building));
+        CreateMap<Account, VerifyTokenResponse>()
+            .ForMember(opt => opt.FullName,
+                opt => opt.MapFrom(
+                    src => src.LastName))
+            .ForMember(opt => opt.Role,
+                opt => opt.MapFrom(
+                    src => EnumHelper.GetEnumDescription<Roles>(src.RoleId)));
     }
 }
