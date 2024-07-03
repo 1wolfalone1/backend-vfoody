@@ -5,19 +5,19 @@ using VFoody.Application.Common.Services;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
-namespace VFoody.Application.UseCases.Product.Commands.DeleteProductOfShopOwner;
+namespace VFoody.Application.UseCases.Product.Commands.UpdateProductStatusOfShopOwner;
 
-public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result>
+public class UpdateProductStatusHandler : ICommandHandler<UpdateProductStatusCommand, Result>
 {
-    private readonly ILogger<DeleteProductHandler> _logger;
+    private readonly ILogger<UpdateProductStatusHandler> _logger;
     private readonly IProductRepository _productRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly ICurrentPrincipalService _currentPrincipalService;
     private readonly IShopRepository _shopRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteProductHandler(
-        ILogger<DeleteProductHandler> logger, IProductRepository productRepository,
+    public UpdateProductStatusHandler(
+        ILogger<UpdateProductStatusHandler> logger, IProductRepository productRepository,
         IUnitOfWork unitOfWork, IOrderRepository orderRepository,
         ICurrentPrincipalService currentPrincipalService, IShopRepository shopRepository)
     {
@@ -29,7 +29,7 @@ public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result
         _shopRepository = shopRepository;
     }
 
-    public async Task<Result<Result>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Result>> Handle(UpdateProductStatusCommand request, CancellationToken cancellationToken)
     {
         var accountId = _currentPrincipalService.CurrentPrincipalId;
         var shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
@@ -38,7 +38,7 @@ public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result
         //1. Return failure when product not found
         if (product == null)
         {
-            return Result.Failure(new Error("400", "Product not found."));
+            return Result.Failure(new Error("400", "Không tìm thấy sản phẩm."));
         }
 
         // 2. Check if the product is currently being ordered
@@ -46,7 +46,7 @@ public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result
         if (isProductInOrder)
         {
             // If the product is in the process of being ordered, prevent deletion and return an error
-            return Result.Failure(new Error("400", "Product is currently being ordered and cannot be deleted."));
+            return Result.Failure(new Error("400", "Sản phẩm đang trong đơn hàng, không thể xóa."));
         }
 
         //3. Update product status to delete
@@ -54,7 +54,7 @@ public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result
         {
             //Begin transaction
             await _unitOfWork.BeginTransactionAsync();
-            product.Status = (int)ProductStatus.Delete;
+            product.Status = (int) request.Status;
             _productRepository.Update(product);
             //Commit transaction
             await _unitOfWork.CommitTransactionAsync();
@@ -67,6 +67,6 @@ public class DeleteProductHandler : ICommandHandler<DeleteProductCommand, Result
             return Result.Failure(new Error("500", "Internal server error."));
         }
 
-        return Result.Success("Delete product successfully!");
+        return Result.Success("Cập nhật trạng thái thành công");
     }
 }
