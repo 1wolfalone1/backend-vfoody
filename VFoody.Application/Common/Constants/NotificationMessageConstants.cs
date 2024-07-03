@@ -31,4 +31,19 @@ public class NotificationMessageConstants
     public static string Shop_Balance_Title = "Tài khoản";
     public static string Shop_Balance_Plus_From_Order = "Bạn vừa được +{0} VND vào tài khoản từ đơn hàng VFD{1}";
     
+    // Verify
+    public static string Approve_Shop_Title = "Cửa hàng";
+    public static string Approve_Shop_Cus_Content =
+        "Cửa hàng {0} của bạn đã được xác nhận bởi hệ thống. Bạn đã có thể bắt đầu buôn bán";
+    public static string Apprve_Shop_Welcome = "Chúc mừng bạn đã mở cửa hàng thành công. Bạn đã có thể đầu buôn bán";
+    
+    // Shop ban action
+    public static string Ban_Shop_Title = "Cửa hàng";
+    public static string Ban_Shop_Content =
+        "Cửa hàng của bạn đã bị hệ thống cấm. Bạn vui lòng mở email để biết thêm chi tiết. Mọi chi tiết xin liên hệ với chúng tôi qua email";
+    
+    // Shop un ban action
+    public static string Un_Ban_Shop_Title = "Cửa hàng";
+    public static string Un_Ban_Shop_Content = "Chúc mừng cửa hàng của bạn đã được gỡ lệnh cấm";
+    public static string Un_Ban_Shop_Cus_Content = "Cửa hàng của bạn đã có thể bán hàng trở lại bình thường";
 }
