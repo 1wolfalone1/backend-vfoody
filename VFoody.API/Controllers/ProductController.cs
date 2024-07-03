@@ -6,7 +6,7 @@ using VFoody.API.Identity;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.CreateProductOfShopOwner;
-using VFoody.Application.UseCases.Product.Commands.DeleteProductOfShopOwner;
+using VFoody.Application.UseCases.Product.Commands.UpdateProductStatusOfShopOwner;
 using VFoody.Application.UseCases.Product.Commands.UpdateProductOfShopOwner;
 using VFoody.Application.UseCases.Product.Queries;
 using VFoody.Application.UseCases.Product.Queries.CardProducts;
@@ -136,14 +136,11 @@ public class ProductController : BaseApiController
         return HandleResult(await Mediator.Send(_mapper.Map<UpdateProductCommand>(updateProductRequest)));
     }
 
-    [HttpDelete("shop-owner/product/delete")]
+    [HttpPut("shop-owner/product/status/update")]
     [Authorize(Roles = IdentityConst.ShopClaimName)]
-    public async Task<IActionResult> DeleteProduct([Required] int id)
+    public async Task<IActionResult> UpdateProductStatus(UpdateProductStatusCommand command)
     {
-        return HandleResult(await Mediator.Send(new DeleteProductCommand
-        {
-            Id = id
-        }));
+        return HandleResult(await Mediator.Send(command));
     }
 
     [HttpGet("admin/shop/product")]
