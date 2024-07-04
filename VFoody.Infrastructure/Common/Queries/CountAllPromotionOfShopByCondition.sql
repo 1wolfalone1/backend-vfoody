@@ -3,6 +3,7 @@
     Date: 01/07/2024
 
     @DeleteStatus int
+    @Status int
     @ShopId int
     @SearchValue string
     @FilterByTime int
@@ -21,6 +22,7 @@ FROM
 WHERE
     status != @DeleteStatus
     AND shop_id = @ShopId
+    AND (@Status IS NULL OR sp.status = @Status)
     AND (@SearchValue IS NULL OR sp.title LIKE CONCAT('%', @SearchValue, '%'))
     AND (@FilterByTime IS NULL OR @FilterByTime = 0 OR sp.created_date >= NOW() - INTERVAL @FilterByTime DAY)
     AND (
