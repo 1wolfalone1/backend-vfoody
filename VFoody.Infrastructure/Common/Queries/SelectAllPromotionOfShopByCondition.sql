@@ -34,6 +34,7 @@ FROM
     shop_promotion sp
 WHERE
     status != @DeleteStatus
+    AND (@Status IS NULL OR sp.status = @Status)
     AND shop_id = @ShopId
     AND (@SearchValue IS NULL OR sp.title LIKE CONCAT('%', @SearchValue, '%'))
     AND (@FilterByTime IS NULL OR @FilterByTime = 0 OR sp.created_date >= NOW() - INTERVAL @FilterByTime DAY)
