@@ -45,13 +45,19 @@ public class FirebaseVerifyIDTokenService : IBaseService, IFirebaseVerifyIDToken
         string userId = decodedToken.Uid;
         string phoneNumber = decodedToken.Claims.ContainsKey("phone_number") ? decodedToken.Claims["phone_number"].ToString() : null;
         string email = decodedToken.Claims.ContainsKey("email") ? decodedToken.Claims["email"].ToString() : null;
+        bool emailVerified = decodedToken.Claims.ContainsKey("email_verified") && (bool)decodedToken.Claims["email_verified"];
+        string name = decodedToken.Claims.ContainsKey("name") ? decodedToken.Claims["name"].ToString() : null;
+        string picture = decodedToken.Claims.ContainsKey("picture") ? decodedToken.Claims["picture"].ToString() : null;
 
         // Map to FirebaseUser object
         FirebaseUser firebaseUser = new FirebaseUser
         {
             UserId = userId,
             PhoneNumber = phoneNumber,
-            Email = email
+            Email = email,
+            Name = name,
+            Picture = picture,
+            EmailVerified = emailVerified
         };
 
         return firebaseUser;
