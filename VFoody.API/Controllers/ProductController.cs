@@ -126,7 +126,7 @@ public class ProductController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize,
             ShopId = null,
-            Status = status
+            Status = status == 0 ? null : status
         }));
     }
 
@@ -153,7 +153,7 @@ public class ProductController : BaseApiController
             PageIndex = pageIndex,
             PageSize = pageSize,
             ShopId = shopId,
-            Status = status
+            Status = status == 0 ? null : status
         }));
     }
 

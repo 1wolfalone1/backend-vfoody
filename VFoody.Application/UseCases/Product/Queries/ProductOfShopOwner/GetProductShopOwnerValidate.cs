@@ -7,8 +7,11 @@ public class GetProductShopOwnerValidate : AbstractValidator<GetProductShopOwner
 {
     public GetProductShopOwnerValidate()
     {
-        RuleFor(x => x.Status)
-            .Must(status => status == (int)ProductStatus.Active || status == (int)ProductStatus.UnActive)
-            .WithMessage("Trạng thái sản phẩm chỉ có thể là 1 (Active) hoặc 2 (InActive).");
+        When(x => x.Status.HasValue, () =>
+        {
+            RuleFor(x => x.Status)
+                .Must(status => status == (int)ProductStatus.Active || status == (int)ProductStatus.UnActive)
+                .WithMessage("Trạng thái sản phẩm chỉ có thể là 1 (Active) hoặc 2 (InActive).");
+        });
     }
 }
