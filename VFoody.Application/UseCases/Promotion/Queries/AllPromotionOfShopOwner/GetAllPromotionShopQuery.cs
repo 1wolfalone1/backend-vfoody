@@ -12,4 +12,5 @@ public class GetAllPromotionShopQuery : PaginationRequest, IQuery<Result>
     public DateTime? DateTo { get; set; }
     public int? OrderBy { get; set; }
     public int? Direction { get; set; }
+    public int? Status { get; set; }
 }
