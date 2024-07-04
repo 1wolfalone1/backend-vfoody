@@ -8,6 +8,7 @@ using VFoody.Application.UseCases.Accounts.Commands.CheckAccount;
 using VFoody.Application.UseCases.Accounts.Commands.CheckAuth.VerifyToken;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPassword;
 using VFoody.Application.UseCases.Accounts.Commands.ForgotPasswordFirebase;
+using VFoody.Application.UseCases.Accounts.Commands.LoginGoogleByFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
@@ -215,6 +216,12 @@ public class AccountController : BaseApiController
     [HttpPut("admin/account/unban")]
     [Authorize(Roles = $"{IdentityConst.AdminClaimName}")]
     public async Task<IActionResult> UnBanAccountCustomer(UnBanActionCommand command)
+    {
+        return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPost("customer/firebase/google/login")]
+    public async Task<IActionResult> LoginGoogleByFirebaseProvider([FromBody] LoginGoogleByFirebaseCommand command)
     {
         return this.HandleResult(await this.Mediator.Send(command));
     }
