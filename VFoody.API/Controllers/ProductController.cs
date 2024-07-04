@@ -117,17 +117,12 @@ public class ProductController : BaseApiController
         return HandleResult(await Mediator.Send(_mapper.Map<CreateProductCommand>(createProductRequest)));
     }
 
-    [HttpGet("shop-owner/product")]
+    [HttpPost("shop-owner/product")]
     [Authorize(Roles = IdentityConst.ShopClaimName)]
-    public async Task<IActionResult> GetProductOfShopOwner(int pageIndex, int pageSize, int status)
+    public async Task<IActionResult> GetProductOfShopOwner(GetProductShopOwnerQuery query)
     {
-        return HandleResult(await Mediator.Send(new GetProductShopOwnerQuery
-        {
-            PageIndex = pageIndex,
-            PageSize = pageSize,
-            ShopId = null,
-            Status = status == 0 ? null : status
-        }));
+        query.ShopId = null;
+        return HandleResult(await Mediator.Send(query));
     }
 
     [HttpPut("shop-owner/product/update")]
