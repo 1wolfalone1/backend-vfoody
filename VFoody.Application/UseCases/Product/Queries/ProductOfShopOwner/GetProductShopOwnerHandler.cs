@@ -42,7 +42,8 @@ public class GetProductShopOwnerHandler : IQueryHandler<GetProductShopOwnerQuery
 
         var totalProduct = _productRepository.CountTotalProductByShopId(shopId);
         var productList =
-            await _productRepository.GetListProductByShopId(shopId, request.PageIndex, request.PageSize);
+            await _productRepository.GetListProductByShopId(
+                shopId, request.Status, request.PageIndex, request.PageSize);
         var result = new PaginationResponse<ProductShopOwnerResponse>(
             _mapper.Map<List<ProductShopOwnerResponse>>(productList),
             request.PageIndex, request.PageSize, totalProduct);
