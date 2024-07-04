@@ -37,8 +37,10 @@ public class GetAllPromotionShopHandler : IQueryHandler<GetAllPromotionShopQuery
         {
             var parameter = new
             {
+                ActiveStatus = (int)PromotionStatus.Active,
+                InActiveStatus = (int)PromotionStatus.UnActive,
                 DeleteStatus = (int)PromotionStatus.Delete,
-                Status = request.Status,
+                IsAvailable = request.IsAvailable,
                 ShopId = shop.Id,
                 SearchValue = request.SearchValue,
                 FilterByTime = request.FilterByTime,
