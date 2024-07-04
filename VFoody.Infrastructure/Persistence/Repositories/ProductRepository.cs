@@ -77,11 +77,18 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .ToListAsync();
     }
 
-    public async Task<List<Product>> GetListProductByShopId(int id, int status, int pageNum, int pageSize)
+    public async Task<List<Product>> GetListProductByShopId(int id, int? status, int pageNum, int pageSize)
     {
-        return await this.DbSet.Where(
-                p => p.ShopId == id && p.Status == status && p.Status != (int)ProductStatus.Delete
-                )
+        var query = this.DbSet.Where(
+            p => p.ShopId == id && p.Status != (int)ProductStatus.Delete
+            );
+
+        if (status.HasValue)
+        {
+            query = query.Where(p => p.Status == status.Value);
+        }
+
+        return await query
             .Skip((pageNum - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
