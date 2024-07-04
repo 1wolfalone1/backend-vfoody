@@ -15,11 +15,13 @@ public class GetAllPromotionShopValidate : AbstractValidator<GetAllPromotionShop
             .NotNull()
             .GreaterThan(0)
             .WithMessage("Page size not null and greater than 0.");
-        When(x => x.Status.HasValue, () =>
-        {
-            RuleFor(x => x.Status)
-                .Must(status => status == (int)PromotionStatus.Active || status == (int)PromotionStatus.UnActive)
-                .WithMessage("Trạng thái mã giảm giá chỉ có thể là 1 (Active) hoặc 2 (InActive).");
-        });
+        RuleFor(p => p.IsAvailable)
+            .Must(IsValidBoolean)
+            .WithMessage("IsAvailable must be true or false.");
+    }
+
+    private bool IsValidBoolean(bool isAvailable)
+    {
+        return isAvailable || isAvailable == false;
     }
 }
