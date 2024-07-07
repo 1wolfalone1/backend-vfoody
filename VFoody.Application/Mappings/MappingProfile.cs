@@ -72,7 +72,14 @@ public class MappingProfile : Profile
             ).ForMember(dest => dest.FullName,
                 opt =>
                     opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email)
-            );
+            ).ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)AccountStatus.UnVerify ? "Chưa xác thực" :
+                        src.Status == (int)AccountStatus.Verify ? "Đang hoạt động" :
+                        src.Status == (int)AccountStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                ));
         CreateMap<ManageShopDto, ManageShopResponse>()
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
