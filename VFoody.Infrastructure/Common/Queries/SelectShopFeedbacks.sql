@@ -7,6 +7,9 @@
  -- @PageIndex int
  -- @PageSize int
  */
+-- SET @ShopId = 1;
+-- SET @PageIndex = 1;
+-- SET @PageSize = 10;
 WITH WithFeedBack AS (
     SELECT
         id,
@@ -14,6 +17,7 @@ WITH WithFeedBack AS (
         order_id,
         rating,
         comment,
+        images_url,
         created_date,
         updated_date,
         ROW_NUMBER() OVER (
@@ -26,11 +30,11 @@ WITH WithFeedBack AS (
     WHERE
         order_id IN (
             SELECT
-                idF
+                id
             FROM
                 `order` o
             WHERE
-                o.id = @ShopId
+                o.shop_id = @ShopId
         )
 ),
 WithFeedbackAndOrderProductName AS (
@@ -56,7 +60,7 @@ WithFeedbackAndOrderProductName AS (
                     FROM
                         `order` o
                     WHERE
-                        o.id = @ShopId
+                        o.shop_id = @ShopId
                 )
         ) AS WithFeedbackAndOrderProductName
     GROUP BY
@@ -71,6 +75,7 @@ SELECT
     feed.id AS FeedbackId,
     feed.rating AS Rating,
     feed.comment AS Comment,
+    feed.images_url AS ImagesUrl,
     feedOrder.product_names AS ProductOrders,
     feed.created_date AS CreatedDate
 FROM
