@@ -23,6 +23,9 @@ public partial class Feedback : BaseEntity
     [MySqlCharSet("utf8mb3")]
     [MySqlCollation("utf8mb3_general_ci")]
     public string? Comment { get; set; }
+    
+    [Column("images_url", TypeName = "text")]
+    public string? ImagesUrl { get; set; }
 
     [Column("account_id")]
     public int AccountId { get; set; }

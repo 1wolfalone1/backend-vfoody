@@ -46,4 +46,8 @@ public class NotificationMessageConstants
     public static string Un_Ban_Shop_Title = "Cửa hàng";
     public static string Un_Ban_Shop_Content = "Chúc mừng cửa hàng của bạn đã được gỡ lệnh cấm";
     public static string Un_Ban_Shop_Cus_Content = "Cửa hàng của bạn đã có thể bán hàng trở lại bình thường";
+    
+    // Shop receive feedback
+    public static string Feedback_Shop_Title = "Phản hồi";
+    public static string Feedback_Shop_Content = "Bạn vừa nhận phản hồi từ khách hàng {0} với đơn hàng VFD{1}";
 }

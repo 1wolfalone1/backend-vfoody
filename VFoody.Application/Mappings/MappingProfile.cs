@@ -6,6 +6,7 @@ using VFoody.Application.UseCases.Accounts.Commands.SendCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyForgotPasswordCode;
 using VFoody.Application.UseCases.Accounts.Commands.VerifyRegisterCode;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Application.UseCases.Feedbacks.Models;
 using VFoody.Application.UseCases.Notifications.Models;
 using VFoody.Application.UseCases.Orders.Models;
 using VFoody.Application.UseCases.Product.Commands.CreateProductImageOfShopOwner;
@@ -130,9 +131,19 @@ public class MappingProfile : Profile
                 )
             )
             ;
-        CreateMap<Account, AccountInfoResponse>().ForMember(dest => dest.FullName,
+        CreateMap<Account, AccountInfoResponse>()
+            .ForMember(dest => dest.FullName,
             opt =>
-                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
+                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email))
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
+                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
+                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                )
+            );
         CreateMap<Notification, NotificationResponse>();
         CreateMap<PlatformPromotion, AllPromotionResponse>();
         CreateMap<PersonPromotion, AllPromotionResponse>();
@@ -151,5 +162,9 @@ public class MappingProfile : Profile
             .ForMember(opt => opt.Role,
                 opt => opt.MapFrom(
                     src => EnumHelper.GetEnumDescription<Roles>(src.RoleId)));
+        CreateMap<Feedback, CreateFeedbackResponse>()
+            .ForMember(opt => opt.Rating,
+                opt => opt.MapFrom(
+                    src => (RatingRanges)src.Rating));
     }
 }
