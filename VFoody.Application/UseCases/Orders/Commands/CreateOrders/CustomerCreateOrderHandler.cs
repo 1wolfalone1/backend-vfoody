@@ -206,10 +206,12 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         }
         catch (InvalidBusinessException exception)
         {
+            this._unitOfWork.RollbackTransaction();
             throw exception;
         }
         catch (Exception exception)
         {
+            this._unitOfWork.RollbackTransaction();
             var shop = this._shopRepository.Get(sh => sh.Id == request.ShopId
             ,includes: new List<Expression<Func<Domain.Entities.Shop, object>>>()
             {
@@ -223,7 +225,6 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 (int)Domain.Enums.Roles.Shop,
                 customerAccount.AvatarUrl
                 );
-            this._unitOfWork.RollbackTransaction();
             throw exception;
         }
     }

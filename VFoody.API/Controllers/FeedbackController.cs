@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
+using VFoody.Application.UseCases.Feedbacks.Commands.CustomerCreateFeedback;
 using VFoody.Application.UseCases.Feedbacks.Queries.ShopFeedbacks;
 
 namespace VFoody.API.Controllers;
@@ -17,6 +18,16 @@ public class FeedbackController : BaseApiController
             Id = id,
             PageIndex = pageIndex,
             PageSize = pageSize
+        }));
+    }
+
+    [HttpPost("customer/feedback/order/{orderId}")]
+    public async Task<IActionResult> CreateFeedbackForOrder(int orderId, [FromForm] CustomerCreateFeedbackRequest requestModel)
+    {
+        return this.HandleResult(await this.Mediator.Send(new CustomerCreateFeedbackCommand()
+        {
+            OrderId = orderId,
+            RequestModel = requestModel
         }));
     }
 }
