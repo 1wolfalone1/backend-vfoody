@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using VFoody.Application.Common.Abstractions.Messaging;
+using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Accounts.Models;
+using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Accounts.Queries.LoginToShop;
@@ -28,7 +30,22 @@ public class LoginToShopHandler : IQueryHandler<LoginToShopQuery, Result>
         var accountId = _currentPrincipalService.CurrentPrincipalId;
         var account = _accountRepository.GetById(accountId!);
         var shop = _shopRepository.Get().Include(s => s.Building)
-            .First(s => s.AccountId == accountId!.Value);
+            .FirstOrDefault(s => s.AccountId == accountId!.Value && s.Status != (int)ShopStatus.Delete);
+        if (shop == null)
+        {
+            return Result.Failure(new Error("1", "Tài khoản không tồn tại shop."));
+        }
+
+        if (shop.Status == (int)ShopStatus.UnActive)
+        {
+            return Result.Failure(new Error("2", "Tài khoản shop chưa được chấp thuận."));
+        }
+
+        if (shop.Status == (int)ShopStatus.Ban)
+        {
+            return Result.Failure(new Error("3", "Tài khoản shop đã bị ban."));
+        }
+
         UpdateAccountToShopOwnerResponse shopOwnerResponse = new UpdateAccountToShopOwnerResponse
         {
             Id = shop.Id,

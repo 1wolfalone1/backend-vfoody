@@ -17,19 +17,17 @@ public class UpdateAccountToShopOwnerHandler : ICommandHandler<UpdateAccountToSh
     private readonly IStorageService _storageService;
     private readonly IAccountRepository _accountRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IJwtTokenService _jwtTokenService;
 
     public UpdateAccountToShopOwnerHandler(
         ICurrentPrincipalService currentPrincipalService, IShopRepository shopRepository,
         IUnitOfWork unitOfWork, IStorageService storageService,
-        IBuildingRepository buildingRepository, IJwtTokenService jwtTokenService, IAccountRepository accountRepository)
+        IBuildingRepository buildingRepository, IAccountRepository accountRepository)
     {
         _currentPrincipalService = currentPrincipalService;
         _shopRepository = shopRepository;
         _unitOfWork = unitOfWork;
         _storageService = storageService;
         _buildingRepository = buildingRepository;
-        _jwtTokenService = jwtTokenService;
         _accountRepository = accountRepository;
     }
 
@@ -85,8 +83,7 @@ public class UpdateAccountToShopOwnerHandler : ICommandHandler<UpdateAccountToSh
                 TotalProduct = 0,
                 TotalRating = 0,
                 TotalStar = 0,
-                //Todo
-                Status = (int)ShopStatus.Active,
+                Status = (int)ShopStatus.UnActive,
                 MinimumValueOrderFreeship = request.MinimumValueOrderFreeship,
                 ShippingFee = request.ShippingFee,
                 AccountId = accountId!.Value,
@@ -100,33 +97,6 @@ public class UpdateAccountToShopOwnerHandler : ICommandHandler<UpdateAccountToSh
             _unitOfWork.RollbackTransaction();
             throw new Exception(e.Message);
         }
-
-        var shopResponse = _shopRepository.Get().Include(s => s.Building).First(s => s.AccountId == accountId.Value);
-        UpdateAccountToShopOwnerResponse shopOwnerResponse = new UpdateAccountToShopOwnerResponse
-        {
-            Id = shopResponse.Id,
-            ShopName = shopResponse.Name,
-            BannerUrl = shopResponse.BannerUrl!,
-            LogoUrl = shopResponse.LogoUrl!,
-            Description = shopResponse.Description!,
-            PhoneNumber = shopResponse.PhoneNumber,
-            ActiveFrom = shopResponse.ActiveFrom,
-            ActiveTo = shopResponse.ActiveTo,
-            MinimumValueOrderFreeship = shopResponse.MinimumValueOrderFreeship,
-            ShippingFee = shopResponse.ShippingFee,
-            AccessTokenResponse = new AccessTokenResponse
-            {
-                AccessToken = _jwtTokenService.GenerateJwtToken(account!),
-                RefreshToken = _jwtTokenService.GenerateJwtRefreshToken(account!)
-            },
-            Building = new BuildingResponse
-            {
-                Id = shopResponse.Building.Id,
-                Address = shopResponse.Building.Name,
-                Latitude = shopResponse.Building.Latitude!.Value,
-                Longitude = shopResponse.Building.Longitude!.Value
-            }
-        };
-        return Result.Success(shopOwnerResponse);
+        return Result.Success("Tạo tài khoản shop thành công.");
     }
 }
