@@ -9,7 +9,7 @@ public class NotificationMessageConstants
     public static string Order_Title = "Đơn hàng";
     
     // Customer Order content
-    public static string Order_Fail = "{0} vừa đặt hàng thất bại";
+    public static string Order_Fail = "{0} đã đặt hàng thất bại";
     public static string Order_Pending_Content = "Đặt hàng cửa hàng {0} thành công";
     public static string Order_Confirmed_Content = "Shop đã xác nhận đơn hàng VFD{0}";
     public static string Order_Delivering_Content = "Đơn hàng VFD{0} đang được giao";
@@ -19,17 +19,17 @@ public class NotificationMessageConstants
 
 
     // Shop Order content
-    public static string Order_Shop_Pending = "{0} vừa đặt một đơn mới";
-    public static string Order_Customer_Cancel = "{0} vừa hủy đơn hàng VFD{1}";
+    public static string Order_Shop_Pending = "{0} đã đặt một đơn mới";
+    public static string Order_Customer_Cancel = "{0} đã hủy đơn hàng VFD{1}";
     public static string Order_Successfull_Content = "Đơn hàng VFD{0} đã giao thành công";
     
     // Payment
-    public static string Payment_Order_Success = "Bạn vừa thanh toán hóa đơn hàng thành công cho đơn hàng VFD{0}";
+    public static string Payment_Order_Success = "Bạn đã thanh toán hóa đơn hàng thành công cho đơn hàng VFD{0}";
     public static string Payment_Order_Fail = "Thanh toán đơn hàng VFD{0} thất bại";
     
     // Shop Balance
     public static string Shop_Balance_Title = "Tài khoản";
-    public static string Shop_Balance_Plus_From_Order = "Bạn vừa được +{0} VND vào tài khoản từ đơn hàng VFD{1}";
+    public static string Shop_Balance_Plus_From_Order = "Bạn đã được +{0} VND vào tài khoản từ đơn hàng VFD{1}";
     
     // Verify
     public static string Approve_Shop_Title = "Cửa hàng";
