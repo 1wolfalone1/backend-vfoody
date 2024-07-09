@@ -137,9 +137,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
                     src =>
-                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
-                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
-                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
+                        src.Status == (int)AccountStatus.UnVerify ? "Chưa xác thực" :
+                        src.Status == (int)AccountStatus.Verify ? "Đang hoạt động" :
+                        src.Status == (int)AccountStatus.Ban ? "Đã bị cấm" :
                         string.Empty
                 )
             );
