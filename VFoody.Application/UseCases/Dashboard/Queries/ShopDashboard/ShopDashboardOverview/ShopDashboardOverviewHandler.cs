@@ -25,7 +25,7 @@ public class ShopDashboardOverviewHandler : IQueryHandler<ShopDashboardOverviewQ
 
     public async Task<Result<Result>> Handle(ShopDashboardOverviewQuery request, CancellationToken cancellationToken)
     {
-        var shop = _shopRepository.GetShopByAccountId(this._currentPrincipalService.CurrentPrincipalId.Value);
+        var shop = await _shopRepository.GetShopByAccountId(this._currentPrincipalService.CurrentPrincipalId.Value);
         try
         {
             var dayCompareRate = 0;
