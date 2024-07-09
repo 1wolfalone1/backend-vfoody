@@ -73,6 +73,7 @@ SELECT
     status AS Status,
     (total_price + shipping_fee - total_promotion) AS TotalOrderValue,
     created_date AS OrderDate,
+    updated_date AS EndDate,
     shop_id AS ShopId,
     name AS ShopName,
     logo_url AS LogoUrl,

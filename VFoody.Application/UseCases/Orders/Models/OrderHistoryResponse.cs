@@ -8,6 +8,7 @@ public class OrderHistoryResponse
     public int Status { get; set; }
     public double TotalOrderValue { get; set; }
     public DateTime OrderDate { get; set; }
+    public DateTime EndDate { get; set; }
     public int ShopId { get; set; }
     public string ShopName { get; set; }
     public string LogoUrl { get; set; }
