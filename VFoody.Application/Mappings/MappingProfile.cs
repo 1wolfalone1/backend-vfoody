@@ -134,16 +134,7 @@ public class MappingProfile : Profile
         CreateMap<Account, AccountInfoResponse>()
             .ForMember(dest => dest.FullName,
             opt =>
-                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email))
-            .ForMember(dest => dest.Status,
-                opt => opt.MapFrom(
-                    src =>
-                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
-                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
-                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
-                        string.Empty
-                )
-            );
+                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
         CreateMap<Notification, NotificationResponse>();
         CreateMap<PlatformPromotion, AllPromotionResponse>();
         CreateMap<PersonPromotion, AllPromotionResponse>();
