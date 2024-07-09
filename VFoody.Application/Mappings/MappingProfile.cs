@@ -73,14 +73,7 @@ public class MappingProfile : Profile
             ).ForMember(dest => dest.FullName,
                 opt =>
                     opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email)
-            ).ForMember(dest => dest.Status,
-                opt => opt.MapFrom(
-                    src =>
-                        src.Status == (int)AccountStatus.UnVerify ? "Chưa xác thực" :
-                        src.Status == (int)AccountStatus.Verify ? "Đang hoạt động" :
-                        src.Status == (int)AccountStatus.Ban ? "Đã bị cấm" :
-                        string.Empty
-                ));
+            );
         CreateMap<ManageShopDto, ManageShopResponse>()
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
@@ -134,7 +127,16 @@ public class MappingProfile : Profile
         CreateMap<Account, AccountInfoResponse>()
             .ForMember(dest => dest.FullName,
             opt =>
-                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email));
+                opt.MapFrom(src => src.LastName != string.Empty ? src.LastName : src.Email))
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Status == (int)ShopStatus.Active ? "Đã phê duyệt" :
+                        src.Status == (int)ShopStatus.UnActive ? "Chưa phê duyệt" :
+                        src.Status == (int)ShopStatus.Ban ? "Đã bị cấm" :
+                        string.Empty
+                )
+            );
         CreateMap<Notification, NotificationResponse>();
         CreateMap<PlatformPromotion, AllPromotionResponse>();
         CreateMap<PersonPromotion, AllPromotionResponse>();
