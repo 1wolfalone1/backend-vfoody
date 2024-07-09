@@ -183,7 +183,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpGet("shop/login")]
-    [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async  Task<IActionResult> LoginToShop()
     {
         return HandleResult(await Mediator.Send(new LoginToShopQuery()));
