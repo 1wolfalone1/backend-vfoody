@@ -12,7 +12,7 @@ public class AccountInfoResponse
     public string Email { get; set; }
 
     public string AvatarUrl { get; set; }
-    public int Status { get; set; }
+    public string Status { get; set; }
     public DateTime CreatedDate { get; set; }
 
     public BuildingResponse Building { get; set; }
