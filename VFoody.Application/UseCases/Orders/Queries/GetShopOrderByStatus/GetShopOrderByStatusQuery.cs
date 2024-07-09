@@ -7,5 +7,5 @@ namespace VFoody.Application.UseCases.Orders.Queries.GetShopOrderByStatus;
 
 public class GetShopOrderByStatusQuery : PaginationRequest, IQuery<Result>
 {
-    public OrderStatus Status { get; set; }
+    public int[] Status { get; set; }
 }

@@ -2,7 +2,7 @@
     CreatedBy: ThongNV
     Date: 25/06/2024
 
-    @Status int
+    @Status int[]
     @ShopId int
     @PageSize int
     @PageIndex int
@@ -20,7 +20,7 @@ WITH ShopOrder AS (
     FROM
         `order` o
     WHERE 
-        o.status = @Status
+        o.status IN @Status
         AND o.shop_id = @ShopId
 )
 SELECT
