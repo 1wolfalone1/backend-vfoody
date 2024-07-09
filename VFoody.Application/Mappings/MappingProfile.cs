@@ -79,8 +79,7 @@ public class MappingProfile : Profile
                         src.Status == (int)AccountStatus.UnVerify ? "Chưa xác thực" :
                         src.Status == (int)AccountStatus.Verify ? "Đang hoạt động" :
                         src.Status == (int)AccountStatus.Ban ? "Đã bị cấm" :
-                        string.Empty
-                ));
+                        string.Empty));
         CreateMap<ManageShopDto, ManageShopResponse>()
             .ForMember(dest => dest.Status,
                 opt => opt.MapFrom(
