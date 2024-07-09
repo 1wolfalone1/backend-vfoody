@@ -170,12 +170,9 @@ public class AccountController : BaseApiController
 
     [HttpPut("customer/account/device-token")]
     [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
-    public async Task<IActionResult> UpdateAccount([FromBody] string deviceToken)
+    public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDeviceTokenCommand command)
     {
-        return this.HandleResult(await Mediator.Send(new UpdateAccountDeviceTokenCommand
-        {
-            DeviceToken = deviceToken
-        }));
+        return this.HandleResult(await Mediator.Send(command));
     }
 
     [HttpPut("customer/account/update-to-shop")]
