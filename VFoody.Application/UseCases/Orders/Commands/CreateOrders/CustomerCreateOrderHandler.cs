@@ -85,7 +85,7 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
                 IsRefund = 0,
                 RefundStatus = (int)RefundOrderStatus.NoRefund,
                 Distance = (float)request.Ship.Distance,
-                DurationShipping = DateTime.Now.AddMinutes(request.Ship.Duration),
+                DurationShipping = DateTime.Now.AddMinutes(request.Ship.Duration + 30),
             };
 
             if (request.Voucher.PromotionType == PromotionTypes.PersonPromotion)
@@ -272,9 +272,12 @@ public class CustomerCreateOrderHandler : ICommandHandler<CustomerCreateOrderCom
         List<string> notes = new List<string>();
         foreach (var pro in productRequest)
         {
-            var product = this._productRepository.GetById(pro.Id);
-            string note = product.Id + StringPatterConstants.SEPARATE_ORDERID + product.Name + ":" + pro.Note;
-            notes.Add(note);
+            if (!string.IsNullOrEmpty(pro.Note) || !string.IsNullOrWhiteSpace(pro.Note))
+            {
+                var product = this._productRepository.GetById(pro.Id);
+                string note = StringPatterConstants.SEPARATE_ORDERID + product.Name + ": " + pro.Note;
+                notes.Add(note);
+            }
         }
 
         return string.Join(StringPatterConstants.SEPARATE_ORDER_PRODUCT, notes);
