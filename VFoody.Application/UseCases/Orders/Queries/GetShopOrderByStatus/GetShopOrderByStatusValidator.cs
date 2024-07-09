@@ -6,8 +6,9 @@ public class GetShopOrderByStatusValidator : AbstractValidator<GetShopOrderBySta
 {
     public GetShopOrderByStatusValidator()
     {
-        RuleFor(x => x.Status)
-            .IsInEnum()
+        RuleForEach(x => x.Status)
+            .GreaterThanOrEqualTo(1)
+            .LessThanOrEqualTo(7)
             .WithMessage("Status phải nằm trong khoảng từ 1 - 7");
     }
 }
