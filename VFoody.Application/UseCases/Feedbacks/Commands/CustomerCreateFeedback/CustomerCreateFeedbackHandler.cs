@@ -9,6 +9,7 @@ using VFoody.Application.Common.Services;
 using VFoody.Application.UseCases.Feedbacks.Models;
 using VFoody.Application.UseCases.Orders.Commands.CreateOrders;
 using VFoody.Domain.Entities;
+using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
 
 namespace VFoody.Application.UseCases.Feedbacks.Commands.CustomerCreateFeedback;
@@ -80,6 +81,10 @@ public class CustomerCreateFeedbackHandler : ICommandHandler<CustomerCreateFeedb
     private void CheckIsOrderOfCustomer(int orderId)
     {
         var order = this._orderRepository.GetById(orderId);
+        if (order == null)
+            throw new InvalidBusinessException($"Không tồn tại đơn hàng với id: {orderId}");
+        if (order.Status != (int)OrderStatus.Confirmed)
+            throw new InvalidBusinessException($"Đơn hàng đang không trong trạng thái có thể review");
         if (this._currentPrincipalService.CurrentPrincipalId != order.AccountId)
             throw new InvalidBusinessException($"Bạn không có quyền cung cấp phản hồi cho đơn hàng VFD{orderId}");
     }
@@ -93,7 +98,12 @@ public class CustomerCreateFeedbackHandler : ICommandHandler<CustomerCreateFeedb
             {
                 var imagePath = await this._storageService.UploadFileAsync(image);
                 listImagesUrl.Add(imagePath);
+                _logger.LogInformation($"Receive file name {image.Name}");
             }
+        }
+        else
+        {
+            this._logger.LogInformation($"No receive any file image");
         }
 
         return listImagesUrl;
