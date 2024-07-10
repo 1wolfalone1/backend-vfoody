@@ -10,6 +10,7 @@ public class OrderHistoryResponse
     public DateTime OrderDate { get; set; }
     public DateTime DurationShipping { get; set; }
     public DateTime EndDate { get; set; }
+    public bool IsReviewed { get; set; }
     public int ShopId { get; set; }
     public string ShopName { get; set; }
     public string LogoUrl { get; set; }

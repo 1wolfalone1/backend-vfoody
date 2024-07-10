@@ -15,11 +15,6 @@ public class CreateFeedbackValidator : AbstractValidator<CustomerCreateFeedbackR
             .Must(BeAValidSize)
             .WithMessage("File ảnh phải nhỏ hơn 100Mb")
             .When(x => x.Images != default && x.Images.Length > 0);
-        
-        RuleForEach(x => x.Images)
-            .Must(BeAValidFileType)
-            .WithMessage("Vui lòng cung ảnh đúng định dạng")
-            .When(x => x.Images != default && x.Images.Length > 0);
     }
 
     private bool BeAValidSize(IFormFile file)
