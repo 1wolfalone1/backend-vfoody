@@ -56,4 +56,5 @@ public enum QueryName
     CountAllPromotionOfShopByCondition,
     SelectAllPromotionOfShopByCondition,
     SelectDashboardOverviewForShop,
+    GetShopOverviewFeedback,
 }
