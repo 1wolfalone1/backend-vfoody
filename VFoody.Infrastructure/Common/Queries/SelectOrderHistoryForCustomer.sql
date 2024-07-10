@@ -35,8 +35,7 @@ WITH OrderCustomer AS (
         `order` o
     WHERE
         o.account_id = @AccountId
-        AND 
-        o.status IN @Status
+        AND o.status IN @Status
     ORDER BY
         o.updated_date DESC
 ),
@@ -77,6 +76,16 @@ SELECT
     created_date AS OrderDate,
     duration_shipping AS DurationShipping,
     updated_date AS EndDate,
+    (
+        EXISTS (
+            SELECT
+                f.id
+            FROM
+                feedback f
+            WHERE
+                f.order_id = order_id
+        )
+    ) AS IsReviewed,
     shop_id AS ShopId,
     name AS ShopName,
     logo_url AS LogoUrl,
