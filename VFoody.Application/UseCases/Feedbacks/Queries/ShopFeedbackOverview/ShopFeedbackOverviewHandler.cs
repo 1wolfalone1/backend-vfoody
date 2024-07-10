@@ -16,7 +16,7 @@ public class ShopFeedbackOverviewHandler : IQueryHandler<ShopFeedbackOverviewQue
 
     public async Task<Result<Result>> Handle(ShopFeedbackOverviewQuery request, CancellationToken cancellationToken)
     {
-        var listShopFeedbackOverview = await this._dapperService.SelectAsync<ShopFeedbackOverviewResponse>(
+        var listShopFeedbackOverview = await this._dapperService.SingleOrDefaultAsync<ShopFeedbackOverviewResponse>(
             QueryName.GetShopOverviewFeedback,
             new
             {

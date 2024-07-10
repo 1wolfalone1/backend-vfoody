@@ -21,4 +21,7 @@ public class ShopFeedbackDTO
     
     [JsonIgnore]
     public string ImagesUrl { get; set; }
+    
+    [JsonIgnore]
+    public int NumberOfItems { get; set; }
 }
