@@ -33,19 +33,20 @@ public class GetAllShopFeedbackHandler : IQueryHandler<GetAllShopFeedbackQuery,R
         try
         {
             var listFeedBack = await this._dapperService
-                .SelectAsync<PaginationResponse<ShopFeedbackDTO>, ShopFeedbackDTO, PaginationResponse<ShopFeedbackDTO>>(
-                    QueryName.SelectShopFeedbacks, (parent, child) =>
-                    {
-                        parent.Items ??= new List<ShopFeedbackDTO>();
-                        parent.Items.Add(child);
-                        return parent;
-                    }, new
+                .SelectAsync<ShopFeedbackDTO>(
+                    QueryName.SelectShopFeedbacks
+                    , new
                     {
                         ShopId = request.Id,
                         PageIndex = request.PageIndex,
                         PageSize = request.PageSize
-                    }, "AccountId").ConfigureAwait(false);
-            return Result.Success(listFeedBack);
+                    }).ConfigureAwait(false);
+            PaginationResponse<ShopFeedbackDTO> result = new PaginationResponse<ShopFeedbackDTO>();
+            result.Items = listFeedBack.ToList();
+            result.PageIndex = request.PageIndex;
+            result.PageSize = request.PageSize;
+            result.NumberOfItems = listFeedBack.Count() > 0 ? listFeedBack.First().NumberOfItems : 0;
+            return Result.Success(result);
         }
         catch (Exception e)
         {
