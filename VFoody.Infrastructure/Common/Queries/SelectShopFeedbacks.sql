@@ -67,8 +67,6 @@ WithFeedbackAndOrderProductName AS (
         order_id
 )
 SELECT
-    @PageIndex AS PageIndex,
-    @PageSize AS PageSize,
     feed.TotalRecords AS NumberOfItems,
     a.id AS AccountId,
     CONCAT(a.last_name, CONCAT(" ", a.first_name)) AS AccountName,
