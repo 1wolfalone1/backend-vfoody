@@ -43,6 +43,8 @@
     <Folder Include="Common\Exceptions\" />
     <None Remove="Common\Queries\SelectDashboardOverviewForShop.sql" />
     <EmbeddedResource Include="Common\Queries\SelectDashboardOverviewForShop.sql" />
+    <None Remove="Common\Queries\GetShopOverviewFeedback.sql" />
+    <EmbeddedResource Include="Common\Queries\GetShopOverviewFeedback.sql" />
   </ItemGroup>
 
   <ItemGroup>

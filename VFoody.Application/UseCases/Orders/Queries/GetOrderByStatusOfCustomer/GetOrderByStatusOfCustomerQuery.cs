@@ -9,4 +9,6 @@ public class GetOrderByStatusOfCustomerQuery : PaginationRequest, IQuery<Result>
 {
     public int[] Status { get; set; }
     public int AccountId { get; set; }
+    
+    public int ReviewMode { get; set; }
 }

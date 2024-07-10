@@ -72,6 +72,7 @@ SELECT
     feed.TotalRecords AS NumberOfItems,
     a.id AS AccountId,
     CONCAT(a.last_name, CONCAT(" ", a.first_name)) AS AccountName,
+    a.avatar_url AS AccountAvartar,
     feed.id AS FeedbackId,
     feed.rating AS Rating,
     feed.comment AS Comment,

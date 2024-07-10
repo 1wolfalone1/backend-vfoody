@@ -35,7 +35,8 @@ public class GetOrderByStatusOfCustomerHandler  : IQueryHandler<GetOrderByStatus
                     Status = request.Status,
                     AccountId = request.AccountId,
                     PageIndex = request.PageIndex,
-                    PageSize = request.PageSize
+                    PageSize = request.PageSize,
+                    ReviewMode = request.ReviewMode
                 }).ConfigureAwait(false);
             var result = new PaginationResponse<OrderHistoryResponse>(listOrderHistory.ToList(), request.PageIndex, request.PageSize,
                 listOrderHistory.Count() > 0 ? listOrderHistory.First().TotalItems : 0);
