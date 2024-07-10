@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VFoody.API.Identity;
 using VFoody.Application.UseCases.Feedbacks.Commands.CustomerCreateFeedback;
+using VFoody.Application.UseCases.Feedbacks.Queries.ShopFeedbackOverview;
 using VFoody.Application.UseCases.Feedbacks.Queries.ShopFeedbacks;
 
 namespace VFoody.API.Controllers;
@@ -28,6 +29,15 @@ public class FeedbackController : BaseApiController
         {
             OrderId = orderId,
             RequestModel = requestModel
+        }));
+    }
+
+    [HttpGet("customer/shop/{shopId}/feedback/overview")]
+    public async Task<IActionResult> GetSummaryFeedbackOfShop(int shopId)
+    {
+        return this.HandleResult(await this.Mediator.Send(new ShopFeedbackOverviewQuery()
+        {
+            ShopId = shopId
         }));
     }
 }

@@ -6,6 +6,7 @@ public class ShopFeedbackDTO
 {
     public int AccountId { get; set; }
     public string AccountName { get; set; }
+    public string AccountAvartar  { get; set; }
     public int FeedbackId { get; set; }
     public string Comment { get; set; }
     public int Rating { get; set; }

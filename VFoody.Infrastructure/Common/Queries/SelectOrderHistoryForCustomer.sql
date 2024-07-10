@@ -6,12 +6,13 @@
  @AccountId int
  @PageIndex int
  @PageSize int
- 
+ @ReviewMode int -- 0 full, 1 - not review, 2 reviewed
  */
 -- SET @Status:=1;
 -- SET @AccountId:=2;
 -- SET @PageIndex:=1;
 -- SET @PageSize:=10;
+-- SET @ReviewMode:=0;
 WITH OrderCustomer AS (
     SELECT
         id,
@@ -30,7 +31,15 @@ WITH OrderCustomer AS (
         building_id,
         created_date,
         updated_date,
-        shop_id
+        shop_id,
+        EXISTS (
+            SELECT
+                f.id
+            FROM
+                feedback f
+            WHERE
+                f.order_id = o.id
+        ) AS is_review
     FROM
         `order` o
     WHERE
@@ -50,6 +59,7 @@ OrderCustomerWithShopName AS (
         ord.updated_date,
         ord.duration_shipping,
         s.id AS shop_id,
+        is_review,
         s.name,
         s.logo_url,
         (
@@ -68,6 +78,16 @@ OrderCustomerWithShopName AS (
     FROM
         OrderCustomer AS ord
         INNER JOIN shop AS s ON ord.shop_id = s.id
+    WHERE
+        @ReviewMode = 0
+        OR (
+            @ReviewMode = 1
+            AND is_review = 0
+        )
+        OR (
+            @ReviewMode = 2
+            AND is_review = 1
+        )
 )
 SELECT
     order_id AS OrderId,
@@ -76,16 +96,7 @@ SELECT
     created_date AS OrderDate,
     duration_shipping AS DurationShipping,
     updated_date AS EndDate,
-    (
-        EXISTS (
-            SELECT
-                f.id
-            FROM
-                feedback f
-            WHERE
-                f.order_id = order_id
-        )
-    ) AS IsReviewed,
+    is_review IsReviewed,
     shop_id AS ShopId,
     name AS ShopName,
     logo_url AS LogoUrl,
