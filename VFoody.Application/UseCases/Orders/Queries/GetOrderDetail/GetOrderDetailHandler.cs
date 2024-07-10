@@ -40,8 +40,6 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
 
     public async Task<Result<Result>> Handle(GetOrderDetailQuery request, CancellationToken cancellationToken)
     {
-        // Validate
-        await this.ValidateGetOrderDetail(request.OrderId);
         try
         {
             var result = new OrderDetailResponse();
@@ -133,27 +131,6 @@ public class GetOrderDetailHandler : IQueryHandler<GetOrderDetailQuery, Result>
         {
             this._logger.LogError(e, e.Message);
             throw;
-        }
-    }
-
-    private async Task ValidateGetOrderDetail(int orderId)
-    {
-
-        var account = this._currentAccountService.GetCurrentAccount();
-        if (account.RoleId == (int)Domain.Enums.Roles.Customer)
-        {
-            var order = await this._orderRepository.Get(or => or.Id == orderId
-                                                              && or.AccountId == account.Id).SingleOrDefaultAsync();
-            if(order == default)
-                throw new InvalidBusinessException($"Bạn không có quyền xem chi tiết đơn hàng này");
-        }
-
-        if (account.RoleId == (int)Domain.Enums.Roles.Shop)
-        {
-            var shop = await this._shopRepository.GetShopByAccountId(this._currentPrincipalService.CurrentPrincipalId.Value);
-            var order = await this._orderRepository.GetOrderOfShopByIdAsync(orderId, shop.Id);
-            if (order == default)
-                throw new InvalidBusinessException($"Cửa hàng bạn không có quyền xem chi tiết đơn hàng này");
         }
     }
 }
