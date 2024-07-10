@@ -83,7 +83,7 @@ public class CustomerCreateFeedbackHandler : ICommandHandler<CustomerCreateFeedb
         var order = this._orderRepository.GetById(orderId);
         if (order == null)
             throw new InvalidBusinessException($"Không tồn tại đơn hàng với id: {orderId}");
-        if (order.Status != (int)OrderStatus.Confirmed)
+        if (order.Status != (int)OrderStatus.Successful)
             throw new InvalidBusinessException($"Đơn hàng đang không trong trạng thái có thể review");
         if (this._currentPrincipalService.CurrentPrincipalId != order.AccountId)
             throw new InvalidBusinessException($"Bạn không có quyền cung cấp phản hồi cho đơn hàng VFD{orderId}");
