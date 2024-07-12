@@ -11,7 +11,12 @@
 -- SET @DateTo:='2024-07-01';
 WITH TotalRevenueOfShop AS (
     SELECT
-        SUM(amount) AS total_revenue
+        SUM(
+            CASE
+                WHEN o.shop_promotion_id IS NOT NULL THEN o.total_price + o.shipping_fee - o.total_promotion -- Revenue after shop promotion discount
+                ELSE o.total_price + o.shipping_fee -- Full price if platform or personal promotion is applied
+            END
+        )
     FROM
         `order` o
         INNER JOIN `transaction` t ON o.transaction_id = t.id
@@ -30,6 +35,8 @@ TotalOrderSuccess AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status = 4
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
+        AND @DateTo
 ),
 TotalOrderCancel AS (
     SELECT
@@ -39,6 +46,8 @@ TotalOrderCancel AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status != 4
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
+        AND @DateTo
 ),
 TotalCustomerOrder AS (
     SELECT
@@ -48,6 +57,8 @@ TotalCustomerOrder AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status = 4
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
+        AND @DateTo
 )
 SELECT
     (
