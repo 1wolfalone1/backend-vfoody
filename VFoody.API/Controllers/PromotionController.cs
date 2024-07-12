@@ -21,7 +21,6 @@ using VFoody.Domain.Enums;
 namespace VFoody.API.Controllers;
 
 [Route("/api/v1/")]
-[Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
 public class PromotionController : BaseApiController
 {
     private readonly IMapper _mapper;
@@ -34,6 +33,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetCustomerPromotion(int pageIndex, int pageSize)
     {
         if (!_currentPrincipalService.CurrentPrincipalId.HasValue)
@@ -52,6 +52,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/shop/{id}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetShopPromotion(int id, int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetShopPromotionListQuery
@@ -65,6 +66,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/platform")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetPlatformPromotion(int pageIndex, int pageSize)
     {
         return this.HandleResult(await this.Mediator.Send(new GetPlatformPromotionListQuery
@@ -77,6 +79,7 @@ public class PromotionController : BaseApiController
     }
 
     [HttpGet("customer/promotion/all")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetAllPlatformPromotion([FromQuery] GetAllPromotionForCustomerQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
