@@ -10,6 +10,7 @@ public class ShopInfoResponse
     public string? Description { get; set; }
     public float Balance { get; set; }
     public string PhoneNumber { get; set; }
+    public string Email { get; set; }
     public int ActiveFrom { get; set; }
     public int ActiveTo { get; set; }
     public ulong Active { get; set; }

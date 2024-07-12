@@ -8,4 +8,5 @@ public class NotificationResponse
     public bool Readed { get; set; }
     public int AccountId { get; set; }
     public string ImageUrl { get; set; }
+    public DateTime CreatedDate { get; set; }
 }
