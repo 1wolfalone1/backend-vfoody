@@ -24,7 +24,7 @@ public class GetDashboardAdminOverviewHandler : IQueryHandler<GetDashboardAdminO
             var dayCompareRate = 0;
             if (request.DateFrom != default)
             {
-                dayCompareRate = (request.DateTo - request.DateFrom).Days;
+                dayCompareRate = (request.DateTo - request.DateFrom).Days + 1;
             }
 
             var currentOverview = await this._dapperService.SingleOrDefaultAsync<OverviewResponse>(
@@ -47,6 +47,7 @@ public class GetDashboardAdminOverviewHandler : IQueryHandler<GetDashboardAdminO
                 currentOverview.CalTotalTradingRate(previousOverview.TotalTrading);
                 currentOverview.CalTotalUserRate(previousOverview.TotalUser);
                 currentOverview.DayCompareRate = dayCompareRate;
+                return Result.Success(currentOverview);
             }
             else
             {
@@ -68,15 +69,10 @@ public class GetDashboardAdminOverviewHandler : IQueryHandler<GetDashboardAdminO
                 currentMonthOverview.CalTotalRevenueRate(lastMonthOverview.TotalRevenue);
                 currentMonthOverview.CalTotalTradingRate(lastMonthOverview.TotalTrading);
                 currentMonthOverview.CalTotalUserRate(lastMonthOverview.TotalUser);
-
-                currentOverview.TotalOrderRate = currentMonthOverview.TotalOrderRate;
-                currentOverview.TotalRevenueRate = currentMonthOverview.TotalRevenueRate;
-                currentOverview.TotalTradingRate = currentMonthOverview.TotalTradingRate;
-                currentOverview.TotalUserRate = currentMonthOverview.TotalUserRate;
-                currentOverview.DayCompareRate = 30;
+                
+                currentMonthOverview.DayCompareRate = 30;
+                return Result.Success(currentMonthOverview);
             }
-
-            return Result.Success(currentOverview);
         }
         catch (Exception e)
         {
