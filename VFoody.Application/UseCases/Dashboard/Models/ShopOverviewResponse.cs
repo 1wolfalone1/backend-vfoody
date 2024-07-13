@@ -14,7 +14,7 @@ public class ShopOverviewResponse
     public void CalTotalRevenueRate(double previousRevenue)
     {
         if(previousRevenue != 0)
-            this.TotalRevenueRate = (this.TotalRevenue - previousRevenue) / previousRevenue * 100;
+            this.TotalRevenueRate = Math.Round((this.TotalRevenue - previousRevenue) / previousRevenue * 100, 1);
         else 
             this.TotalRevenueRate = 0;
     }
@@ -22,7 +22,7 @@ public class ShopOverviewResponse
     public void CalTotalSuccessOrderRate(double previousSuccessOrder)
     {
         if(previousSuccessOrder != 0)
-            this.TotalSuccessOrderRate = (this.TotalSuccessOrder - previousSuccessOrder) / previousSuccessOrder * 100;
+            this.TotalSuccessOrderRate = Math.Round((this.TotalSuccessOrder - previousSuccessOrder) / previousSuccessOrder * 100, 1);
         else 
             this.TotalSuccessOrderRate = 0;
     }
@@ -30,7 +30,7 @@ public class ShopOverviewResponse
     public void CalTotalOrderCancelRate(double previousCancelOrderRevenue)
     {
         if(previousCancelOrderRevenue != 0)
-            this.TotalOrderCancelRate = (this.TotalOrderCancel - previousCancelOrderRevenue) / previousCancelOrderRevenue * 100;
+            this.TotalOrderCancelRate = Math.Round((this.TotalOrderCancel - previousCancelOrderRevenue) / previousCancelOrderRevenue * 100, 1);
         else 
             this.TotalOrderCancelRate = 0;
     }
@@ -38,7 +38,7 @@ public class ShopOverviewResponse
     public void CalTotalCustomerRate(double previousCustomer)
     {
         if(previousCustomer != 0)
-            this.TotalCustomerOrderRate = (this.TotalCustomerOrder - previousCustomer) / previousCustomer * 100;
+            this.TotalCustomerOrderRate = Math.Round((this.TotalCustomerOrder - previousCustomer) / previousCustomer * 100, 1);
         else 
             this.TotalCustomerOrderRate = 0;
     }
