@@ -31,7 +31,7 @@ public class ShopDashboardOverviewHandler : IQueryHandler<ShopDashboardOverviewQ
             var dayCompareRate = 0;
             if (request.DateFrom != default)
             {
-                dayCompareRate = (request.DateTo - request.DateFrom).Days;
+                dayCompareRate = (request.DateTo - request.DateFrom).Days + 1;
             }
 
             var listCurrently = await this._dapperService.SingleOrDefaultAsync<ShopOverviewResponse>(
