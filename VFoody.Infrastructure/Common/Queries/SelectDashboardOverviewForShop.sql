@@ -24,8 +24,8 @@ WITH TotalRevenueOfShop AS (
         o.shop_id = @ShopId
         AND o.status = 4
         AND o.is_refund = 0
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
 TotalOrderSuccess AS (
     SELECT
@@ -35,8 +35,8 @@ TotalOrderSuccess AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status = 4
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+      AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
 TotalOrderCancel AS (
     SELECT
@@ -46,8 +46,8 @@ TotalOrderCancel AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status != 4
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
 TotalCustomerOrder AS (
     SELECT
@@ -57,8 +57,8 @@ TotalCustomerOrder AS (
     WHERE
         o.shop_id = @ShopId
         AND o.status = 4
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 )
 SELECT
     (
