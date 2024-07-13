@@ -45,7 +45,7 @@ TotalOrderCancel AS (
         `order` o
     WHERE
         o.shop_id = @ShopId
-        AND o.status != 4
+        AND o.status IN (5, 6, 7)
         AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
         AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
