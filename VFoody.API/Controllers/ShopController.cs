@@ -14,6 +14,7 @@ using VFoody.Application.UseCases.Shop.Queries.ShopTop;
 using VFoody.Application.UseCases.Shops.Commands.GetApprove;
 using VFoody.Application.UseCases.Shops.Commands.GetBan;
 using VFoody.Application.UseCases.Shops.Commands.GetUnBan;
+using VFoody.Application.UseCases.Shops.Commands.UpdateOperationStatus;
 using VFoody.Application.UseCases.Shops.Commands.UpdateProfile.UploadShopBannerImage;
 using VFoody.Application.UseCases.Shops.Commands.UpdateProfile.UploadShopLogoImage;
 
@@ -142,5 +143,12 @@ public class ShopController : BaseApiController
     public async Task<IActionResult> ShopGetUnBan([FromBody] ShopGetUnBanCommand command)
     {
         return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpPut("shop/operation/update")]
+    [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
+    public async Task<IActionResult> UpdateShopOperationStatus()
+    {
+        return HandleResult(await Mediator.Send(new UpdateOperationStatusCommand()));
     }
 }
