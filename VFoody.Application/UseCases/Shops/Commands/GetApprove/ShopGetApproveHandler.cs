@@ -4,6 +4,7 @@ using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.Common.Utils;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
@@ -89,7 +90,6 @@ public class ShopGetApproveHandler : ICommandHandler<ShopGetApproveCommand, Resu
     
     private bool SendEmailAnnounce(string fullName, string email, string shopName)
     {
-        string date = DateTime.Now.ToString("dd MMMM yyyy");
         string emailBody = @"
         <html>
             <body style='font-family: Arial, sans-serif; color: #333;'>
@@ -98,12 +98,13 @@ public class ShopGetApproveHandler : ICommandHandler<ShopGetApproveCommand, Resu
                 </div>
                 <p>Xin chào " + fullName + @",</p>
                 <p>Chúng tôi rất vui mừng thông báo rằng yêu cầu nâng cấp tài khoản của bạn lên tài khoản cửa hàng cho " + shopName + @" đã được chấp thuận.</p>
-                <p>Ngày hiệu lực: " + date + @"</p>
+                <p>Ngày hiệu lực: " + StringUtils.DateToStringFormat(DateTime.Now) + @"</p>
                 <p>Bạn hiện có thể truy cập các tính năng và lợi ích dành riêng cho cửa hàng trên VFoody. Nếu bạn có bất kỳ câu hỏi nào hoặc cần thêm hỗ trợ, vui lòng liên hệ với đội hỗ trợ của chúng tôi.</p>
                 <p>Chúc bạn kinh doanh thành công!</p>
                 <p>Trân trọng,</p>
                 <p>Đội ngũ VFoody</p>
-            </body>
+                "+ EmailConstants.Staff_Support_Infor +
+            @"</body>
         </html>";
         return this._emailService.SendEmail(email, "VFoody - Tài khoản của bạn nâng cấp thành cửa hàng thành công", emailBody);
     }

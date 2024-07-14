@@ -4,6 +4,7 @@ using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.Common.Utils;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
@@ -77,7 +78,6 @@ public class ShopGetBanHandler : ICommandHandler<ShopGetBanCommand, Result>
 
     private bool SendEmailAnnounce(string fullName, string email, string reason, string shopName)
     {
-        string date = DateTime.Now.ToString("dd MMMM yyyy");
         string emailBody = @"
         <html>
             <body style='font-family: Arial, sans-serif; color: #333;'>
@@ -89,11 +89,12 @@ public class ShopGetBanHandler : ICommandHandler<ShopGetBanCommand, Result>
                 <div style='text-align: center; margin: 20px;'>
                     <span style='font-size: 18px; padding: 10px; border: 1px solid #ccc;'>" + reason + @"</span>
                 </div>
-                <p>Ngày hiệu lực: " + date + @"</p>
+                <p>Ngày hiệu lực: " + StringUtils.DateToStringFormat(DateTime.Now) + @"</p>
                 <p>Nếu bạn cho rằng đây là một sai lầm hoặc cần thêm thông tin, vui lòng liên hệ với đội hỗ trợ của chúng tôi.</p>
                 <p>Trân trọng,</p>
                 <p>Đội ngũ VFoody</p>
-            </body>
+                " + EmailConstants.Staff_Support_Infor +
+            @"</body>
         </html>";
         return this._emailService.SendEmail(email, "VFoody - Cửa hàng của bạn bị cấm", emailBody);
     }

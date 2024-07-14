@@ -17,6 +17,8 @@ using VFoody.Application.UseCases.Promotion.Commands.CreateShopPromotion;
 using VFoody.Application.UseCases.Promotion.Commands.UpdatePromotionInfo;
 using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Application.UseCases.Shop.Models;
+using VFoody.Application.UseCases.ShopBalanceHistories.Models;
+using VFoody.Application.UseCases.ShopWithdrawalRequests.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 
@@ -165,5 +167,7 @@ public class MappingProfile : Profile
             .ForMember(opt => opt.Rating,
                 opt => opt.MapFrom(
                     src => (RatingRanges)src.Rating));
+        CreateMap<ShopBalanceHistory, ShopBalanceHistoryResponse>();
+        CreateMap<ShopWithdrawalRequest, ShopWithdrawalHistoryResponse>();
     }
 }
