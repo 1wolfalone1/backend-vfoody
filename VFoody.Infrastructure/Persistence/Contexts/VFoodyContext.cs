@@ -84,7 +84,11 @@ public partial class VFoodyContext : DbContext
 
     public virtual DbSet<Shop> Shops { get; set; }
 
+    public virtual DbSet<ShopBalanceHistory> ShopBalanceHistories { get; set; }
+
     public virtual DbSet<ShopPromotion> ShopPromotions { get; set; }
+
+    public virtual DbSet<ShopWithdrawalRequest> ShopWithdrawalRequests { get; set; }
 
     public virtual DbSet<Transaction> Transactions { get; set; }
     
@@ -345,6 +349,18 @@ public partial class VFoodyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("shop_building_FK");
         });
+        
+        modelBuilder.Entity<ShopBalanceHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Shop).WithMany(p => p.ShopBalanceHistories)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("shop_balance_history_shop_FK");
+        });
 
         modelBuilder.Entity<ShopPromotion>(entity =>
         {
@@ -353,6 +369,22 @@ public partial class VFoodyContext : DbContext
             entity.HasOne(d => d.Shop).WithMany(p => p.ShopPromotions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("shop_promotion_shop_FK");
+        });
+        
+        modelBuilder.Entity<ShopWithdrawalRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.RequestedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Status).HasDefaultValueSql("'1'");
+            entity.Property(e => e.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.ProcessedByNavigation).WithMany(p => p.ShopWithdrawalRequests).HasConstraintName("shop_withdrawal_requests_processed_by_FK");
+
+            entity.HasOne(d => d.Shop).WithMany(p => p.ShopWithdrawalRequests)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("shop_withdrawal_requests_shop_FK");
         });
 
         modelBuilder.Entity<Transaction>(entity =>
