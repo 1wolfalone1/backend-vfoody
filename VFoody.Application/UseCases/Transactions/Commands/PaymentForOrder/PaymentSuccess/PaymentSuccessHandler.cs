@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Esf;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.Common.Utils;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
 using VFoody.Domain.Shared;
@@ -24,8 +26,9 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
     private readonly ILogger<PaymentSuccessHandler> _logger;
     private readonly INotificationRepository _notificationRepository;
     private readonly IFirebaseFirestoreService _firebaseFirestoreService;
+    private readonly IShopBalanceHistoryRepository _balanceHistoryRepository;
 
-    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository, ILogger<PaymentSuccessHandler> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService)
+    public PaymentSuccessHandler(ITransactionRepository transactionRepository, ITransactionHistoryRepository transactionHistoryRepository, IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderHistoryRepository orderHistoryRepository, IFirebaseNotificationService firebaseNotification, IAccountRepository accountRepository, IShopRepository shopRepository, ILogger<PaymentSuccessHandler> logger, INotificationRepository notificationRepository, IFirebaseFirestoreService firebaseFirestoreService, IShopBalanceHistoryRepository balanceHistoryRepository)
     {
         _transactionRepository = transactionRepository;
         _transactionHistoryRepository = transactionHistoryRepository;
@@ -38,6 +41,7 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         _logger = logger;
         _notificationRepository = notificationRepository;
         _firebaseFirestoreService = firebaseFirestoreService;
+        _balanceHistoryRepository = balanceHistoryRepository;
     }
 
     public async Task<Result<Result>> Handle(PaymentSucessCommand request, CancellationToken cancellationToken)
@@ -50,7 +54,8 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         {
             await this.UpdateOrderAsync(order).ConfigureAwait(false);
             await this.UpdateTransactionAsync(transaction, order.Id, request).ConfigureAwait(false);
-            await this.UpdateShopBalance(shop, transaction.Amount);
+            var amountShopReceive = this.CalculateShopReceiveAmount(order);
+            await this.UpdateShopBalance(shop, amountShopReceive, order.Id);
             await this._unitOfWork.CommitTransactionAsync().ConfigureAwait(false);
 
             var account = this._accountRepository.GetById(order.AccountId);
@@ -86,7 +91,7 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Shop_Balance_Title,
                 string.Format(NotificationMessageConstants.Shop_Balance_Plus_From_Order,
-                    transaction.Amount, order.Id),
+                    StringUtils.ToVnCurrencyFormat(amountShopReceive), order.Id),
                 (int)Domain.Enums.Roles.Shop);
             return Result.Success("Thanh toán đơn hàng thành công vui lòng quay lại app");
         }
@@ -108,6 +113,21 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
             this._unitOfWork.RollbackTransaction();
             throw;
         }
+    }
+
+    private float CalculateShopReceiveAmount(Order order)
+    {
+        float amount;
+        if (order.ShopPromotionId != default)
+        {
+            amount = order.TotalPrice - order.TotalPromotion + order.ShippingFee;
+        }
+        else
+        {
+            amount = order.TotalPrice + order.ShippingFee;
+        }
+
+        return amount;
     }
 
     private async Task UpdateTransactionAsync(Transaction transaction, int orderId, PaymentSucessCommand request)
@@ -160,8 +180,18 @@ public class PaymentSuccessHandler : ICommandHandler<PaymentSucessCommand, Resul
         this._orderRepository.Update(order);
     }
 
-    private async Task UpdateShopBalance(Domain.Entities.Shop shop, float amount)
+    private async Task UpdateShopBalance(Domain.Entities.Shop shop, float amount, int orderId)
     {
+        ShopBalanceHistory shopBalanceHistory = new ShopBalanceHistory
+        {
+            ShopId = shop.Id,
+            ChangeAmount = amount,
+            BalanceBeforeChange = shop.Balance,
+            BalanceAfterChange = shop.Balance + amount,
+            TransactionType = (int)ShopBalanceTransactionTypes.OrderPayment,
+            Description = $"Thanh toán từ đơn hàng VFD{orderId}"
+        };
+        this._balanceHistoryRepository.AddAsync(shopBalanceHistory);
         shop.Balance += amount;
         this._shopRepository.Update(shop);
     }

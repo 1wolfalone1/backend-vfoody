@@ -98,4 +98,10 @@ public partial class Shop : BaseEntity
 
     [InverseProperty("Shop")]
     public virtual ICollection<ShopPromotion> ShopPromotions { get; set; } = new List<ShopPromotion>();
+    
+    [InverseProperty("Shop")]
+    public virtual ICollection<ShopBalanceHistory> ShopBalanceHistories { get; set; } = new List<ShopBalanceHistory>();
+    
+    [InverseProperty("Shop")]
+    public virtual ICollection<ShopWithdrawalRequest> ShopWithdrawalRequests { get; set; } = new List<ShopWithdrawalRequest>();
 }

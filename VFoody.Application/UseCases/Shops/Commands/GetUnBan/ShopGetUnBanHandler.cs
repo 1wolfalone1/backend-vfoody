@@ -4,6 +4,7 @@ using VFoody.Application.Common.Constants;
 using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
 using VFoody.Application.Common.Services;
+using VFoody.Application.Common.Utils;
 using VFoody.Application.UseCases.Shops.Commands.GetBan;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
@@ -90,7 +91,6 @@ public class ShopGetUnBanHandler : ICommandHandler<ShopGetUnBanCommand, Result>
 
     private bool SendEmailAnnounce(string fullName, string email, string reason, string shopName)
     {
-        string date = DateTime.Now.ToString("dd MMMM yyyy");
         string emailBody = @"
         <html>
             <body style='font-family: Arial, sans-serif; color: #333;'>
@@ -100,12 +100,13 @@ public class ShopGetUnBanHandler : ICommandHandler<ShopGetUnBanCommand, Result>
                 <p>Xin chào " + fullName + @",</p>
                 <p>Chúng tôi rất vui mừng thông báo rằng cửa hàng của bạn, " + shopName + @", đã được mở khóa và bạn có thể tiếp tục sử dụng dịch vụ của VFoody.</p>
                 <p>Lý do: " + reason + @"</p>
-                <p>Ngày hiệu lực: " + date + @"</p>
+                <p>Ngày hiệu lực: " + StringUtils.DateToStringFormat(DateTime.Now) + @"</p>
                 <p>Chúng tôi cảm ơn sự kiên nhẫn của bạn trong thời gian cửa hàng bị cấm. Nếu bạn có bất kỳ câu hỏi nào hoặc cần thêm hỗ trợ, vui lòng liên hệ với đội hỗ trợ của chúng tôi.</p>
                 <p>Chúc bạn kinh doanh thành công!</p>
                 <p>Trân trọng,</p>
                 <p>Đội ngũ VFoody</p>
-            </body>
+                " + EmailConstants.Staff_Support_Infor +
+            @"</body>
         </html>";
         return this._emailService.SendEmail(email, "VFoody - Cửa hàng của bạn đả được bỏ cấm", emailBody);
     }

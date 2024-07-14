@@ -93,6 +93,9 @@ public partial class Account : BaseEntity
     [ForeignKey("RoleId")]
     [InverseProperty("Accounts")]
     public virtual Role Role { get; set; } = null!;
+    
+    [InverseProperty("ProcessedByNavigation")]
+    public virtual ICollection<ShopWithdrawalRequest> ShopWithdrawalRequests { get; set; } = new List<ShopWithdrawalRequest>();
 
     [InverseProperty("Account")]
     public virtual ICollection<Shop> Shops { get; set; } = new List<Shop>();
