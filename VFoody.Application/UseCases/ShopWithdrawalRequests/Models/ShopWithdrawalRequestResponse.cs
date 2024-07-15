@@ -17,7 +17,7 @@ public class ShopWithdrawalRequestResponse
     public int Status { get; set; }
     public int BankCode { get; set; }
     public string BankShortName { get; set; }
-    public string BankAccountName { get; set; }
+    public string BankAccountNumber { get; set; }
     public string Note { get; set; }
     public DateTime RequestedDate { get; set; }
     public DateTime ProcessedDate { get; set; }
