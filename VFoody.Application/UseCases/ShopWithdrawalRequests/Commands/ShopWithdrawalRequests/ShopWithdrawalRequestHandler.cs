@@ -65,7 +65,7 @@ public class ShopWithdrawalRequestHandler : ICommandHandler<ShopWithdrawalReques
                 shopAccount.Id,
                 shopAccount.DeviceToken,
                 NotificationMessageConstants.Shop_Withdrawal_Title,
-                string.Format(NotificationMessageConstants.Shop_Withdrawal_Content,
+                string.Format(NotificationMessageConstants.Shop_Withdrawal_Pending_Content,
                     StringUtils.ToVnCurrencyFormat(request.CommandRequestModel.RequestedAmount)),
                 (int)Domain.Enums.Roles.Shop).ConfigureAwait(false);
         }
@@ -157,7 +157,6 @@ public class ShopWithdrawalRequestHandler : ICommandHandler<ShopWithdrawalReques
                 <p>Vui lòng xử lý yêu cầu này sớm nhất có thể.</p>
                 <p>Trân trọng,</p>
                 <p>Hệ thống VFoody</p>
-                <p>Đội ngũ VFoody</p>
             </body>
         </html>";
     

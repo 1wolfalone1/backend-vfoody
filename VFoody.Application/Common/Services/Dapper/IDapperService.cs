@@ -57,4 +57,5 @@ public enum QueryName
     SelectAllPromotionOfShopByCondition,
     SelectDashboardOverviewForShop,
     GetShopOverviewFeedback,
+    SelectShopWithdrawalRequest,
 }
