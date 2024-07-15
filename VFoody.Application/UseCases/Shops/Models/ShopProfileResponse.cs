@@ -22,6 +22,10 @@ public class ShopProfileResponse
     {
         get
         {
+            if (TotalRating == 0)
+            {
+                return 0;
+            }
             return Math.Round((double)this.TotalStar / TotalRating, 1);
         }
     }
