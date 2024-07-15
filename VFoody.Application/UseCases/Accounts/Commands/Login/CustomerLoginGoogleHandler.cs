@@ -92,6 +92,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
                 this._logger.LogError(e, e.Message);
             }
 
+            var building = new Building();
             var newAccount = new Account
             {
                 Email = userInfor.Email,
@@ -103,6 +104,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
                 AccountType = (int)AccountTypes.Google,
                 Status = (int)AccountStatus.Verify,
                 FUserId = firebaseUid,
+                Building = building
             };
 
             await this._accountRepository.AddAsync(newAccount);
