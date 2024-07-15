@@ -29,7 +29,7 @@ public class NotificationMessageConstants
     
     // Shop Balance
     public static string Shop_Balance_Title = "Tài khoản";
-    public static string Shop_Balance_Plus_From_Order = "Bạn đã được +{0} vào tài khoản từ đơn hàng VFD{1}";
+    public static string Shop_Balance_Plus_From_Order = "Tài khoản cửa hàng đã được +{0} từ đơn hàng VFD{1}";
     
     // Verify
     public static string Approve_Shop_Title = "Cửa hàng";
@@ -53,5 +53,10 @@ public class NotificationMessageConstants
     
     // Shop withdrawal 
     public static string Shop_Withdrawal_Title = "Tài khoản";
-    public static string Shop_Withdrawal_Content = "Tài khoản cửa hàng bạn vừa bị trừ -{0} với lý do rút tiền";
+    public static string Shop_Withdrawal_Pending_Content = "Tài khoản cửa hàng bạn vừa bị trừ -{0} với lý do rút tiền";
+    public static string Shop_Withdrawal_Approve_Content = "Yêu cầu rút tiền của bạn đã được chấp nhận lúc {0}";
+    public static string Shop_Withdrawal_Reject_Content = "Yêu cầu rút tiền của bạn đã bị từ chối lúc {0}";
+    public static string Shop_Withdrawal_Reject_Refund_Content =
+        "Tài khoản cửa hàng đã được +{0} từ yêu cầu rút từ yêu cầu rút tiền bị từ chối";
+
 }

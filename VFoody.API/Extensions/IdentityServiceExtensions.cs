@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using VFoody.Domain.Shared;
 using VFoody.Infrastructure.Settings;
 
 namespace VFoody.API.Extensions;
@@ -32,6 +34,41 @@ public static class IdentityServiceExtensions
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
             };
+            
+            // Customize the response for unauthorized requests
+            x.Events = new JwtBearerEvents
+            {
+                OnChallenge = context =>
+                {
+                    // Skip the default logic
+                    context.HandleResponse();
+
+                    // Set custom response
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonSerializer.Serialize(
+                        Result.Failure(new Error("401", "Authentication failed: JWT token không hợp lệ")),
+                        new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                        });
+                    return context.Response.WriteAsync(result);
+                },
+                OnForbidden = context =>
+                {
+                    // Set custom response
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonSerializer.Serialize(
+                        Result.Failure(new Error("403", "Authorization failed: Bạn không có quyền truy cập")),
+                        new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                        });
+                    return context.Response.WriteAsync(result);
+                }
+            };
+
         });
         
         // add authorization
