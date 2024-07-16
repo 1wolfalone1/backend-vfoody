@@ -10,7 +10,7 @@ namespace VFoody.API.Controllers;
 public class NotificationController : BaseApiController
 {
     [HttpGet("customer/notification")]
-    [Authorize(Roles = $"{IdentityConst.CustomerClaimName}")]
+    [Authorize(Roles = $"{IdentityConst.CustomerClaimName},{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> GetAllCustomerNotification([FromQuery] GetCustomerNotificationQuery query)
     {
         return this.HandleResult(await this.Mediator.Send(query));
