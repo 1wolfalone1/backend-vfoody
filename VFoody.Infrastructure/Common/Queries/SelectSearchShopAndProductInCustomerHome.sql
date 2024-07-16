@@ -31,7 +31,7 @@ WITH ShopAndProduct AS (
         LEFT JOIN question q ON p.id = q.product_id
         LEFT JOIN `option` op ON q.id = op.question_id
     WHERE
-        TIME(NOW()) BETWEEN TIME(
+        TIME(DATE_ADD(NOW(), INTERVAL 7 HOUR)) BETWEEN TIME(
             CONCAT(
                 SUBSTRING(LPAD(s.active_from, 4, '0'), 1, 2),
                 ':',
