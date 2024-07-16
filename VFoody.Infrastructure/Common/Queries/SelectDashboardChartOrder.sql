@@ -18,8 +18,8 @@ WITH OrderStatus AS (
         `order` o
         INNER JOIN  `transaction` t ON o.transaction_id = t.id
     WHERE
-        DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d') 
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d') 
 ),
 OrderSummary AS (
     SELECT
