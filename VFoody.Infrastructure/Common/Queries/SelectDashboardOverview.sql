@@ -22,8 +22,8 @@ WITH TotalUser AS (
                 name = "Customer"
                 OR name = "Shop"
         )
-        AND DATE_FORMAT(a.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(a.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
 TotalTrading AS (
     SELECT
@@ -35,8 +35,8 @@ TotalTrading AS (
         t.status = 1 -- PAID SUCCESS
         AND o.status = 4 -- Successful
         AND o.is_refund = 0 -- No refund
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 ),
 TotalRevenue AS (
     SELECT
@@ -62,8 +62,8 @@ TotalOrder AS (
         `order` o
     WHERE
         o.status = 4 -- Successful
-        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN @DateFrom
-        AND @DateTo
+        AND DATE_FORMAT(o.created_date, '%Y-%m-%d') BETWEEN DATE_FORMAT(@DateFrom, '%Y-%m-%d')
+        AND DATE_FORMAT(@DateTo, '%Y-%m-%d')
 )
 SELECT
     t.total_trading AS TotalTrading,
