@@ -72,6 +72,19 @@ public class FirebaseAuthenticateUserService : BaseService, IFirebaseAuthenticat
             throw;
         }
     }
+    
+    public async Task DeleteUserAccount(string uid)
+    {
+        try
+        {
+            await FirebaseAuth.DefaultInstance.DeleteUserAsync(uid);
+            Console.WriteLine($"Successfully deleted user with UID: {uid}");
+        }
+        catch (FirebaseAuthException ex)
+        {
+            Console.WriteLine($"Error deleting user: {ex.Message}");
+        }
+    }
 
     public async Task<string> CreateCustomerToken(string uid)
     {

@@ -71,14 +71,20 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         }
         
         // 1.2.3.4 Update firebase Uid
+        string firebaseUid = string.Empty;
         try
         {
-            var firebaseUid = await this._firebaseAuthenticate.CreateUser(request.Email, account.PhoneNumber,
-                account.Password, account.LastName, account.AvatarUrl);
+            firebaseUid = await this._firebaseAuthenticate.CreateUser(request.Email, null,
+                null, account.LastName, null);
             this.UpdateAccountFirebaseUid(account, firebaseUid);
+            this._logger.LogInformation($"FirebaseUid In verify token {firebaseUid}");
         }
         catch (Exception e)
         {
+            if (firebaseUid != string.Empty)
+            {
+                await this._firebaseAuthenticate.DeleteUserAccount(firebaseUid);
+            }
             this._logger.LogError(e, e.Message);
         }
 
@@ -103,8 +109,9 @@ public class AccountVerifyHandler : ICommandHandler<AccountVerifyCommand, Result
         try
         {
             await _unitOfWork.BeginTransactionAsync();
-            account.FUserId = uid;
-            _accountRepository.Update(account);
+            var accountUpdate = this._accountRepository.GetAccountByEmail(account.Email);
+            accountUpdate.FUserId = uid;
+            _accountRepository.Update(accountUpdate);
             await _unitOfWork.CommitTransactionAsync();
             return true;
         }
