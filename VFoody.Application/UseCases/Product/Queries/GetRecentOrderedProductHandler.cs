@@ -38,7 +38,7 @@ public class GetRecentOrderedProductHandler : IQueryHandler<GetRecentOrderedProd
                 Email = request.Email
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
+            var result = new PaginationResponse<SelectSimpleProductDTO>(list.ToList(), request.PageIndex, request.PageSize, list.ToList().Count > 0 ? list.First().TotalItems : 0);
 
             return Result.Success(result);
         }
