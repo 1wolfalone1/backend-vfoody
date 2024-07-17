@@ -93,6 +93,8 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
             }
 
             var building = new Building();
+            building.Name = string.Empty;
+        
             var newAccount = new Account
             {
                 Email = userInfor.Email,
