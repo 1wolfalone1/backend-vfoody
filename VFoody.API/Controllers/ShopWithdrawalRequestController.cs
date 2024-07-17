@@ -13,7 +13,7 @@ namespace VFoody.API.Controllers;
 [Route("/api/v1/")]
 public class ShopWithdrawalRequestController : BaseApiController
 {
-    [HttpPost("shop/withdrwawal")]
+    [HttpPost("shop/withdrawal")]
     [Authorize(Roles = $"{IdentityConst.ShopClaimName}")]
     public async Task<IActionResult> ShopWithdrawalRequest(ShopWithdrawalCommandRequest requestModel)
     {

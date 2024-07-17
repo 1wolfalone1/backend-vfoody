@@ -13,8 +13,7 @@ public class WithdrawalRequestValidator : AbstractValidator<ShopWithdrawalComman
             .NotEmpty().WithMessage("Số tài khoản ngân hàng không được để trống.");
 
         RuleFor(x => x.RequestedAmount)
-            .GreaterThan(0).WithMessage("Số tiền yêu cầu phải lớn hơn 0.")
-            .Must(amount => amount % 1000 == 0).WithMessage("Số tiền yêu cầu phải là bội số của 1000.");
+            .GreaterThan(1000).WithMessage("Số tiền yêu cầu phải lớn hơn 10.000 đ.");
 
     }
 }
