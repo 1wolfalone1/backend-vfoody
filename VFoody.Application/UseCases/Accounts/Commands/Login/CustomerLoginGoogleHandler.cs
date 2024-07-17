@@ -88,7 +88,10 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
             }
             catch (Exception e)
             {
-                firebaseUid = string.Empty;
+                if (firebaseUid != string.Empty)
+                {
+                    await this._firebaseAuthenticate.DeleteUserAccount(firebaseUid).ConfigureAwait(false);
+                }
                 this._logger.LogError(e, e.Message);
             }
 
