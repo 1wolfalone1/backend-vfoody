@@ -15,6 +15,7 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
     private readonly ILogger<CustomerRegisterHandler> _logger;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IAccountRepository _accountRepository;
+    private readonly IBuildingRepository _buildingRepository;
     private readonly IVerificationCodeRepository _verificationCodeRepository;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
@@ -22,13 +23,15 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
     public CustomerRegisterHandler(
         ILogger<CustomerRegisterHandler> logger, IJwtTokenService jwtTokenService,
         IAccountRepository accountRepository, IUnitOfWork unitOfWork,
-        IVerificationCodeRepository verificationCodeRepository, IEmailService emailService)
+        IVerificationCodeRepository verificationCodeRepository, IEmailService emailService,
+        IBuildingRepository buildingRepository)
     {
         _jwtTokenService = jwtTokenService;
         _accountRepository = accountRepository;
         _unitOfWork = unitOfWork;
         _verificationCodeRepository = verificationCodeRepository;
         _emailService = emailService;
+        _buildingRepository = buildingRepository;
         _logger = logger;
     }
 
@@ -98,9 +101,19 @@ public class CustomerRegisterHandler : ICommandHandler<CustomerRegisterCommand, 
         {
             return Result.Failure(new Error("500", "Internal server error."));
         }
+        Building building = new Building
+        {
+            Name = "VinHomes Quận 9",
+            Latitude = (float)10.8376371,
+            Longitude = (float)106.831874
+        };
+
         try
         {
             await _unitOfWork.BeginTransactionAsync();
+            await _buildingRepository.AddAsync(building);
+            await _unitOfWork.SaveChangesAsync();
+            account.BuildingId = building.Id;
             await _accountRepository.AddAsync(account);
             var verificationCode = new VerificationCode
             {
