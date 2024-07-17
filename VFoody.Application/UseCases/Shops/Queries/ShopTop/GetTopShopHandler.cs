@@ -42,7 +42,7 @@ public class GetTopShopHandler : IQueryHandler<GetTopShopQuery, Result>
             var response = list.ToList();
             response.ForEach(s => s.IsFavouriteShop = _favouriteShopRepository.IsFavouriteShop(s.Id, accountId));
             var result = new PaginationResponse<SelectSimpleShopDTO>(response, request.PageIndex, request.PageSize,
-                list.First().TotalItems);
+                list.ToList().Count > 0 ? list.First().TotalItems : 0);
 
             return Result.Success(result);
         }

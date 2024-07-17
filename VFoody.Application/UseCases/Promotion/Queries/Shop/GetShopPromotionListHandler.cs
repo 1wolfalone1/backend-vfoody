@@ -42,7 +42,7 @@ public class GetShopPromotionListHandler : IQueryHandler<GetShopPromotionListQue
                 request.PageSize,
             }).ConfigureAwait(false);
 
-            var result = new PaginationResponse<SelectShopPromotionDTO>(list.ToList(), request.PageIndex, request.PageSize, list.First().TotalItems);
+            var result = new PaginationResponse<SelectShopPromotionDTO>(list.ToList(), request.PageIndex, request.PageSize, list.ToList().Count > 0 ? list.First().TotalItems : 0);
 
             return Result.Success(result);
         }
