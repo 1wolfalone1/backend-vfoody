@@ -4,6 +4,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using VFoody.Application.Common.Abstractions.Messaging;
 using VFoody.Application.Common.Exceptions;
 using VFoody.Application.Common.Repositories;
+using VFoody.Application.Common.Utils;
 using VFoody.Application.UseCases.Promotion.Models;
 using VFoody.Domain.Entities;
 using VFoody.Domain.Enums;
@@ -69,7 +70,8 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         platformPromotion.Title = promotion.Title;
         platformPromotion.Description = promotion.Description;
         platformPromotion.BannerUrl = promotion.BannerUrl;
-        platformPromotion.StartDate = promotion.StartDate;
+        platformPromotion.StartDate = DateTimeUtils.SetTimeToMidnight(promotion.StartDate);
+        platformPromotion.EndDate = DateTimeUtils.SetTimeToMidnight(promotion.EndDate);
         platformPromotion.ApplyType = (int)promotion.ApplyType;
         platformPromotion.AmountRate = promotion.AmountRate;
         platformPromotion.AmountValue = promotion.AmountValue;
@@ -86,7 +88,8 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         var personPromotion = this._personPromotionRepository.GetById(promotion.Id);
         personPromotion.Title = promotion.Title;
         personPromotion.Description = promotion.Description;
-        personPromotion.StartDate = promotion.StartDate;
+        personPromotion.StartDate = DateTimeUtils.SetTimeToMidnight(promotion.StartDate);
+        personPromotion.EndDate = DateTimeUtils.SetTimeToMidnight(promotion.EndDate);
         personPromotion.ApplyType = (int)promotion.ApplyType;
         personPromotion.AmountRate = promotion.AmountRate;
         personPromotion.AmountValue = promotion.AmountValue;
@@ -103,7 +106,8 @@ public class UpdatePromotionInfoHandler : ICommandHandler<UpdatePromotionInfoCom
         var shopPromotion = this._shopPromotionRepository.GetById(promotion.Id);
         shopPromotion.Title = promotion.Title;
         shopPromotion.Description = promotion.Description;
-        shopPromotion.StartDate = promotion.StartDate;
+        shopPromotion.StartDate = DateTimeUtils.SetTimeToMidnight(promotion.StartDate);
+        shopPromotion.EndDate = DateTimeUtils.SetTimeToMidnight(promotion.EndDate);
         shopPromotion.ApplyType = (int)promotion.ApplyType;
         shopPromotion.AmountRate = promotion.AmountRate;
         shopPromotion.AmountValue = promotion.AmountValue;
