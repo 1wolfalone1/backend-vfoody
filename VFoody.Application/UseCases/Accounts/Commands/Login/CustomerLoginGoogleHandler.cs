@@ -48,7 +48,7 @@ public class CustomerLoginGoogleHandler : ICommandHandler<CustomerLoginGoogleCom
         var responseContent = await response.Content.ReadAsStringAsync();
         var userInfor = JsonConvert.DeserializeObject<GoogleUserInfor>(responseContent);
 
-        var accTemp = this._accountRepository.GetAccountByEmail(userInfor.Email);
+        var accTemp = this._accountRepository.GetAccountWithBuildingByEmail(userInfor.Email);
         // With email already regis account
         if (accTemp != null)
         {
