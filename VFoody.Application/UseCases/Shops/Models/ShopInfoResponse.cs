@@ -15,6 +15,8 @@ public class ShopInfoResponse
     public int ActiveTo { get; set; }
     public ulong Active { get; set; }
     public int TotalProduct { get; set; }
+    public int TotalOrder { get; set; }
+    
     public double Rating { get; set; }
     public float MinimumValueOrderFreeship { get; set; }
     public float ShippingFee { get; set; }

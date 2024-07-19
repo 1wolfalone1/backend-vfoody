@@ -17,7 +17,7 @@ public class OverviewResponse
         if(previousRevenue != 0)
             this.TotalTradingRate = (this.TotalTrading - previousRevenue) / previousRevenue * 100;
         else 
-            this.TotalTradingRate = 0;
+            this.TotalTradingRate = 100;
     }
     
     public void CalTotalRevenueRate(double previousProfit)
@@ -25,7 +25,7 @@ public class OverviewResponse
         if(previousProfit != 0)
             this.TotalRevenueRate = (this.TotalRevenue - previousProfit) / previousProfit * 100;
         else 
-            this.TotalRevenueRate = 0;
+            this.TotalRevenueRate = 100;
     }
     
     public void CalTotalOrderRate(double previousOrder)
@@ -33,7 +33,7 @@ public class OverviewResponse
         if(previousOrder != 0)
             this.TotalOrderRate = (this.TotalOrder - previousOrder) / previousOrder * 100;
         else 
-            this.TotalOrderRate = 0;
+            this.TotalOrderRate = 100;
     }
     
     public void CalTotalUserRate(double previousUser)
@@ -41,6 +41,6 @@ public class OverviewResponse
         if(previousUser != 0)
             this.TotalUserRate = (this.TotalUser - previousUser) / previousUser * 100;
         else 
-            this.TotalUserRate = 0;
+            this.TotalUserRate = 100;
     }
 }
