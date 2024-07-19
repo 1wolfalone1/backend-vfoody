@@ -54,9 +54,9 @@ WITH ShopWithdrawal AS (
 			@DateFrom IS NULL 
 			OR 
 			@DateTo IS NULL 
-			OR 
-			swr.requested_date BETWEEN @DateFrom
-			AND DATE_FORMAT(swr.created_date, '%Y-%m-%d')
+			OR
+            DATE_FORMAT(swr.created_date, '%Y-%m-%d') BETWEEN @DateFrom
+            AND @DateTo
 		)
 		AND (
 		@ShopId = 0
