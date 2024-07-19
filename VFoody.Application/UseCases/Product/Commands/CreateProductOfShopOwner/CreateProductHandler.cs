@@ -116,6 +116,7 @@ public class CreateProductHandler : ICommandHandler<CreateProductCommand, Result
                 _productCategoryRepository.AddAsync(productCategory);
             });
 
+            shop = await _shopRepository.GetShopByAccountId(accountId!.Value);
             //4. Update total product of shop
             shop.TotalProduct += 1;
             //4.1 Update shop information
