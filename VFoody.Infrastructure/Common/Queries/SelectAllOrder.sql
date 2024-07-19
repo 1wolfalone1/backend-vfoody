@@ -22,6 +22,7 @@ FROM
         JOIN
     account a ON o.account_id = a.id
 WHERE a.status != @ExcludedAccountStatus AND s.status != @ExcludedShopStatus
+ORDER BY o.created_date DESC, (o.total_price + o.shipping_fee - o.total_promotion) DESC
 LIMIT
     @PageSize
 OFFSET
