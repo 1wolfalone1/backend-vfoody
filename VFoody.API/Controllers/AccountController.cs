@@ -12,6 +12,7 @@ using VFoody.Application.UseCases.Accounts.Commands.LoginGoogleByFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.Register;
 using VFoody.Application.UseCases.Accounts.Commands.RegisterVerifyFirebase;
 using VFoody.Application.UseCases.Accounts.Commands.SendCode;
+using VFoody.Application.UseCases.Accounts.Commands.SendMail;
 using VFoody.Application.UseCases.Accounts.Commands.UnBanAction;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateAccountDeviceToken;
 using VFoody.Application.UseCases.Accounts.Commands.UpdateInfo.UpdateProfile;
@@ -221,5 +222,11 @@ public class AccountController : BaseApiController
     public async Task<IActionResult> LoginGoogleByFirebaseProvider([FromBody] LoginGoogleByFirebaseCommand command)
     {
         return this.HandleResult(await this.Mediator.Send(command));
+    }
+
+    [HttpGet("send-mail-grade")]
+    public async Task<IActionResult> SendMailGrade()
+    {
+        return this.HandleResult(await this.Mediator.Send(new SendMailCommand()));
     }
 }
